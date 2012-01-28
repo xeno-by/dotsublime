@@ -1,5 +1,37 @@
-// Settings in here override those in "Default/Base File.sublime-settings", and
-// are overridden in turn by file type specific settings. Place your settings
-// here, to ensure they're preserved when upgrading.
 {
+	"auto_complete": false,
+	"auto_complete_commit_on_tab": false,
+	"auto_complete_delay": 50,
+	"auto_complete_selector": "source - comment",
+	"auto_complete_size_limit": 4194304,
+	"auto_complete_triggers":
+	[
+		{
+			"characters": "<",
+			"selector": "text.html"
+		}
+	],
+	"auto_complete_with_fields": false,
+	"auto_indent": true,
+	"auto_match_enabled": false,
+	"color_scheme": "Packages/Color Scheme - Default/IDLE.tmTheme",
+	"default_encoding": "UTF-8",
+	"default_line_ending": "unix",
+	"detect_indentation": true,
+	"draw_indent_guides": false,
+	"ensure_newline_at_eof_on_save": false,
+	"fallback_encoding": "Windows 1251",
+	"font_face": "Consolas",
+	"font_size": 11,
+	"line_numbers": true,
+	"match_brackets": true,
+	"match_brackets_content": true,
+	"save_on_focus_lost": true,
+	"shift_tab_unindent": false,
+	"tab_completion": true,
+	"tab_size": 2,
+	"translate_tabs_to_spaces": true,
+	"trim_automatic_white_space": true,
+	"trim_trailing_white_space_on_save": true,
+	"use_tab_stops": true
 }
