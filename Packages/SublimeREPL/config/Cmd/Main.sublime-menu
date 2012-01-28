@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Cmd",
+                 "mnemonic": "z",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["cmd.exe"],
+                    "suppress_echo": true,
+                    "external_id": "cmd",
+                    "syntax": "Packages/Text/Plain Text.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
 import threading
@@ -50,6 +50,7 @@ def subst_for_translate(window):
     filename = os.path.abspath(filename)
     res["file"] = filename
     res["file_path"] = os.path.dirname(filename)
+    res["project_path"] = window.folders()[0]
     return res
 
 
@@ -123,14 +124,24 @@ class HistoryMatchList(object):
 
 
 class History(object):
-    def __init__(self):
+    def __init__(self, repl):
+        self._repl = repl
         self._stack = []
+        self._settings_file = "SublimeREPL." + self._repl.external_id + ".sublime-settings"
+        self._settings = sublime.load_settings(self._settings_file)
+        history = self._settings.get("history", [])
+        self._settings.set("history", history)
+        for entry in history: self._stack.append(entry)
 
     def push(self, command):
         cmd = command.rstrip()
         if not cmd:
             return
         self._stack.append(cmd)
+        history = self._settings.get("history")
+        history.append(cmd)
+        self._settings.set("history", history)
+        sublime.save_settings(self._settings_file)
 
     def match(self, command_prefix):
         matching_commands = []
@@ -141,21 +152,22 @@ class History(object):
 
 class ReplView(object):
     def __init__(self, view, repl, syntax):
+        view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         self.repl = repl
         self._view = view
         if syntax:
             view.set_syntax_file(syntax)
-        
+
         self._output_end = view.size()
-        
+
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
 
-        self._history = History()
+        self._history = History(repl)
         self._history_match = None
-        
+
         # begin refreshing attached view
         self.update_view_loop()
 
@@ -207,7 +219,7 @@ class ReplView(object):
             self._view.end_edit(e)
 
     def new_output(self):
-        """Returns new data from Repl and bool indicating if Repl is still 
+        """Returns new data from Repl and bool indicating if Repl is still
            working"""
         q = self._repl_reader.queue
         data = ""
@@ -229,7 +241,7 @@ class ReplView(object):
         else:
             self.write("\n***Repl Closed***\n""")
             self._view.set_read_only(True)
-            
+
     def push_history(self, command):
         self._history.push(command)
         self._history_match = None
@@ -242,11 +254,11 @@ class ReplView(object):
                 self._history_match = None
         if self._history_match is None:
             self._history_match = self._history.match(user_input)
-        
+
     def view_previous_command(self, edit):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.prev_command())
-        
+
     def view_next_command(self, edit):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.next_command())
@@ -272,7 +284,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             view.set_name("*REPL* [%s]" % (r.name(),))
             return rv
         except Exception, e:
-            sublime.error_message(str(e))    
+            sublime.error_message(str(e))
 
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
@@ -299,7 +311,7 @@ class ReplViewNextCommand(sublime_plugin.TextCommand):
         repl_view(self.view).view_next_command(edit)
 
 
-class SublimeReplListener(sublime_plugin.EventListener):        
+class SublimeReplListener(sublime_plugin.EventListener):
     def on_close(self, view):
         rv = repl_view(view)
         if not rv:
@@ -313,7 +325,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
         rv = repl_view(self.view)
         subrepl = rv.repl
         signals = subrepl.available_signals()
-        sorted_names = sorted(signals.keys())              
+        sorted_names = sorted(signals.keys())
         if signals.has_key(signal):
             #signal given by name
             self.safe_send_signal(subrepl, signals[signal])
@@ -330,7 +342,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
             sigcode = signals[signame]
             self.safe_send_signal(subrepl, sigcode)
         self.view.window().show_quick_panel(sorted_names, signal_selected)
-                
+
     def safe_send_signal(self, subrepl, sigcode):
         try:
             subrepl.send_signal(sigcode)
@@ -346,6 +358,3 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
 
     def description(self):
         return "Send SIGNAL"
-
-
-

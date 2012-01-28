@@ -1,5 +1,17 @@
 [
+	{ "keys": ["ctrl+up"], "command": "repl_view_previous",
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 	{ "keys": ["ctrl+p"], "command": "repl_view_previous",
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["ctrl+down"], "command": "repl_view_next",
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
