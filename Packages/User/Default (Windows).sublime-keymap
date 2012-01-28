@@ -3,5 +3,17 @@
   { "keys": ["alt+right"], "command": "navigation_history_forward"},
   { "keys": ["ctrl+shift+f4"], "command": "close_other_tabs"},
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }]},
-  { "keys": ["alt+shift+insert"], "command": "copy_path" }
+  { "keys": ["alt+shift+insert"], "command": "copy_path" },
+  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console"}},
+  { "keys": ["ctrl+delete"], "command": "myke", "args": {"cmd": "clean"}},
+  { "keys": ["alt+b+r"], "command": "myke", "args": {"cmd": "rebuild"}},
+  { "keys": ["alt+b", "alt+r"], "command": "myke", "args": {"cmd": "rebuild"}},
+  { "keys": ["ctrl+shift+b"], "command": "myke", "args": {"cmd": "compile"}},
+  { "keys": ["ctrl+shift+enter"], "command": "myke", "args": {"cmd": "run"}},
+  { "keys": ["ctrl+shift+r"], "command": "myke", "args": {"cmd": "repl"}},
+  { "keys": ["super+shift+enter"], "command": "myke", "args": {"cmd": "run-test"}},
+  { "keys": ["ctrl+shift+g"], "command": "myke", "args": {"cmd": "commit"}},
+  { "keys": ["ctrl+shift+l"], "command": "myke", "args": {"cmd": "log"}}
+  //{ "keys": ["ctrl+shift+p"], "command": "myke", "args": {"cmd": "push"}},
+  //{ "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "pull"}}
 ]

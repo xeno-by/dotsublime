@@ -89,6 +89,7 @@ class AsyncProcess(object):
 class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
     def run(self, cmd = [], file_regex = "", line_regex = "", working_dir = "",
             encoding = "utf-8", env = {}, quiet = False, kill = False,
+            title = "", cont = "", #xeno.by
             # Catches "path" and "shell"
             **kwargs):
 
@@ -99,9 +100,22 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
                 self.append_data(None, "[Cancelled]")
             return
 
-        if not hasattr(self, 'output_view'):
-            # Try not to call get_output_panel until the regexes are assigned
-            self.output_view = self.window.get_output_panel("exec")
+        #xeno.by: if not hasattr(self, 'output_view'):
+        #    # Try not to call get_output_panel until the regexes are assigned
+        #    # self.output_view = self.window.get_output_panel("exec")
+        wannabes = filter(lambda v: v.name() == (title or " ".join(cmd)), self.window.views())
+        self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
+        self.output_view.set_name(title or " ".join(cmd))
+        self.output_view.set_scratch(True)
+        self.output_view.show(self.output_view.size())
+        self.output_view.set_read_only(False)
+        edit = self.output_view.begin_edit()
+        #if self.output_view.size(): self.output_view.insert(edit, self.output_view.size(), "\n\n")
+        self.output_view.erase(edit, sublime.Region(0, self.output_view.size()))
+        self.output_view.sel().clear()
+        self.output_view.sel().add(sublime.Region(self.output_view.size()))
+        self.output_view.end_edit(edit)
+        self.output_view.set_read_only(True)
 
         # Default the to the current files directory if no working directory was given
         if (working_dir == "" and self.window.active_view()
@@ -114,7 +128,8 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         # Call get_output_panel a second time after assigning the above
         # settings, so that it'll be picked up as a result buffer
-        self.window.get_output_panel("exec")
+        #xeno.by: self.window.get_output_panel("exec")
+        self.window.focus_view(self.output_view)
 
         self.encoding = encoding
         self.quiet = quiet
@@ -123,7 +138,7 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         if not self.quiet:
             print "Running " + " ".join(cmd)
 
-        self.window.run_command("show_panel", {"panel": "output.exec"})
+        #xeno.by: self.window.run_command("show_panel", {"panel": "output.exec"})
 
         merged_env = env.copy()
         if self.window.active_view():
@@ -143,6 +158,7 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         try:
             # Forward kwargs to AsyncProcess
             self.proc = AsyncProcess(cmd, merged_env, self, **kwargs)
+            self.cont = cont
         except err_type as e:
             self.append_data(None, str(e) + "\n")
             if not self.quiet:
@@ -194,6 +210,9 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         self.output_view.sel().clear()
         self.output_view.sel().add(sublime.Region(0))
         self.output_view.end_edit(edit)
+
+        if self.cont:
+            self.output_view.run_command(self.cont)
 
     def on_data(self, proc, data):
         sublime.set_timeout(functools.partial(self.append_data, proc, data), 0)

@@ -1,0 +1,24 @@
+{
+	"folders":
+	[
+		{
+			"path": "/C/Projects/Kepler/src/library"
+		},
+		{
+			"path": "/C/Projects/Kepler/src/compiler"
+		},
+		{
+			"path": "/C/Projects/Kepler/sandbox"
+		},
+		{
+			"path": "/D/Dropbox/Scratchpad/Scala"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.sublime_session"
+			],
+			"path": "/D/Dropbox/Software/Sublime"
+		}
+	]
+}

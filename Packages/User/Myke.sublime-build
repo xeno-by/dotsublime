@@ -1,0 +1,7 @@
+{
+    "cmd": ["myke compile"],
+    "file_regex": "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+): error: .*$",
+    "selector": "source.scala",
+    "working_dir": "${project_path:${folder}}",
+    "shell": "true"
+}
