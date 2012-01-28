@@ -5,6 +5,7 @@ from _winreg import *
 class MykeCommand(sublime_plugin.WindowCommand):
   def run(self, cmd = "compile"):
     view = self.window.active_view()
+
     # how do I detect currently open project?!
     project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
     current_file = (view.settings().get("myke_current_file") if view else None) or view.file_name() or project_root
