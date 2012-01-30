@@ -21,7 +21,12 @@ class BufferScroll(sublime_plugin.EventListener):
 
 	def on_load(self, view):
 		if view.file_name() != None and view.file_name() != '':
-			if unlock(): return
+			if unlock():
+				print("buffer_scroll: on_load locked")
+				return
+			else:
+				print("buffer_scroll: on_load unlocked")
+
 			self.restore(view)
 			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
 
@@ -29,9 +34,14 @@ class BufferScroll(sublime_plugin.EventListener):
 	# after the file has been reloading because of external modifications
 	def on_activated(self, view):
 		if view.file_name() != None and view.file_name() != '':
-			if unlock(): return
+			if unlock():
+				print("buffer_scroll: on_activated locked")
+				return
+			else:
+				print("buffer_scroll: on_activated unlocked")
+
 			self.restore(view)
-			sublime.set_timeout(lambda: self.restore(view), 200)
+			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
 
 	# the application is not sending "on_close" event when closing
 	# or switching the projects, then we need to save the data on focus lost

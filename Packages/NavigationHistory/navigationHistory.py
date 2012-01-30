@@ -1,14 +1,18 @@
 import sublime, sublime_plugin
+import time
+import os
 from collections import deque
 
 MAX_SIZE = 64
 LINE_THRESHOLD = 2
+TIME_THRESHOLD = 1000
 
 class Location(object):
     """A location in the history
     """
 
     def __init__(self, path, line, col):
+        self.time = time.time() * 1000
         self.path = path
         self.line = line
         self.col = col
@@ -38,7 +42,10 @@ class History(object):
         self._back = deque([], max_size)    # items before self._current
         self._forward = deque([], max_size) # items after self._current
 
+        self._record_movement_invoked = 0   # number of times `record_movement' has been invoked
         self._last_movement = None          # last recorded movement
+        self._last_history = None           # last recorded movement that got into history
+        self._last_navigation = None        # last recorded navigation (alt+left or alt+right)
 
     def record_movement(self, location):
         """Record movement to the given location, pushing history if
@@ -47,21 +54,45 @@ class History(object):
 
         if location:
             if self.has_changed(location):
-                self.push(location)
-            self.mark_location(location)
+                print("nav_history: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
-    def mark_location(self, location):
-        """Remember the current location, for the purposes of being able
-        to do a has_changed() check.
-        """
-        self._last_movement = location.copy()
+                if self._current:
+                    time_delta = abs(location.time - self._current.time)
+                    print("time delta is: " + str(time_delta))
+                    subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
+                    if subsume:
+                        print("nav_history: subsumed current")
+                        if self.has_changed(location):
+                            self._current = location
+                            self._last_movement = location.copy()
+                            self._last_history = location.copy()
+                        else:
+                            print("nav_history: discarded both")
+                            prev = self._back and self._back.pop()
+                            if prev:
+                                self._last_movement = prev.copy()
+                            self._current = prev
+                            self._last_history = location.copy()
+                    else:
+                        self.push(location)
+                        self._last_movement = location.copy()
+                        self._last_history = location.copy()
+                else:
+                    self.push(location)
+                    self._last_movement = location.copy()
+                    self._last_history = location.copy()
+            else:
+                self._last_movement = location.copy()
 
     def has_changed(self, location):
         """Determine if the given location combination represents a
         significant enough change to warrant pushing history.
         """
 
-        return self._last_movement is None or not self._last_movement.near(location)
+        changed_movement = self._last_movement is None or not self._last_movement.near(location)
+        changed_history = self._last_history is None or not self._last_history.near(location)
+        changed_navigation = self._last_navigation is None or not self._last_navigation.near(location)
+        return changed_movement and changed_history and changed_navigation
 
     def push(self, location):
         """Push the given location to the back history. Clear the forward
@@ -84,6 +115,8 @@ class History(object):
         self._forward.appendleft(self._current)
         self._current = self._back.pop()
         self._last_movement = self._current # preempt, so we don't re-push
+
+        self._last_navigation = self._current
         return self._current
 
     def forward(self):
@@ -97,6 +130,8 @@ class History(object):
         self._back.append(self._current)
         self._current = self._forward.popleft()
         self._last_movement = self._current # preempt, so we don't re-push
+
+        self._last_navigation = self._current
         return self._current
 
 _histories = {} # window id -> History
@@ -121,6 +156,12 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
     """
 
     def on_selection_modified(self, view):
+        self.possiblyRecordMovement(view)
+
+    def on_activated(self, view):
+        self.possiblyRecordMovement(view)
+
+    def possiblyRecordMovement(self, view):
         """When the selection is changed, possibly record movement in the
         history
         """
@@ -128,9 +169,22 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
         if history is None:
             return
 
-        path = view.file_name()
-        row, col = view.rowcol(view.sel()[0].a)
-        history.record_movement(Location(path, row + 1, col + 1))
+        if view.settings().get("repl") or view.settings().get("no_history"):
+            return
+
+        is_not_previewed = False
+        window = sublime.active_window()
+        for window_view in window.views():
+            if (window_view.id() == view.id()):
+                is_not_previewed = True
+
+        if is_not_previewed:
+            path = view.file_name()
+            if not path and view.name(): path = view.id()
+            if path:
+                row, col = view.rowcol(view.sel()[0].a)
+                history.record_movement(Location(path, row + 1, col + 1))
+
 
     # def on_close(self, view):
     #     """When a view is closed, check to see if the window was closed too
@@ -157,8 +211,26 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
 
         location = history.back()
         if location:
+            print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+
             window = sublime.active_window()
-            window.open_file("%s:%d:%d" % (location.path, location.line, location.col), sublime.ENCODED_POSITION)
+            if not isinstance(location.path, int):
+                window.open_file("%s:%d:%d" % (location.path, location.line, location.col), sublime.ENCODED_POSITION)
+            else:
+                found = False
+                for view in window.views():
+                    if view.id() == location.path:
+                        found = True
+                        lock_buffer_scroll()
+                        window.focus_view(view)
+                        pt = view.text_point(location.line, location.col)
+                        view.sel().clear()
+                        view.sel().add(sublime.Region(pt))
+                        view.show(pt)
+                if not found:
+                    window.run_command("navigation_history_backward")
+        else:
+            print("back to: None")
 
 class NavigationHistoryForward(sublime_plugin.TextCommand):
     """Go forward in history
@@ -171,5 +243,44 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
 
         location = history.forward()
         if location:
+            print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+
             window = sublime.active_window()
-            window.open_file("%s:%d:%d" % (location.path, location.line, location.col), sublime.ENCODED_POSITION)
+            if not isinstance(location.path, int):
+                window.open_file("%s:%d:%d" % (location.path, location.line, location.col), sublime.ENCODED_POSITION)
+            else:
+                found = False
+                for view in window.views():
+                    if view.id() == location.path:
+                        found = True
+                        lock_buffer_scroll()
+                        window.focus_view(view)
+                        pt = view.text_point(location.line, location.col)
+                        view.sel().clear()
+                        view.sel().add(sublime.Region(pt))
+                        view.show(pt)
+                if not found:
+                    window.run_command("navigation_history_forward")
+        else:
+            print("forward to: None")
+
+bufferscroll_lockfile = sublime.packages_path() + "/User/BufferScroll.lock"
+
+def lock_buffer_scroll():
+    with file(bufferscroll_lockfile, "a"):
+        os.utime(bufferscroll_lockfile, None)
+
+def unlock_buffer_scroll():
+    def do_unlock():
+        try:
+            if os.path.exists(bufferscroll_lockfile):
+                os.remove(bufferscroll_lockfile)
+        except IOError as e:
+            pass
+
+    locked = os.path.exists(bufferscroll_lockfile)
+    if locked:
+        sublime.set_timeout(do_unlock, 200)
+        return True
+    else:
+        return False

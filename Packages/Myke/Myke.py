@@ -70,6 +70,12 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
       view.settings().set("result_base_dir", env["WorkingDir"])
       window.focus_view(view)
 
+    view.settings().erase("no_history")
+    pt = view.text_point(1, 1)
+    view.sel().clear()
+    view.sel().add(sublime.Region(pt))
+    view.show(pt)
+
     message = "Myke %s upon %s" % (env["Action"], env["Target"])
     args = env["Args"] if "Args" in env else None
     if args: message = "%s with args %s" % (message, args)

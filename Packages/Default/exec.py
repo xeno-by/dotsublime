@@ -105,6 +105,7 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         #    # self.output_view = self.window.get_output_panel("exec")
         wannabes = filter(lambda v: v.name() == (title or " ".join(cmd)), self.window.views())
         self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
+        self.output_view.settings().set("no_history", True)
         self.output_view.set_name(title or " ".join(cmd))
         self.output_view.set_scratch(True)
         self.output_view.show(self.output_view.size())
