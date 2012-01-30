@@ -21,13 +21,17 @@ class BufferScroll(sublime_plugin.EventListener):
 
 	def on_load(self, view):
 		if view.file_name() != None and view.file_name() != '':
-			# restore on preview tabs should be fast as posible
+			if unlock(): return
 			self.restore(view)
-			# overwrite restoration of scroll made by the application
-			#xeno.by: this conflicts with next_result/prev_result
-			#xeno.by: find how to retain the performance without jeopardizing correctness
-			#xeno.by: sublime.set_timeout(lambda: self.restoreScroll(view), 200)
-			self.restoreScroll(view)
+			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
+
+	# xeno.by: very stupid, yes, but that's the only way to keep position
+	# after the file has been reloading because of external modifications
+	def on_activated(self, view):
+		if view.file_name() != None and view.file_name() != '':
+			if unlock(): return
+			self.restore(view)
+			sublime.set_timeout(lambda: self.restore(view), 200)
 
 	# the application is not sending "on_close" event when closing
 	# or switching the projects, then we need to save the data on focus lost
@@ -119,37 +123,37 @@ class BufferScroll(sublime_plugin.EventListener):
 
 		if hash in buffers:
 			buffer = buffers[hash]
-			if long(buffer['id']) == long(view.size()):
-				view.sel().clear()
+#xeno.by:			if long(buffer['id']) == long(view.size()):
+			view.sel().clear()
 
-				# fold
-				rs = []
-				for r in buffer['f']:
-					rs.append(sublime.Region(int(r[0]), int(r[1])))
-				if len(rs):
-					view.fold(rs)
+			# fold
+			rs = []
+			for r in buffer['f']:
+				rs.append(sublime.Region(int(r[0]), int(r[1])))
+			if len(rs):
+				view.fold(rs)
 
-				# selection
-				for r in buffer['s']:
-					view.sel().add(sublime.Region(int(r[0]), int(r[1])))
+			# selection
+			for r in buffer['s']:
+				view.sel().add(sublime.Region(int(r[0]), int(r[1])))
 
-				# marks
-				rs = []
-				for r in buffer['m']:
-					rs.append(sublime.Region(int(r[0]), int(r[1])))
-				if len(rs):
-					view.add_regions("mark", rs, "mark", "dot", sublime.HIDDEN | sublime.PERSISTENT)
+			# marks
+			rs = []
+			for r in buffer['m']:
+				rs.append(sublime.Region(int(r[0]), int(r[1])))
+			if len(rs):
+				view.add_regions("mark", rs, "mark", "dot", sublime.HIDDEN | sublime.PERSISTENT)
 
-				# bookmarks
-				rs = []
-				for r in buffer['b']:
-					rs.append(sublime.Region(int(r[0]), int(r[1])))
-				if len(rs):
-					view.add_regions("bookmarks", rs, "bookmarks", "bookmark", sublime.HIDDEN | sublime.PERSISTENT)
+			# bookmarks
+			rs = []
+			for r in buffer['b']:
+				rs.append(sublime.Region(int(r[0]), int(r[1])))
+			if len(rs):
+				view.add_regions("bookmarks", rs, "bookmarks", "bookmark", sublime.HIDDEN | sublime.PERSISTENT)
 
-				# scroll
-				if buffer['l']:
-					view.set_viewport_position(tuple(buffer['l']), False)
+			# scroll
+			if buffer['l']:
+				view.set_viewport_position(tuple(buffer['l']), False)
 
 	def restoreScroll(self, view):
 		hash_filename = hashlib.sha1(os.path.normpath(view.file_name().encode('utf-8'))).hexdigest()[:7]
@@ -162,6 +166,44 @@ class BufferScroll(sublime_plugin.EventListener):
 
 		if hash in buffers:
 			buffer = buffers[hash]
-			if long(buffer['id']) == long(view.size()):
-				if buffer['l']:
-					view.set_viewport_position(tuple(buffer['l']), False)
+#xeno.by:			if long(buffer['id']) == long(view.size()):
+			if buffer['l']:
+				view.set_viewport_position(tuple(buffer['l']), False)
+
+# xeno.by: That's the ugly part of BufferScroll
+# In order to make it work for next_result/prev_result, I need to temporarily disable BufferScroll for those occasions
+# Moreover, I need to block only on_activated when result is already opened
+# But I need to block both on_activated and on_load when result isn't opened (i.e. will be loaded from disk)
+
+class BufferScrollFriendlyNextResult(sublime_plugin.WindowCommand):
+
+	def run(self):
+		lock()
+		self.window.run_command("next_result")
+
+class BufferScrollFriendlyPrevResult(sublime_plugin.WindowCommand):
+
+	def run(self):
+		lock()
+		self.window.run_command("prev_result")
+
+lockfile = sublime.packages_path() + "/User/BufferScroll.lock"
+
+def lock():
+	with file(lockfile, "a"):
+		os.utime(lockfile, None)
+
+def unlock():
+	def do_unlock():
+		try:
+			if os.path.exists(lockfile):
+				os.remove(lockfile)
+		except IOError as e:
+			pass
+
+	locked = os.path.exists(lockfile)
+	if locked:
+		sublime.set_timeout(do_unlock, 200)
+		return True
+	else:
+		return False

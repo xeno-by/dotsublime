@@ -8,7 +8,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
 
     # how do I detect currently open project?!
     project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
-    current_file = (view.settings().get("myke_current_file") if view else None) or view.file_name() or project_root
+    current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or project_root
     if view and view.settings().get("repl_external_id") == "myke_console":
       contents = view.substr(sublime.Region(0, view.size()))
       last_line = view.substr(view.lines(sublime.Region(0, view.size()))[-1])[0:-1]

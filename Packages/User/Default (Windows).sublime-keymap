@@ -13,7 +13,9 @@
   { "keys": ["ctrl+shift+r"], "command": "myke", "args": {"cmd": "repl"}},
   { "keys": ["super+shift+enter"], "command": "myke", "args": {"cmd": "run-test"}},
   { "keys": ["ctrl+shift+g"], "command": "myke", "args": {"cmd": "commit"}},
-  { "keys": ["ctrl+shift+l"], "command": "myke", "args": {"cmd": "log"}}
+  { "keys": ["ctrl+shift+l"], "command": "myke", "args": {"cmd": "log"}},
   //{ "keys": ["ctrl+shift+p"], "command": "myke", "args": {"cmd": "push"}},
-  //{ "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "pull"}}
+  //{ "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "pull"}},
+  { "keys": ["f4"], "command": "buffer_scroll_friendly_next_result" },
+  { "keys": ["shift+f4"], "command": "buffer_scroll_friendly_prev_result" }
 ]
