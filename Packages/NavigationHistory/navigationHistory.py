@@ -58,10 +58,9 @@ class History(object):
 
                 if self._current:
                     time_delta = abs(location.time - self._current.time)
-                    print("time delta is: " + str(time_delta))
                     subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
                     if subsume:
-                        print("nav_history: subsumed current")
+                        print("nav_history: subsumed current, time delta is " + str(time_delta))
                         if self.has_changed(location):
                             self._current = location
                             self._last_movement = location.copy()
@@ -151,14 +150,35 @@ def get_history():
         _histories[window_id] = history = History()
     return history
 
+class PrintNavigationHistory(sublime_plugin.WindowCommand):
+    def run(self):
+        history = get_history()
+        if history is None:
+            return
+
+        print("=====")
+        for entry in history._back:
+            print(str(entry.path) + ":" + str(entry.line) + ":" + str(entry.col))
+        print("* " + str(history._current.path) + ":" + str(history._current.line) + ":" + str(history._current.col))
+        for entry in history._forward:
+            print(str(entry.path) + ":" + str(entry.line) + ":" + str(entry.col))
+        print("=====")
+
 class NavigationHistoryRecorder(sublime_plugin.EventListener):
     """Keep track of history
     """
 
     def on_selection_modified(self, view):
+        # filters out temporary navs from ctrl+f and ctrl+g
+        active_view_id = view.window() and view.window().active_view() and view.window().active_view().id()
+        if hasattr(self, "_last_activated") and self._last_activated and self._last_activated != active_view_id:
+            print("nav_history: on_selection_modified when an overlay is active, skipped")
+            return
+
         self.possiblyRecordMovement(view)
 
     def on_activated(self, view):
+        self._last_activated = view.id()
         self.possiblyRecordMovement(view)
 
     def possiblyRecordMovement(self, view):
@@ -211,6 +231,7 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
 
         location = history.back()
         if location:
+            lock_buffer_scroll()
             print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
@@ -221,7 +242,6 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
                 for view in window.views():
                     if view.id() == location.path:
                         found = True
-                        lock_buffer_scroll()
                         window.focus_view(view)
                         pt = view.text_point(location.line, location.col)
                         view.sel().clear()
@@ -243,6 +263,7 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
 
         location = history.forward()
         if location:
+            lock_buffer_scroll()
             print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
@@ -253,7 +274,6 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
                 for view in window.views():
                     if view.id() == location.path:
                         found = True
-                        lock_buffer_scroll()
                         window.focus_view(view)
                         pt = view.text_point(location.line, location.col)
                         view.sel().clear()

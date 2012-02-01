@@ -30,18 +30,26 @@ class BufferScroll(sublime_plugin.EventListener):
 			self.restore(view)
 			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
 
-	# xeno.by: very stupid, yes, but that's the only way to keep position
-	# after the file has been reloading because of external modifications
+	# xeno.by: very stupid, yes, but that's the only way to keep the position
+	# after the file has been reloaded because of external modifications
 	def on_activated(self, view):
-		if view.file_name() != None and view.file_name() != '':
-			if unlock():
-				print("buffer_scroll: on_activated locked")
-				return
-			else:
-				print("buffer_scroll: on_activated unlocked")
+		skip = hasattr(self, "last_activated") and not filter(lambda view: view.id() == self.last_activated, view.window().views())
+		self.last_activated = view.id()
 
-			self.restore(view)
-			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
+		# xeno.by: we need to filter out on_activate after an overlay is closed
+		# otherwise, ctrl+f becomes unusable, and so becomes ctrl+g
+		if not skip:
+			if view.file_name() != None and view.file_name() != '':
+				if unlock():
+					print("buffer_scroll: on_activated locked")
+					return
+				else:
+					print("buffer_scroll: on_activated unlocked")
+
+				self.restore(view)
+				sublime.set_timeout(lambda: self.restoreScroll(view), 200)
+		else:
+			print("buffer_scroll: on_activated after quitting an overlay, skipped")
 
 	# the application is not sending "on_close" event when closing
 	# or switching the projects, then we need to save the data on focus lost

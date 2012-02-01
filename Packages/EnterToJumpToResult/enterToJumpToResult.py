@@ -15,4 +15,4 @@ class JumpToResultUnderCursorCommand(sublime_plugin.WindowCommand):
     view.sel().clear()
     view.sel().add(sublime.Region(pt))
     view.show(pt)
-    self.window.run_command("next_result")
+    self.window.run_command("buffer_scroll_friendly_next_result")
