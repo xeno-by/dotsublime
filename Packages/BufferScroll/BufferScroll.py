@@ -72,9 +72,6 @@ class BufferScroll(sublime_plugin.EventListener):
 
 		buffer = {}
 
-		# if the size of the view change outside the application skip restoration
-		buffer['id'] = long(view.size())
-
 		# scroll
 		buffer['l'] = list(view.viewport_position())
 
@@ -141,7 +138,7 @@ class BufferScroll(sublime_plugin.EventListener):
 
 		if hash in buffers:
 			buffer = buffers[hash]
-#xeno.by:			if long(buffer['id']) == long(view.size()):
+
 			view.sel().clear()
 
 			# fold
@@ -174,19 +171,22 @@ class BufferScroll(sublime_plugin.EventListener):
 				view.set_viewport_position(tuple(buffer['l']), False)
 
 	def restoreScroll(self, view):
-		hash_filename = hashlib.sha1(os.path.normpath(view.file_name().encode('utf-8'))).hexdigest()[:7]
-		hash_position = hash_filename+':'+str(view.window().get_view_index(view) if view.window() else '')
 
-		if hash_position in buffers:
-			hash = hash_position
-		else:
-			hash = hash_filename
+		if view.is_loading():
+			sublime.set_timeout(lambda: self.restoreScroll(view), 100)
+		elif view.file_name():
+			hash_filename = hashlib.sha1(os.path.normpath(view.file_name().encode('utf-8'))).hexdigest()[:7]
+			hash_position = hash_filename+':'+str(view.window().get_view_index(view) if view.window() else '')
 
-		if hash in buffers:
-			buffer = buffers[hash]
-#xeno.by:			if long(buffer['id']) == long(view.size()):
-			if buffer['l']:
-				view.set_viewport_position(tuple(buffer['l']), False)
+			if hash_position in buffers:
+				hash = hash_position
+			else:
+				hash = hash_filename
+
+			if hash in buffers:
+				buffer = buffers[hash]
+				if buffer['l']:
+					view.set_viewport_position(tuple(buffer['l']), False)
 
 # xeno.by: That's the ugly part of BufferScroll
 # In order to make it work for next_result/prev_result, I need to temporarily disable BufferScroll for those occasions
