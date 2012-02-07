@@ -19,37 +19,17 @@ queue = settings.get('queue', [])
 
 class BufferScroll(sublime_plugin.EventListener):
 
+	# restore on load for new opened tabs or previews.
 	def on_load(self, view):
 		if view.file_name() != None and view.file_name() != '':
-			if unlock():
-				print("buffer_scroll: on_load locked")
-				return
-			else:
-				print("buffer_scroll: on_load unlocked")
-
+			# restore on preview tabs should be fast as posible
 			self.restore(view)
+			# overwrite restoration of scroll made by the application
 			sublime.set_timeout(lambda: self.restoreScroll(view), 200)
 
-	# xeno.by: very stupid, yes, but that's the only way to keep the position
-	# after the file has been reloaded because of external modifications
+	# restore on activated for tabs changed in external applications
 	def on_activated(self, view):
-		skip = hasattr(self, "last_activated") and not filter(lambda view: view.id() == self.last_activated, view.window().views())
-		self.last_activated = view.id()
-
-		# xeno.by: we need to filter out on_activate after an overlay is closed
-		# otherwise, ctrl+f becomes unusable, and so becomes ctrl+g
-		if not skip:
-			if view.file_name() != None and view.file_name() != '':
-				if unlock():
-					print("buffer_scroll: on_activated locked")
-					return
-				else:
-					print("buffer_scroll: on_activated unlocked")
-
-				self.restore(view)
-				sublime.set_timeout(lambda: self.restoreScroll(view), 200)
-		else:
-			print("buffer_scroll: on_activated after quitting an overlay, skipped")
+			sublime.set_timeout(lambda: self.restoreScroll(view), 0)
 
 	# the application is not sending "on_close" event when closing
 	# or switching the projects, then we need to save the data on focus lost
@@ -128,6 +108,7 @@ class BufferScroll(sublime_plugin.EventListener):
 		sublime.save_settings('BufferScroll.sublime-settings')
 
 	def restore(self, view):
+
 		hash_filename = hashlib.sha1(os.path.normpath(view.file_name().encode('utf-8'))).hexdigest()[:7]
 		hash_position = hash_filename+':'+str(view.window().get_view_index(view) if view.window() else '')
 
@@ -135,7 +116,7 @@ class BufferScroll(sublime_plugin.EventListener):
 			hash = hash_position
 		else:
 			hash = hash_filename
-
+		
 		if hash in buffers:
 			buffer = buffers[hash]
 
@@ -167,11 +148,11 @@ class BufferScroll(sublime_plugin.EventListener):
 				view.add_regions("bookmarks", rs, "bookmarks", "bookmark", sublime.HIDDEN | sublime.PERSISTENT)
 
 			# scroll
-			if buffer['l']:
+			if buffer['l'] and view.viewport_position() == (0.0, 0.0):
 				view.set_viewport_position(tuple(buffer['l']), False)
 
 	def restoreScroll(self, view):
-
+		
 		if view.is_loading():
 			sublime.set_timeout(lambda: self.restoreScroll(view), 100)
 		elif view.file_name():
@@ -182,46 +163,8 @@ class BufferScroll(sublime_plugin.EventListener):
 				hash = hash_position
 			else:
 				hash = hash_filename
-
+				
 			if hash in buffers:
 				buffer = buffers[hash]
-				if buffer['l']:
+				if buffer['l'] and view.viewport_position() == (0.0, 0.0):
 					view.set_viewport_position(tuple(buffer['l']), False)
-
-# xeno.by: That's the ugly part of BufferScroll
-# In order to make it work for next_result/prev_result, I need to temporarily disable BufferScroll for those occasions
-# Moreover, I need to block only on_activated when result is already opened
-# But I need to block both on_activated and on_load when result isn't opened (i.e. will be loaded from disk)
-
-class BufferScrollFriendlyNextResult(sublime_plugin.WindowCommand):
-
-	def run(self):
-		lock()
-		self.window.run_command("next_result")
-
-class BufferScrollFriendlyPrevResult(sublime_plugin.WindowCommand):
-
-	def run(self):
-		lock()
-		self.window.run_command("prev_result")
-
-lockfile = sublime.packages_path() + "/User/BufferScroll.lock"
-
-def lock():
-	with file(lockfile, "a"):
-		os.utime(lockfile, None)
-
-def unlock():
-	def do_unlock():
-		try:
-			if os.path.exists(lockfile):
-				os.remove(lockfile)
-		except IOError as e:
-			pass
-
-	locked = os.path.exists(lockfile)
-	if locked:
-		sublime.set_timeout(do_unlock, 200)
-		return True
-	else:
-		return False

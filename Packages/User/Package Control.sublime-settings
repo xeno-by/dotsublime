@@ -1,7 +1,8 @@
 {
-	"auto_upgrade_last_run": 1328264310,
+	"auto_upgrade_last_run": 1328611241,
 	"installed_packages":
 	[
+		"BufferScroll",
 		"FileDiffs",
 		"Git",
 		"HexViewer",

@@ -4,7 +4,8 @@
   { "keys": ["ctrl+shift+f4"], "command": "close_other_tabs"},
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }]},
   { "keys": ["alt+shift+insert"], "command": "copy_path" },
-  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console"}},
+  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console_main"}},
+  { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "console_new"}},
   { "keys": ["ctrl+delete"], "command": "myke", "args": {"cmd": "clean"}},
   { "keys": ["alt+b+r"], "command": "myke", "args": {"cmd": "rebuild"}},
   { "keys": ["alt+b", "alt+r"], "command": "myke", "args": {"cmd": "rebuild"}},
@@ -13,9 +14,10 @@
   { "keys": ["ctrl+shift+r"], "command": "myke", "args": {"cmd": "repl"}},
   { "keys": ["super+shift+enter"], "command": "myke", "args": {"cmd": "run-test"}},
   { "keys": ["ctrl+shift+g"], "command": "myke", "args": {"cmd": "commit"}},
+  { "keys": ["ctrl+shift+j"], "command": "myke", "args": {"cmd": "blame"}},
   { "keys": ["ctrl+shift+l"], "command": "myke", "args": {"cmd": "log"}},
-  //{ "keys": ["ctrl+shift+p"], "command": "myke", "args": {"cmd": "push"}},
-  //{ "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "pull"}},
   { "keys": ["f4"], "command": "buffer_scroll_friendly_next_result" },
-  { "keys": ["shift+f4"], "command": "buffer_scroll_friendly_prev_result" }
+  { "keys": ["shift+f4"], "command": "buffer_scroll_friendly_prev_result" },
+  { "keys": ["ctrl+k,ctrl+b"], "command": "reveal_in_side_bar" },
+  { "keys": ["ctrl+t"], "command": "clone_file" }
 ]

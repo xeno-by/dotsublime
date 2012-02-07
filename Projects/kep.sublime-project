@@ -8,7 +8,16 @@
       "path": "/C/Projects/Kepler/src/compiler"
     },
     {
+      "path": "/C/Projects/Kepler/src/partest"
+    },
+    {
+      "path": "/C/Projects/Kepler/src/continuations"
+    },
+    {
       "path": "/C/Projects/Kepler/sandbox"
+    },
+    {
+      "path": "/C/Projects/Kepler/sandbox3"
     },
     {
       "path": "/D/Dropbox/Scratchpad/Scala"
