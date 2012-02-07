@@ -300,8 +300,8 @@
                 "children":
                 [
                     { "command": "show_panel", "args": {"panel": "output.find_results"}, "caption": "Show Results Panel" },
-                    { "command": "buffer_scroll_friendly_next_result" },
-                    { "command": "buffer_scroll_friendly_prev_result", "caption": "Previous Result" }
+                    { "command": "next_result" },
+                    { "command": "  prev_result", "caption": "Previous Result" }
                 ]
             }
         ]
@@ -628,8 +628,8 @@
                 "children":
                 [
                     { "command": "show_panel", "args": {"panel": "output.exec"}, "caption": "Show Build Results", "mnemonic": "S" },
-                    { "command": "buffer_scroll_friendly_next_result", "mnemonic": "N" },
-                    { "command": "buffer_scroll_friendly_prev_result", "caption": "Previous Result", "mnemonic": "P" }
+                    { "command": "next_result", "mnemonic": "N" },
+                    { "command": "  prev_result", "caption": "Previous Result", "mnemonic": "P" }
                 ]
             },
             { "command": "toggle_save_all_on_build", "caption": "Save All on Build", "mnemonic": "A", "checkbox": true },

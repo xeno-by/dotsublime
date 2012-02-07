@@ -221,8 +221,8 @@
 	{ "keys": ["ctrl+e"], "command": "slurp_find_string" },
 	{ "keys": ["ctrl+shift+e"], "command": "slurp_replace_string" },
 	{ "keys": ["ctrl+shift+f"], "command": "show_panel", "args": {"panel": "find_in_files"} },
-	{ "keys": ["f4"], "command": "buffer_scroll_friendly_next_result" },
-	{ "keys": ["shift+f4"], "command": "buffer_scroll_friendly_prev_result" },
+	{ "keys": ["f4"], "command": "next_result" },
+	{ "keys": ["shift+f4"], "command": "  prev_result" },
 
 	{ "keys": ["f6"], "command": "toggle_setting", "args": {"setting": "spell_check"} },
 	{ "keys": ["ctrl+f6"], "command": "next_misspelling" },

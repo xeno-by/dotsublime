@@ -1,13 +1,12 @@
 {
-	"auto_upgrade_last_run": 1328611241,
-	"installed_packages":
-	[
-		"BufferScroll",
-		"FileDiffs",
-		"Git",
-		"HexViewer",
-		"Package Control",
-		"SideBarEnhancements",
-		"Theme - Soda"
-	]
+  "auto_upgrade_last_run": 1328611241,
+  "installed_packages":
+  [
+    "FileDiffs",
+    "Git",
+    "HexViewer",
+    "Package Control",
+    "SideBarEnhancements",
+    "Theme - Soda"
+  ]
 }
