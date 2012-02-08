@@ -21,5 +21,7 @@
   { "keys": ["ctrl+k,ctrl+b"], "command": "reveal_in_side_bar" },
   { "keys": ["ctrl+t"], "command": "clone_file" },
   { "keys": ["ctrl+shift+s"], "command": "save_all" },
-  { "keys": ["ctrl+shift+a"], "command": "prompt_save_as" }
+  { "keys": ["ctrl+shift+a"], "command": "prompt_save_as" },
+  { "keys": ["super+n"], "command": "quick_create_file" },
+  { "keys": ["super+shift+n"], "command": "quick_create_directory" }
 ]

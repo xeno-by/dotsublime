@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
 import subprocess
+import os
 from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
@@ -9,6 +10,8 @@ class MykeCommand(sublime_plugin.WindowCommand):
     # how do I detect currently open project?!
     project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
     current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or project_root
+    current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
+    current_dir = os.path.dirname(current_dir) if current_dir else project_root
     if view and view.settings().get("repl_external_id") == "myke_console":
       contents = view.substr(sublime.Region(0, view.size()))
       last_line = view.substr(view.lines(sublime.Region(0, view.size()))[-1])[0:-1]
@@ -17,7 +20,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
     if cmd == "log" or cmd == "commit":
       incantation = "myke " + cmd
       print("Running " + incantation)
-      subprocess.Popen(incantation, shell = True)
+      subprocess.Popen(incantation, shell = True, cwd = current_dir)
     elif cmd == "blame":
       incantation = "myke " + cmd + " " + current_file
       print("Running " + incantation)
@@ -48,7 +51,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.set_name(view_name)
       wannabe.settings().set("myke_project_root", project_root)
       wannabe.settings().set("myke_current_file", current_file)
-      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", cmd, current_file], "cont": "myke_continuation", "shell": "true", "working_dir": project_root, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", cmd, current_file], "cont": "myke_continuation", "shell": "true", "working_dir": current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit):

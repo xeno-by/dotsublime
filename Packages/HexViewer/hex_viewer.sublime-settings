@@ -11,7 +11,7 @@
 
 	// Use a custom font and/or font size in hex view.
 	// Use None to use the current Sublime Text font.
-	"custom_font" : "None",
+	"custom_font" : "none",
 
 	// Use zero to use the current Sublime Text font size.
 	"custom_font_size" : 0,
