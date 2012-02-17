@@ -20,6 +20,8 @@ queue = settings.get('queue', [])
 class BufferScroll(sublime_plugin.EventListener):
 
   def on_load(self, view):
+    self.last_loaded = view
+
     if view.file_name() != None and view.file_name() != '':
       if unlock():
         print("buffer_scroll: on_load locked")
@@ -153,10 +155,14 @@ class BufferScroll(sublime_plugin.EventListener):
         print("buffer_scroll: mtime_actual " + str(mtime_actual))
 
         if abs(float(mtime_saved) - float(mtime_actual)) < 10.0:
-          print("buffer_scroll: detected intentional jump into buffer, restore cancelled")
+          print("buffer_scroll: [mtime] detected intentional jump into buffer, restore cancelled")
           return
         else:
-          print("buffer_scroll: detected reload due to external modifications, restore authorized")
+          if self.last_loaded == view:
+            print("buffer_scroll: [last_loaded] detected intentional jump into buffer, restore cancelled")
+            return
+          else:
+            print("buffer_scroll: detected reload due to external modifications, restore authorized")
 
       print("buffer_scroll: restore authorized " + str(buffer['l']))
       view.sel().clear()
