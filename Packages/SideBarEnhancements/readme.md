@@ -3,13 +3,12 @@ Description
 
 Provides enhancements to the operations on Side Bar of Files and Folders for Sublime Text 2. See: http://www.sublimetext.com/
 
-Notably provides delete as "move to trash", open with.. and clipboard.
+Notably provides delete as "move to trash", open with.. a and clipboard. Close, move, open and restore buffers affected by a rename/move command.
 
 Provides the basics: new file/folder, edit, open/run, reveal, find in selected/parent/project, cut, copy, paste, paste in parent, rename, move, delete, refresh....
 
 The not so basic: copy paths as URIs, URLs, content as UTF8, content as data:uri base64 ( nice for embedding into CSS! ), copy as tags img/a/script/style, duplicate
 
-Close, move, open and restore buffers affected by a rename/move command.
 
 Preference to control if a buffer should be closed when affected by a deletion operation.
 
@@ -25,7 +24,6 @@ Todo
 ------------------
 
  * Use a real clipboard integrated with the OS
- * Paste/Rename/Move should prompt for replace ( if any of the target items exists)
  * A way to copy a filename with URL format. such: http://domain.tld/path/to/file.ext
 
 Installation
@@ -50,6 +48,11 @@ Forum Thread
 ------------------
 
 http://www.sublimetext.com/forum/viewtopic.php?f=5&t=3331
+
+Update v1.1:
+------------------
+* New: Add boolean preference "confirm_before_deleting" which controls if a the package should ask the user to delete files and folders
+* New: When using copy, cut or paste the editor will ask for "replace items" when these items exists. Note: When a folder exists the package will merge the two as in the OS.
 
 Update v1.0:
 ------------------
