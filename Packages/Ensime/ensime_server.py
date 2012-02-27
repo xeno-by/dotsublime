@@ -109,7 +109,7 @@ class EnsimeOnly:
   def is_enabled(self, kill = False):
     return bool(ensime_environment.ensime_env.client()) and ensime_environment.ensime_env.client.ready() and bool(self.ensime_project_file())
 
-class EnsimeServerCommand(sublime_plugin.WindowCommand, 
+class EnsimeServerCommand(sublime_plugin.WindowCommand,
                           ProcessListener, ScalaOnly, EnsimeOnly):
 
   def ensime_project_root(self):
@@ -123,31 +123,31 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
     return hasattr(self, 'proc') and self.proc and self.proc.poll()
 
   def is_enabled(self, **kwargs):
-    start, kill, show_output = (kwargs.get("start", False), 
-                                kwargs.get("kill", False), 
+    start, kill, show_output = (kwargs.get("start", False),
+                                kwargs.get("kill", False),
                                 kwargs.get("show_output", False))
-    return (((kill or show_output) and self.is_started()) or 
+    return (((kill or show_output) and self.is_started()) or
             (start and bool(self.ensime_project_file())))
-                
+
   def show_output_window(self, show_output = False):
     if show_output:
       self.window.run_command("show_panel", {"panel": "output.ensime_server"})
 
-  def ensime_command(self): 
+  def ensime_command(self):
     if os.name == 'nt':
       return "bin\\server.bat"
-    else: 
+    else:
       return "bin/server"
 
   def default_ensime_install_path(self):
     if os.name == 'nt':
       return "Ensime\\server"
-    else: 
-      return "Ensime/server"    
+    else:
+      return "Ensime/server"
 
 
-  def run(self, encoding = "utf-8", env = {}, 
-          start = False, quiet = True, kill = False, 
+  def run(self, encoding = "utf-8", env = {},
+          start = False, quiet = True, kill = False,
           show_output = True):
     print "Running: " + self.__class__.__name__
     self.show_output = show_output
@@ -197,7 +197,7 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
       self.show_output = show_output
       if start:
         cl = EnsimeClient(
-          ensime_environment.ensime_env.settings, 
+          ensime_environment.ensime_env.settings,
           self.window, self.ensime_project_root())
         sublime.set_timeout(
           functools.partial(ensime_environment.ensime_env.set_client, cl), 0)
@@ -295,7 +295,7 @@ class EnsimeHandshakeCommand(sublime_plugin.WindowCommand, EnsimeOnly):
       sublime.status_message("Initializing... ")
       ensime_environment.ensime_env.client().initialize_project(self.handle_init_reply)
     else:
-      sublime.error_message("There was problem initializing ensime, msgno: " + 
+      sublime.error_message("There was problem initializing ensime, msgno: " +
                             str(server_info[2]) + ".")
 
   def run(self):
