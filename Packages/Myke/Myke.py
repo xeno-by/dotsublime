@@ -18,15 +18,15 @@ class MykeCommand(sublime_plugin.WindowCommand):
       current_file = last_line
 
     if cmd == "log" or cmd == "commit":
-      incantation = "myke " + cmd
+      incantation = "myke /S " + cmd
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True, cwd = current_dir)
     elif cmd == "blame":
-      incantation = "myke " + cmd + " " + current_file
+      incantation = "myke /S " + cmd + " " + current_file
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True)
     elif cmd == "clean":
-      incantation = "myke clean \"" + current_file + "\""
+      incantation = "myke clean /S \"" + current_file + "\""
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True)
     elif cmd == "console_main":
@@ -39,11 +39,11 @@ class MykeCommand(sublime_plugin.WindowCommand):
             found = True
             self.window.focus_view(view)
         if not found:
-          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "console"], "cwd": "$project_path", "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif cmd == "console_new":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "console"], "cwd": "$project_path", "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif cmd == "repl":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "repl"], "cwd": "$project_path", "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"], "cwd": project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
     else:
       view_name = "myke " + cmd
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())
@@ -51,7 +51,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.set_name(view_name)
       wannabe.settings().set("myke_project_root", project_root)
       wannabe.settings().set("myke_current_file", current_file)
-      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", cmd, current_file], "cont": "myke_continuation", "shell": "true", "working_dir": current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", "/S", cmd, current_file], "cont": "myke_continuation", "shell": "true", "working_dir": current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit):

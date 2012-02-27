@@ -18,7 +18,7 @@
                     "external_id": "scala",
                     "cmd": {"linux": ["scala"],
                             "osx": ["scala"],
-                            "windows": ["scala.exe", "-i"]},
+                            "windows": ["scala.exe", "/sublime"]},
                     "soft_quit": "\nexit\n",
                     "cwd": "$file_path",
                     "cmd_postfix": "\n",
