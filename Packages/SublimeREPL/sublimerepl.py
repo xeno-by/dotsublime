@@ -8,10 +8,14 @@ import Queue
 import sublime
 import sublime_plugin
 import repl
+import os
+import buzhug
 
 repl_views = {}
 
 PLATFORM = sublime.platform().lower()
+SUBLIMEREPL_DIR = os.getcwdu()
+SETTINGS_FILE = 'SublimeREPL.sublime-settings'
 
 def repl_view(view):
     id = view.settings().get("repl_id")
@@ -50,7 +54,11 @@ def subst_for_translate(window):
     filename = os.path.abspath(filename)
     res["file"] = filename
     res["file_path"] = os.path.dirname(filename)
-    res["project_path"] = window.folders()[0]
+    res["file_basename"] = os.path.basename(filename)
+
+    settings = sublime.load_settings(SETTINGS_FILE)
+    for key in ["win_cmd_encoding"]:
+        res[key] = settings.get(key)
     return res
 
 
@@ -124,24 +132,29 @@ class HistoryMatchList(object):
 
 
 class History(object):
-    def __init__(self, repl):
-        self._repl = repl
-        self._stack = []
-        self._settings_file = "SublimeREPL." + self._repl.external_id + ".sublime-settings"
-        self._settings = sublime.load_settings(self._settings_file)
-        history = self._settings.get("history", [])
-        self._settings.set("history", history)
-        for entry in history: self._stack.append(entry)
+    def __init__(self):
+        self._last = None
 
     def push(self, command):
         cmd = command.rstrip()
-        if not cmd:
+        if not cmd or cmd == self._last:
             return
+        self.append(cmd)
+        self._last = cmd
+
+    def append(self, cmd):
+        raise NotImplemented
+
+    def match(self, command_prefix):
+        raise NotImplemented
+
+class MemHistory(History):
+    def __init__(self):
+        super(MemHistory, self).__init__()
+        self._stack = []
+
+    def append(self, cmd):
         self._stack.append(cmd)
-        history = self._settings.get("history")
-        history.append(cmd)
-        self._settings.set("history", history)
-        sublime.save_settings(self._settings_file)
 
     def match(self, command_prefix):
         matching_commands = []
@@ -149,6 +162,28 @@ class History(object):
             if cmd.startswith(command_prefix):
                 matching_commands.append(cmd)
         return HistoryMatchList(command_prefix, matching_commands)
+
+
+class PersistentHistory(History):
+    def __init__(self, external_id):
+        import datetime
+        super(PersistentHistory, self).__init__()
+        path = os.path.join(sublime.packages_path(), "User", "SublimeREPLHistory")
+        self._db = buzhug.TS_Base(path)
+        self._external_id = external_id
+        self._db.create(("external_id", unicode), ("command", unicode), ("ts", datetime.datetime), mode="open")
+
+    def append(self, cmd):
+        from datetime import datetime
+        self._db.insert(external_id=self._external_id, command=cmd, ts=datetime.now())
+
+    def match(self, command_prefix):
+        import re
+        pattern = re.compile("^" + re.escape(command_prefix) + ".*")
+        retults = self._db.select(None, 'external_id==eid and p.match(command)', eid=self._external_id, p=pattern)
+        retults.sort_by("+ts")
+        return HistoryMatchList(command_prefix, [x.command for x in retults])
+
 
 class ReplView(object):
     def __init__(self, view, repl, syntax):
@@ -165,7 +200,10 @@ class ReplView(object):
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
 
-        self._history = History(repl)
+        if self.external_id and sublime.load_settings(SETTINGS_FILE).get("persistent_history_enabled"):
+            self._history = PersistentHistory(self.external_id)
+        else:
+            self._history = MemHistory()
         self._history_match = None
 
         # begin refreshing attached view
@@ -276,6 +314,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
         try:
             window = self.window
             kwds = translate(window, kwds)
+            encoding = translate(window, encoding)
             r = repl.Repl.subclass(type)(encoding, **kwds)
             view = window.new_file()
             rv = ReplView(view, r, syntax)
@@ -284,7 +323,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             view.set_name("*REPL* [%s]" % (r.name(),))
             return rv
         except Exception, e:
-            sublime.error_message(str(e))
+            sublime.error_message(repr(e))
 
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
@@ -358,3 +397,6 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
 
     def description(self):
         return "Send SIGNAL"
+
+
+

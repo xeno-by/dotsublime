@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net)
-# All rights reserved.
+# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
+# All rights reserved. 
 # See LICENSE.txt for details.
 
 import subprocess
@@ -10,13 +10,15 @@ import repl
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, env=None, cwd=None, extend_env=None):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, 
+                 env=None, cwd=None, extend_env=None, soft_quit=""):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         self._cmd = cmd
+        self._soft_quit = soft_quit
         self.popen = subprocess.Popen(
-                        cmd,
+                        cmd, 
                         startupinfo=self.startupinfo(),
-                        bufsize=1,
+                        bufsize=1, 
                         cwd=self.cwd(cwd),
                         env=self.env(env, extend_env),
                         stderr=subprocess.STDOUT,
@@ -31,15 +33,29 @@ class SubprocessRepl(repl.Repl):
 
     def env(self, env, extend_env):
         import os
+        from sublime import load_settings
         updated_env = env if env else os.environ.copy()
+
+        default_extend_env = load_settings('SublimeREPL.sublime-settings').get("default_extend_env")
+        if default_extend_env:
+            updated_env.update(self.interpolate_extend_env(updated_env, default_extend_env))
+
         if extend_env:
-            updated_env.update(extend_env)
+            updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
         for k,v in updated_env.items():
             enc_k = self.encoder(unicode(k))[0]
             enc_v = self.encoder(unicode(v))[0]
             bytes_env[enc_k] = enc_v
         return bytes_env
+
+    def interpolate_extend_env(self, env, extend_env):
+        """Interpolates (subst) values in extend_env.
+           Mostly for path manipulation"""
+        new_env = {}
+        for key, val in extend_env.items():
+            new_env[key] = str(val).format(**env)
+        return new_env
 
     def startupinfo(self):
         startupinfo = None
@@ -59,18 +75,17 @@ class SubprocessRepl(repl.Repl):
         return self.popen.poll() is None
 
     def read_bytes(self):
-        # this is windows specific problem, that you cannot tell if there
+        # this is windows specific problem, that you cannot tell if there 
         # are more bytes ready, so we read only 1 at a times
         return self.popen.stdout.read(1)
 
     def write_bytes(self, bytes):
-        si = self.popen.stdin
+        si = self.popen.stdin 
         si.write(bytes)
         si.flush()
 
     def kill(self):
-        # dirty hack to dispose of scala repls
-        self.write("\nexit\n")
+        self.write(self._soft_quit)
         self.popen.kill()
 
     def available_signals(self):

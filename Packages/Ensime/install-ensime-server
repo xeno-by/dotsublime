@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Downloading ensime server archive"
+curl -OL# https://github.com/downloads/aemoncannon/ensime/ensime_2.9.2-SNAPSHOT-0.9.3.RC2.tar.gz
+echo "Extracting ensime server"
+tar xzf ensime_2.9.2-SNAPSHOT-0.9.3.RC2.tar.gz
+mv ensime_2.9.2-SNAPSHOT-0.9.3.RC2 server
+rm ensime_2.9.2-SNAPSHOT-0.9.3.RC2.tar.gz
+echo "All done."
