@@ -147,8 +147,8 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
 
 
   def run(self, encoding = "utf-8", env = {},
-          start = False, quiet = True, kill = False,
-          show_output = True):
+          start = False, quiet = False, kill = False,
+          show_output = False):
     print "Running: " + self.__class__.__name__
     self.show_output = show_output
     if not hasattr(self, 'settings'):
@@ -203,7 +203,7 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
           functools.partial(ensime_environment.ensime_env.set_client, cl), 0)
         vw = self.window.active_view()
         self.proc = AsyncProcess([server_path + '/' + self.ensime_command(),
-				  self.ensime_project_root() + "/.ensime_port"],
+				  self.ensime_project_root() + "/.ensime_port", " > d:/foo.txt"],
 				  self,
 				  server_path)
     except err_type as e:
@@ -228,16 +228,19 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
       ensime_environment.ensime_env.client().set_ready()
       self.perform_handshake()
 
-    selection_was_at_end = (len(self.output_view.sel()) == 1
-      and self.output_view.sel()[0]
-        == sublime.Region(self.output_view.size()))
-    self.output_view.set_read_only(False)
-    edit = self.output_view.begin_edit()
-    self.output_view.insert(edit, self.output_view.size(), str_data)
-    if selection_was_at_end:
-      self.output_view.show(self.output_view.size())
-    self.output_view.end_edit(edit)
-    self.output_view.set_read_only(True)
+    # @xeno.by: hangs sublime when compiling scalac
+    # selection_was_at_end = (len(self.output_view.sel()) == 1
+    #   and self.output_view.sel()[0]
+    #     == sublime.Region(self.output_view.size()))
+    # self.output_view.set_read_only(False)
+    # edit = self.output_view.begin_edit()
+    # self.output_view.insert(edit, self.output_view.size(), str_data)
+    # if selection_was_at_end:
+    #   self.output_view.show(self.output_view.size())
+    # self.output_view.end_edit(edit)
+    # self.output_view.set_read_only(True)
+    with open("d:/ensime.log", "a") as myfile:
+      myfile.write(str_data)
 
   def finish(self, proc):
     if proc != self.proc:

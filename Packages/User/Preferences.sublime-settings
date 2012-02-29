@@ -25,7 +25,8 @@
 	"font_size": 11,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
+		"HexViewer"
 	],
 	"line_numbers": true,
 	"match_brackets": true,
