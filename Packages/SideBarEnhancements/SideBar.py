@@ -997,3 +997,21 @@ class SideBarProjectItemExcludeCommand(sublime_plugin.WindowCommand):
 
 	def is_enabled(self, paths = []):
 		return len(paths) > 0
+
+class SideBarOpenInBrowserCommand(sublime_plugin.WindowCommand):
+	def run(self, paths = []):
+		import webbrowser
+		project = SideBarProject()
+		url = project.getPreference('url')
+		if url:
+			if url[-1:] != '/':
+				url = url+'/'
+			for item in SideBarSelection(paths).getSelectedItems():
+				webbrowser.open_new_tab(url + item.pathRelativeFromProjectEncoded())
+		else:
+			for item in SideBarSelection(paths).getSelectedItems():
+				webbrowser.open_new_tab(item.uri())
+			sublime.status_message('Preference "url" was not found in project file.\n"'+project.getProjectFile()+'", opening local file')
+
+	def is_enabled(self, paths = []):
+		return SideBarSelection(paths).hasFiles()

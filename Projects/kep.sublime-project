@@ -38,6 +38,13 @@
       "path": "/C/Projects/Kepler/test/pending"
     },
     {
+      "folder_exclude_patterns":
+      [
+        "_site"
+      ],
+      "path": "/C/Projects/Pages"
+    },
+    {
       "path": "/C/Program Files (x86)/scripts"
     },
     {
