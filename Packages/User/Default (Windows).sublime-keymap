@@ -23,5 +23,8 @@
   { "keys": ["ctrl+shift+s"], "command": "save_all" },
   { "keys": ["ctrl+shift+a"], "command": "prompt_save_as" },
   { "keys": ["super+n"], "command": "quick_create_file" },
-  { "keys": ["super+shift+n"], "command": "quick_create_directory" }
+  { "keys": ["super+shift+n"], "command": "quick_create_directory" },
+  { "keys": ["ctrl+alt+end"], "command": "myke_last_trace"},
+  { "keys": ["ctrl+alt+right"], "command": "myke_prev_trace"},
+  { "keys": ["ctrl+alt+left"], "command": "myke_next_trace"}
 ]
