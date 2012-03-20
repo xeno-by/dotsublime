@@ -5,7 +5,9 @@ import re
 import shutil
 
 from SideBarProject import SideBarProject
-from Utils import Object
+
+class Object():
+	pass
 
 class SideBarItem:
 
@@ -123,14 +125,14 @@ class SideBarItem:
 		return self.name().replace(self.extension(), '').replace('-', ' ').replace('_', ' ').strip();
 
 	def open(self):
-		import sys
-		if sys.platform == 'darwin':
+		if sublime.platform() == 'osx':
 			import subprocess
 			subprocess.Popen(['open', '-a', self.nameSystem()], cwd=self.dirnameSystem())
-		elif sys.platform == 'win32':
+		elif sublime.platform() == 'windows':
 			import subprocess
 			subprocess.Popen([self.nameSystem()], cwd=self.dirnameSystem(), shell=True)
 		else:
+			import sys
 			path = os.path.join(sublime.packages_path(), 'SideBarEnhancements')
 			if path not in sys.path:
 				sys.path.append(path)
@@ -309,9 +311,12 @@ class SideBarItem:
 			view.window().run_command('revert')
 		else:
 			options.content = False
+
+		_view = view
+		view = window.open_file(location)
+		window.focus_view(_view)
 		window.run_command('close')
 
-		view = window.open_file(location)
 		sublime.set_timeout(lambda: self._move_restoreView(view, options, window), 200)
 
 		if is_active_view:
