@@ -23,6 +23,7 @@
 	"fallback_encoding": "Windows 1251",
 	"font_face": "Consolas",
 	"font_size": 11,
+	"highlight_line": true,
 	"ignored_packages":
 	[
 		"Vintage",
@@ -39,6 +40,5 @@
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": true,
 	"trim_trailing_white_space_on_save": true,
-	"use_tab_stops": true,
-	"highlight_line": true
+	"use_tab_stops": true
 }

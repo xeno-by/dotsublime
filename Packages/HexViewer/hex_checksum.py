@@ -18,15 +18,13 @@ try:
     import whirlpool
 except:
     class whirlpool(object):
-        pass
-    whirlpool.whirlpool = None
+        whirlpool = None
 
 try:
     import tiger
 except:
     class tiger(object):
-        pass
-    tiger.tiger = None
+        tiger = None
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
@@ -157,7 +155,7 @@ class adler32(zlib_algorithm):
 
 
 # Sublime Text Commands
-class checksum:
+class checksum(object):
     thread = None
 
     def __init__(self, hash_algorithm=None, data=""):

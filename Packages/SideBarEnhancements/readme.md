@@ -20,11 +20,26 @@ All commands available for files and folders(when applicable) .
 
 <img src="http://dl.dropbox.com/u/43596449/tito/sublime/SideBar/screenshot.png" border="0"/>
 
+F12 key
+------------------
+
+F12 key allows you to open the current file in browser.
+If you want to add a url to that feature:
+Right click the sidebar -> project -> edit project
+There add the new preferences:
+
+```
+, "url":"http://localhost/"
+, "url_production":"http://domain.test/"
+```
+
+```url``` allows you to set the url of your local server, opened via F12
+```url_production``` allows you to set the url of your production server, opened via ALT+F12
+
 Todo
 ------------------
 
  * Use a real clipboard integrated with the OS
- * A way to copy a filename with URL format. such: http://domain.tld/path/to/file.ext
 
 Installation
 ------------------
@@ -48,6 +63,19 @@ Forum Thread
 ------------------
 
 http://www.sublimetext.com/forum/viewtopic.php?f=5&t=3331
+
+Update v1.2:
+------------------
+* Improved: Feature "find advanced -> in paths containing" or CTRL+ALT+F now provides instant search, contribution by @ryecroft, thanks a lot!
+* Fix: When only 1 tab is open and setting "close_windows_when_empty" is true. If the user renames or delete the current file will cause the application to close by itself (it will be perceived as a crash but is not).
+* New: Add to the command palette useful commands as duplicate, reveal, move, open project file, open in browser, refresh, rename
+* New: added keybindings F12 to open in local server, ALT+F12 to open in production server.
+* New: Allows to copy the URL of the selected items.
+* Improved: When renaming/moving remember the tab position and syntax.
+* small fixes:
+- Correct display of commands that are available only for projects
+- Be sure to return None if there is no open project
+- only display a message when using the clipboard if something was copied.
 
 Update v1.1:
 ------------------

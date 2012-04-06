@@ -53,6 +53,12 @@ class SideBarSelection:
 		else:
 			return False
 
+	def hasItemsUnderProject(self):
+		for item in self.getSelectedItems():
+			if item.isUnderCurrentProject():
+				return True
+		return False
+
 	def hasImages(self):
 		return self.hasFilesWithExtension('gif|jpg|jpeg|png')
 

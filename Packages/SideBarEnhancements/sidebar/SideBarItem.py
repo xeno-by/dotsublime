@@ -5,6 +5,7 @@ import re
 import shutil
 
 from SideBarProject import SideBarProject
+import desktop
 
 class Object():
 	pass
@@ -32,6 +33,13 @@ class SideBarItem:
 		for directory in SideBarProject().getDirectories():
 			path = path.replace(directory, '', 1)
 		return path.replace('\\', '/')
+
+	def isUnderCurrentProject(self):
+		path = self.path()
+		path2 = self.path()
+		for directory in SideBarProject().getDirectories():
+			path2 = path2.replace(directory, '', 1)
+		return path != path2
 
 	def pathRelativeFromProject(self):
 		return re.sub('^/+', '', self.pathWithoutProject())
@@ -73,7 +81,7 @@ class SideBarItem:
 
 	def forCwdSystemName(self):
 		if self.isDirectory():
-			return './'
+			return '.'
 		else:
 			path = self.pathSystem()
 			branch = self.dirnameSystem()
@@ -84,7 +92,7 @@ class SideBarItem:
 		relative = SideBarItem(relativeFrom, os.path.isdir(relativeFrom))
 		path = self.pathSystem().replace(relative.pathSystem(), '', 1).replace('\\', '/')
 		if path == '':
-			return './'
+			return '.'
 		else:
 			return './'+re.sub('^/+', '', path)
 
@@ -92,7 +100,7 @@ class SideBarItem:
 		relative = SideBarItem(relativeFrom, os.path.isdir(relativeFrom))
 		path = self.pathSystem().replace(relative.pathSystem(), '', 1).replace('\\', '/')
 		if path == '':
-			return './'
+			return '.'
 		else:
 			if self.isDirectory():
 				return './'+re.sub('^/+', '', path)+'/'
@@ -132,11 +140,6 @@ class SideBarItem:
 			import subprocess
 			subprocess.Popen([self.nameSystem()], cwd=self.dirnameSystem(), shell=True)
 		else:
-			import sys
-			path = os.path.join(sublime.packages_path(), 'SideBarEnhancements')
-			if path not in sys.path:
-				sys.path.append(path)
-			import desktop
 			desktop.open(self.path())
 
 	def edit(self):
@@ -368,3 +371,50 @@ class SideBarItem:
 				view.add_regions("bookmarks", rs, "bookmarks", "bookmark", sublime.HIDDEN | sublime.PERSISTENT)
 
 			view.set_viewport_position(options.scroll, False)
+
+	def close_associated_buffers(self):
+		path = self.path()
+		closed_items = []
+		for window in sublime.windows():
+			active_view = window.active_view()
+			views = []
+			for view in window.views():
+				if view.file_name():
+					views.append(view)
+			views.reverse();
+			for view in views:
+				if path == view.file_name():
+					if view.window():
+						closed_items.append([view.file_name(), view.window(), view.window().get_view_index(view)])
+					if len(window.views()) == 1:
+						window.new_file()
+					window.focus_view(view)
+					window.run_command('revert')
+					window.run_command('close')
+				elif view.file_name().find(path+'\\') == 0:
+					if view.window():
+						closed_items.append([view.file_name(), view.window(), view.window().get_view_index(view)])
+					if len(window.views()) == 1:
+						window.new_file()
+					window.focus_view(view)
+					window.run_command('revert')
+					window.run_command('close')
+				elif view.file_name().find(path+'/') == 0:
+					if view.window():
+						closed_items.append([view.file_name(), view.window(), view.window().get_view_index(view)])
+					if len(window.views()) == 1:
+						window.new_file()
+					window.focus_view(view)
+					window.run_command('revert')
+					window.run_command('close')
+
+			# try to repaint
+			try:
+				window.focus_view(active_view)
+				window.focus_view(window.active_view())
+			except:
+				try:
+					window.focus_view(window.active_view())
+				except:
+					pass
+		return closed_items
