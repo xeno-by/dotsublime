@@ -2,6 +2,12 @@
   "folders":
   [
     {
+      "path": "/C/Projects/StarrSymlinks/starr-library"
+    },
+    {
+      "path": "/C/Projects/StarrSymlinks/starr-compiler"
+    },
+    {
       "path": "/C/Projects/Kepler/src/library"
     },
     {

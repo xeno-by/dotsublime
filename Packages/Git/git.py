@@ -496,7 +496,12 @@ class GitCommitCommand(GitWindowCommand):
             self.panel("Nothing to commit")
             return
         # Okay, get the template!
-        self.run_command(['git', 'diff', '--staged'], self.diff_done)
+        s = sublime.load_settings("Git.sublime-settings")
+        if s.get("verbose_commits"):
+            self.run_command(['git', 'diff', '--staged'], self.diff_done)
+        else:
+            self.run_command(['git', 'status'], self.diff_done)
+
 
     def diff_done(self, result):
         template = "\n".join([
@@ -515,6 +520,7 @@ class GitCommitCommand(GitWindowCommand):
         msg.sel().clear()
         msg.sel().add(sublime.Region(0, 0))
         GitCommitCommand.active_message = self
+
 
     def message_done(self, message):
         # filter out the comments (git commit doesn't do this automatically)
@@ -577,8 +583,9 @@ class GitStatusCommand(GitWindowCommand):
     def panel_followup(self, picked_status, picked_file, picked_index):
         # split out solely so I can override it for laughs
 
+        s = sublime.load_settings("Git.sublime-settings")
         root = git_root(self.get_working_dir())
-        if picked_status == '??':
+        if picked_status == '??' or s.get('status_opens_file'):
             self.window.open_file(os.path.join(root, picked_file))
         else:
             self.run_command(['git', 'diff', '--no-color', '--', picked_file.strip('"')],
@@ -714,6 +721,8 @@ class GitCheckoutCommand(GitTextCommand):
 
     def run(self, edit):
         self.run_command(['git', 'checkout', self.get_file_name()])
+        # Refresh file
+        sublime.set_timeout(lambda: self.view.run_command('revert'), 100)
 
 
 class GitPullCommand(GitWindowCommand):
@@ -760,6 +769,14 @@ class GitClearAnnotationCommand(GitTextCommand):
         self.view.erase_regions('git.changes.-')
 
 
+class GitToggleAnnotationsCommand(GitTextCommand):
+    def run(self, view):
+        if self.active_view().settings().get('live_git_annotations'):
+            self.view.run_command('git_clear_annotation')
+        else:
+            self.view.run_command('git_annotate')
+
+
 class GitAnnotationListener(sublime_plugin.EventListener):
     def on_modified(self, view):
         if not view.settings().get('live_git_annotations'):
@@ -777,7 +794,7 @@ class GitAnnotateCommand(GitTextCommand):
     #    output is then parsed and regions are set accordingly.
     def run(self, view):
         # If the annotations are already running, we dont have to create a new tmpfile
-        if self.active_view().settings().get('live_git_annotations'):
+        if hasattr(self, "tmp"):
             self.compare_tmp(None)
             return
         self.tmp = tempfile.NamedTemporaryFile()
@@ -911,3 +928,18 @@ class GitCommitSelectedHunk(GitAddSelectedHunkCommand):
         self.run_command(['git', 'diff', '--no-color', self.get_file_name()], self.cull_diff)
         self.get_window().run_command('git_commit')
 
+        
+
+class GitGuiCommand(GitTextCommand):
+    def run(self, edit):
+        command = ['git', 'gui']
+        self.run_command(command)
+
+
+class GitGitkCommand(GitTextCommand):
+    def run(self, edit):
+        command = ['gitk']
+        self.run_command(command)
+            
+                        
+    
