@@ -271,6 +271,8 @@ class ReplView(object):
             return data, True
 
     def update_view_loop(self):
+        if hasattr(self, "killed") and self.killed:
+            return
         (data, is_still_working) = self.new_output()
         if data:
             self.write(data)
@@ -302,6 +304,8 @@ class ReplView(object):
         self.replace_current_with_history(edit, self._history_match.next_command())
 
     def view_kill(self):
+        self.killed = True
+        self.write("\n***Repl Killed***\n""")
         self.repl.kill()
 
     def replace_current_with_history(self, edit, cmd):
@@ -313,13 +317,17 @@ class ReplView(object):
 
 
 class ReplOpenCommand(sublime_plugin.WindowCommand):
-    def run(self, encoding, type, syntax=None, **kwds):
+    def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         try:
             window = self.window
             kwds = translate(window, kwds)
             encoding = translate(window, encoding)
             r = repl.Repl.subclass(type)(encoding, **kwds)
-            view = window.new_file()
+            found = None
+            for view in self.window.views():
+                if view.id() == view_id:
+                    found = view
+            view = found or window.new_file()
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
             view.set_scratch(True)
