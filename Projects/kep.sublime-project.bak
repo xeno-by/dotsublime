@@ -2,19 +2,13 @@
   "folders":
   [
     {
-      "path": "/C/Projects/StarrSymlinks/starr-library"
-    },
-    {
-      "path": "/C/Projects/StarrSymlinks/starr-compiler"
-    },
-    {
       "path": "/C/Projects/Kepler/src/library"
     },
     {
       "path": "/C/Projects/Kepler/src/compiler"
     },
     {
-      "path": "/C/Projects/Kepler/src/partest"
+      "path": "/C/Projects/Donor/src/partest"
     },
     {
       "path": "/C/Projects/Kepler/src/continuations"

@@ -4,3 +4,15 @@
 -exit
 -2
 -exit
+-scalac -Xshow-phases
+-scala
+-:power
+-scala
+-import scala.reflect.makro.Context
+-mrqc
+-2 + 2
+-2 + 2
+-exit
+-exit
+-exit
+-exit

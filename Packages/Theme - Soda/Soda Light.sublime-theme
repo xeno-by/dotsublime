@@ -63,10 +63,22 @@
     },
     // Tab labels
     {
-        // Inactive tab label
         "class": "tab_label",
         "fade": true,
-        "fg": [0, 0, 0]
+        "fg": [50, 50, 50],
+        "shadow_color": [235, 235, 235],
+        "shadow_offset": [0, 1]
+    },
+    {
+        "class": "tab_label",
+        "parents": [{"class": "tab_control", "attributes": ["hover"]}],
+        "fg": [25, 25, 25]
+    },
+    {
+        "class": "tab_label",
+        "parents": [{"class": "tab_control", "attributes": ["selected"]}],
+        "fg": [0, 0, 0],
+        "shadow_color": [255, 255, 255]
     },
     // Tab close button
     {
@@ -413,18 +425,39 @@
         "shadow_color": [241, 244, 247],
         "shadow_offset": [0, 1]
     },
-    {
-        "class": "sidebar_heading",
-        "parents": [{"class": "tree_row", "attributes": ["selected"]}],
-        "color": [255, 255, 255],
-        "shadow_color": [34, 94, 145]
-    },
     // Sidebar entry
     {
         "class": "sidebar_label",
         "color": [0, 0, 0],
         "shadow_offset": [0, 0]
     },
+    // Sidebar folder entry
+    {
+        "class": "sidebar_label",
+        "parents": [{"class": "tree_row", "attributes": ["expandable"]}],
+        "color": [90, 103, 115],
+        "shadow_color": [241, 244, 247],
+        "shadow_offset": [0, 1]
+    },
+    {
+        "class": "sidebar_label",
+        "parents": [{"class": "tree_row", "attributes": ["expandable", "hover"]}],
+        "color": [70, 80, 89]
+    },
+    {
+        "class": "sidebar_label",
+        "parents": [{"class": "tree_row", "attributes": ["expandable"]}],
+        "settings": ["bold_folder_labels"],
+        "color": [110, 126, 141],
+        "font.bold": true
+    },
+    {
+        "class": "sidebar_label",
+        "parents": [{"class": "tree_row", "attributes": ["expandable", "hover"]}],
+        "settings": ["bold_folder_labels"],
+        "color": [90, 103, 115]
+    },
+    // Sidebar entry selected
     {
         "class": "sidebar_label",
         "parents": [{"class": "tree_row", "attributes": ["selected"]}],

@@ -110,7 +110,7 @@ class CommandThread(threading.Thread):
 
 
 # A base for all commands
-class GitCommand:
+class GitCommand(object):
     may_change_files = False
 
     def run_command(self, command, callback=None, show_status=True,
@@ -138,9 +138,6 @@ class GitCommand:
             sublime.status_message(message)
 
     def generic_done(self, result):
-        if not result.strip():
-            return
-
         if self.may_change_files and self.active_view() and self.active_view().file_name():
             if self.active_view().is_dirty():
                 result = "WARNING: Current view is dirty.\n\n"
@@ -151,6 +148,9 @@ class GitCommand:
                 self.active_view().run_command('revert')
                 do_when(lambda: not self.active_view().is_loading(), lambda: self.active_view().set_viewport_position(position, False))
                 # self.active_view().show(position)
+
+        if not result.strip():
+            return
         self.panel(result)
 
     def _output_to_view(self, output_file, output, clear=False,
@@ -163,13 +163,15 @@ class GitCommand:
         output_file.insert(edit, 0, output)
         output_file.end_edit(edit)
 
-    def scratch(self, output, title=False, **kwargs):
+    def scratch(self, output, title=False, position=None, **kwargs):
         scratch_file = self.get_window().new_file()
         if title:
             scratch_file.set_name(title)
         scratch_file.set_scratch(True)
         self._output_to_view(scratch_file, output, **kwargs)
         scratch_file.set_read_only(True)
+        if position:
+            sublime.set_timeout(lambda: scratch_file.set_viewport_position(position), 0)
         return scratch_file
 
     def panel(self, output, **kwargs):
@@ -267,15 +269,20 @@ class GitBlameCommand(GitTextCommand):
                 end_line -= 1
             lines = str(begin_line + 1) + ',' + str(end_line + 1)
             command.extend(('-L', lines))
+            callback = self.blame_done
+        else:
+            callback = functools.partial(self.blame_done,
+                    position=self.view.viewport_position())
 
         command.append(self.get_file_name())
-        self.run_command(command, self.blame_done)
+        self.run_command(command, callback)
 
-    def blame_done(self, result):
-        self.scratch(result, title="Git Blame", syntax=plugin_file("Git Blame.tmLanguage"))
+    def blame_done(self, result, position=None):
+        self.scratch(result, title="Git Blame", position=position,
+                syntax=plugin_file("Git Blame.tmLanguage"))
 
 
-class GitLog:
+class GitLog(object):
     def run(self, edit=None):
         return self.run_log('--', self.get_file_name())
 
@@ -324,7 +331,7 @@ class GitLogAllCommand(GitLog, GitWindowCommand):
     pass
 
 
-class GitShow:
+class GitShow(object):
     def run(self, edit=None):
         # GitLog Copy-Past
         self.run_command(
@@ -387,7 +394,7 @@ class GitGraphAllCommand(GitGraph, GitWindowCommand):
 
 class GitDiff (object):
     def run(self, edit=None):
-        self.run_command(['git', 'diff', '--no-color', self.get_file_name()],
+        self.run_command(['git', 'diff', '--no-color', '--', self.get_file_name()],
             self.diff_done)
 
     def diff_done(self, result):
@@ -489,7 +496,7 @@ class GitCommitCommand(GitWindowCommand):
         has_staged_files = False
         result_lines = result.rstrip().split('\n')
         for line in result_lines:
-            if not line[0].isspace():
+            if line and not line[0].isspace():
                 has_staged_files = True
                 break
         if not has_staged_files:
@@ -501,7 +508,6 @@ class GitCommitCommand(GitWindowCommand):
             self.run_command(['git', 'diff', '--staged'], self.diff_done)
         else:
             self.run_command(['git', 'status'], self.diff_done)
-
 
     def diff_done(self, result):
         template = "\n".join([
@@ -520,7 +526,6 @@ class GitCommitCommand(GitWindowCommand):
         msg.sel().clear()
         msg.sel().add(sublime.Region(0, 0))
         GitCommitCommand.active_message = self
-
 
     def message_done(self, message):
         # filter out the comments (git commit doesn't do this automatically)
@@ -721,8 +726,6 @@ class GitCheckoutCommand(GitTextCommand):
 
     def run(self, edit):
         self.run_command(['git', 'checkout', self.get_file_name()])
-        # Refresh file
-        sublime.set_timeout(lambda: self.view.run_command('revert'), 100)
 
 
 class GitPullCommand(GitWindowCommand):
@@ -730,9 +733,38 @@ class GitPullCommand(GitWindowCommand):
         self.run_command(['git', 'pull'], callback=self.panel)
 
 
+class GitPullCurrentBranchCommand(GitWindowCommand):
+    command_to_run_after_describe = 'pull'
+
+    def run(self):
+        self.run_command(['git', 'describe', '--contains',  '--all', 'HEAD'], callback=self.describe_done)
+
+    def describe_done(self, result):
+        self.current_branch = result.strip()
+        self.run_command(['git', 'remote'], callback=self.remote_done)
+
+    def remote_done(self, result):
+        self.remotes = result.rstrip().split('\n')
+        if len(self.remotes) == 1:
+            self.panel_done()
+        else:
+            self.quick_panel(self.remotes, self.panel_done, sublime.MONOSPACE_FONT)
+
+    def panel_done(self, picked=0):
+        if picked < 0 or picked >= len(self.remotes):
+            return
+        self.picked_remote = self.remotes[picked]
+        self.picked_remote = self.picked_remote.strip()
+        self.run_command(['git', self.command_to_run_after_describe, self.picked_remote, self.current_branch])
+
+
 class GitPushCommand(GitWindowCommand):
     def run(self):
         self.run_command(['git', 'push'], callback=self.panel)
+
+
+class GitPushCurrentBranchCommand(GitPullCurrentBranchCommand):
+    command_to_run_after_describe = 'push'
 
 
 class GitCustomCommand(GitTextCommand):
