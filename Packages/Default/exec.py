@@ -41,8 +41,10 @@ class AsyncProcess(object):
         for k, v in proc_env.iteritems():
             proc_env[k] = os.path.expandvars(v).encode(sys.getfilesystemencoding())
 
+        print "[exec] launching " + str(arg_list)
         self.proc = subprocess.Popen(arg_list, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, startupinfo=startupinfo, env=proc_env, shell=shell)
+        print "[exec] pid is " + str(self.proc.pid)
 
         if path:
             os.environ["PATH"] = old_path
@@ -95,7 +97,10 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         if kill:
             if self.proc:
-                self.proc.kill()
+                # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
+                #self.proc.kill()
+                print "[exec] killing " + str(self.proc.proc.pid)
+                subprocess.Popen("mykill /tree " + str(self.proc.proc.pid), creationflags=0x08000000)
                 self.proc = None
                 self.append_data(None, "[Cancelled]")
             return

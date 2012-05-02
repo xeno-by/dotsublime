@@ -39,11 +39,11 @@ class MykeCommand(sublime_plugin.WindowCommand):
             found = True
             self.window.focus_view(view)
         if not found:
-          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "soft_quit": "\nexit\n", "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif cmd == "console_new":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "soft_quit": "\nexit\n", "cwd": project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif cmd == "repl":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"], "cwd": project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"], "soft_quit": "\nexit\n", "cwd": project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
     else:
       view_name = "myke " + cmd
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())

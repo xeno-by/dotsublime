@@ -86,7 +86,11 @@ class SubprocessRepl(repl.Repl):
 
     def kill(self):
         self.write(self._soft_quit)
-        self.popen.kill()
+        # kill doesn't let processes to gracefully terminate on windows
+#        self.popen.kill()
+        # this line is supposed to send Ctrl+C, but it doesn't work - I give up
+#        ctypes.windll.kernel32.GenerateConsoleCtrlEvent(0, self.popen.pid)
+        subprocess.Popen("mykill /tree " + str(self.popen.pid), creationflags=0x08000000)
 
     def available_signals(self):
         import signal

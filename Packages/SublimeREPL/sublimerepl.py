@@ -301,6 +301,9 @@ class ReplView(object):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.next_command())
 
+    def view_kill(self):
+        self.repl.kill()
+
     def replace_current_with_history(self, edit, cmd):
         if not cmd:
             return #don't replace if no match
@@ -348,6 +351,11 @@ class ReplViewPreviousCommand(sublime_plugin.TextCommand):
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         repl_view(self.view).view_next_command(edit)
+
+
+class ReplKillCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        repl_view(self.view).view_kill()
 
 
 class SublimeReplListener(sublime_plugin.EventListener):
