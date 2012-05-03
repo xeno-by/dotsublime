@@ -123,6 +123,12 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         self.output_view.end_edit(edit)
         self.output_view.set_read_only(True)
 
+        #xeno.by: hack: would be much nicer if we could communicate with myke about these
+        # sure, it sets the regexes after the build, but that's not very convenient, especially given that we can press Ctrl+C before the build ends
+        file_regex = file_regex if file_regex and file_regex != "weird value stubs" else "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)"
+        line_regex = line_regex if line_regex and line_regex != "weird value stubs" else ""
+        print "file_regex = " + file_regex
+
         # Default the to the current files directory if no working directory was given
         if (working_dir == "" and self.window.active_view()
                         and self.window.active_view().file_name() != ""):
