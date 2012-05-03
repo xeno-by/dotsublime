@@ -21,12 +21,12 @@
   { "keys": ["ctrl+shift+pageup"], "command": "myke", "args": {"cmd": "deploy"}},
   { "keys": ["f4"], "command": "next_result" },
   { "keys": ["shift+f4"], "command": "prev_result" },
-  { "keys": ["ctrl+k,ctrl+b"], "command": "reveal_in_side_bar" },
+  { "keys": ["super+n"], "command": "quick_create_file" },
+  { "keys": ["super+shift+n"], "command": "quick_create_directory" },
+  { "keys": ["ctrl+b"], "command": "reveal_in_side_bar" },
   { "keys": ["ctrl+t"], "command": "clone_file_and_split" },
   { "keys": ["ctrl+shift+s"], "command": "save_all" },
   { "keys": ["ctrl+shift+a"], "command": "prompt_save_as" },
-  { "keys": ["super+n"], "command": "quick_create_file" },
-  { "keys": ["super+shift+n"], "command": "quick_create_directory" },
   { "keys": ["ctrl+alt+end"], "command": "myke_last_trace"},
   { "keys": ["ctrl+alt+right"], "command": "myke_prev_trace"},
   { "keys": ["ctrl+alt+left"], "command": "myke_next_trace"},
@@ -37,5 +37,6 @@
   { "keys": ["alt+shift+8"], "command": "my_split_vertically" },
   { "keys": ["alt+shift+1"], "command": "my_unsplit" },
   { "keys": ["ctrl+break"], "command": "myke_kill" },
-  { "keys": [""], "command": "myke_kill" }
+  { "keys": [""], "command": "myke_kill" },
+  { "keys": ["ctrl+c"], "command": "myke_ctrl_c" }
 ]
