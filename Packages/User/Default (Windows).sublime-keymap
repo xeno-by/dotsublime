@@ -20,6 +20,7 @@
   { "keys": ["ctrl+shift+;"], "command": "myke", "args": {"cmd": "logthis"}},
   { "keys": ["ctrl+shift+pageup"], "command": "myke", "args": {"cmd": "deploy"}},
   { "keys": ["ctrl+\\"], "command": "myke_select_test_suite"},
+  { "keys": ["ctrl+'"], "command": "myke_prefix"},
   { "keys": ["f4"], "command": "next_result" },
   { "keys": ["shift+f4"], "command": "prev_result" },
   { "keys": ["super+insert"], "command": "quick_create_file" },
