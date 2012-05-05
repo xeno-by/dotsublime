@@ -1,5 +1,5 @@
 {
-	"auto_upgrade_last_run": 1336030409,
+	"auto_upgrade_last_run": 1336226401,
 	"installed_packages":
 	[
 		"BracketHighlighter",
@@ -10,6 +10,11 @@
 		"Package Control",
 		"Quick File Creator",
 		"SideBarEnhancements",
+		"SideBarGit",
 		"Theme - Soda"
+	],
+	"repositories":
+	[
+		"http://wuub.net/sublimepty-alpha.json"
 	]
 }

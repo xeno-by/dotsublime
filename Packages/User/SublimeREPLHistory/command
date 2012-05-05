@@ -16,3 +16,48 @@
 -exit
 -exit
 -exit
+-mrqc
+-ds
+-dsds
+-\\Projects\\Perf_Bad>echo foo
+-echo foo
+-echo
+-ls
+-\\Projects\\Perf_Bad>ls
+-ls
+-ds
+-ls
+-dsds
+-mrqc
+-mrqc
+-mrc
+-mrc
+-mr
+-mr
+-scala
+-mr
+-mrc
+-mr
+-git remote update
+-git pull odersky/topic/reflection
+-git pull odersky topic/reflection
+-ant all.clean
+-cd build
+-ls
+-cd palo/bin
+-ls
+-scala
+-typeTag[Int]
+-scala -Xlog-implicits
+-f_Bad>sta
+-sta
+-d build/palo/bin
+-cd build/palo/bin
+-scala -Xlog-implicits
+-typeTag[Int]
+-mr
+-ant all.clean
+-mr
+-mr
+-mr
+-mr

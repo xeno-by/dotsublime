@@ -1,0 +1,21 @@
+{
+  "folders":
+  [
+    {
+      "path": "/C/Projects/Starr/src/library"
+    },
+    {
+      "path": "/C/Projects/Starr/src/compiler"
+    },
+    {
+      "path": "/C/Program Files (x86)/scripts"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.sublime_session"
+      ],
+      "path": "/C/Users/xeno.by/AppData/Roaming/Sublime Text 2"
+    }
+  ]
+}

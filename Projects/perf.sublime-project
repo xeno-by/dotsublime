@@ -1,0 +1,28 @@
+{
+  "folders":
+  [
+    {
+      "path": "/C/Projects/Perf_Bad/src/library"
+    },
+    {
+      "path": "/C/Projects/Perf_Bad/src/compiler"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "_site"
+      ],
+      "path": "/C/Projects/Pages"
+    },
+    {
+      "path": "/C/Program Files (x86)/scripts"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.sublime_session"
+      ],
+      "path": "/C/Users/xeno.by/AppData/Roaming/Sublime Text 2"
+    }
+  ]
+}
