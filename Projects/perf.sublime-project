@@ -18,6 +18,9 @@
       "path": "/C/Program Files (x86)/scripts"
     },
     {
+      "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.sublime_session"

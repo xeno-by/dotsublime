@@ -27,4 +27,4 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     view = window.active_view()
     window.run_command("clone_file")
     window.run_command("set_layout", {"cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]})
-    window.set_view_index(view, 1, len(window.views_in_group(1)))
+    window.set_view_index(window.active_view(), 1, len(window.views_in_group(1)))

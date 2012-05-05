@@ -7,9 +7,12 @@ class MykeCommand(sublime_plugin.WindowCommand):
   def run(self, cmd = "compile", args=""):
     view = self.window.active_view()
 
-    args = args if not args else args + " "
-    args = args + str(view.settings().get("myke_prefix"))
-    view.settings().set("myke_prefix", "")
+    args = args or (view.settings().get("myke_args") if view else None)
+    myke_prefix = view.settings().get("myke_prefix") if view else None
+    if myke_prefix:
+      args = args if not args else args + " "
+      args = args + str(myke_prefix)
+      view.settings().set("myke_prefix", "")
 
     # how do I detect currently open project?!
     project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
@@ -55,7 +58,8 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.set_name(view_name)
       wannabe.settings().set("myke_project_root", project_root)
       wannabe.settings().set("myke_current_file", current_file)
-      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", "/S", cmd, current_file, args], "cont": "myke_continuation", "shell": "true", "working_dir": current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      wannabe.settings().set("myke_args", args)
+      self.window.run_command("exec", {"title": "myke " + cmd, "cmd": ["myke", "/S", cmd, current_file, args or ""], "cont": "myke_continuation", "shell": "true", "working_dir": current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit):

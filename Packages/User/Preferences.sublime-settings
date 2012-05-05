@@ -13,7 +13,14 @@
 	],
 	"auto_complete_with_fields": false,
 	"auto_indent": true,
+	"smart_indent": false,
 	"auto_match_enabled": false,
+  "match_brackets": false,
+  "match_brackets_content": false,
+  "match_brackets_square": false,
+  "match_brackets_braces": false,
+  "match_brackets_angle": false,
+  "match_tags": false,
 	"color_scheme": "Packages/Color Scheme - Default/IDLE.tmTheme",
 	"default_encoding": "UTF-8",
 	"default_line_ending": "unix",
@@ -40,5 +47,7 @@
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": true,
 	"trim_trailing_white_space_on_save": true,
-	"use_tab_stops": true
+	"use_tab_stops": true,
+  // Valid values are "system", "enabled" and "disabled"
+  "overlay_scroll_bars": "enabled"
 }
