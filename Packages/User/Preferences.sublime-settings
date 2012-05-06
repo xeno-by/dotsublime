@@ -27,7 +27,7 @@
 	"detect_indentation": true,
 	"draw_indent_guides": false,
 	"ensure_newline_at_eof_on_save": false,
-	"fallback_encoding": "Windows 1251",
+	"fallback_encoding": "Cyrillic (Windows 1251)",
 	"font_face": "Consolas",
 	"font_size": 11,
 	"highlight_line": true,
