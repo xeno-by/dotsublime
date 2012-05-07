@@ -44,7 +44,9 @@
     {
       "file_exclude_patterns":
       [
-        "*.sublime_session"
+        "*.sublime_session",
+        "*.sublime-project",
+        "*.sublime-workspace"
       ],
       "path": "/C/Users/xeno.by/AppData/Roaming/Sublime Text 2"
     }

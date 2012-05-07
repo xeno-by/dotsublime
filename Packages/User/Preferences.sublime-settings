@@ -13,7 +13,7 @@
 	],
 	"auto_complete_with_fields": false,
 	"auto_indent": true,
-	"smart_indent": false,
+	"smart_indent": true,
 	"auto_match_enabled": false,
   "match_brackets": false,
   "match_brackets_content": false,

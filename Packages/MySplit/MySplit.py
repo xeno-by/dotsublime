@@ -75,7 +75,7 @@ class MySplitMoveToNext(sublime_plugin.WindowCommand):
     curr = curr + 1
     if curr == total:
       curr = curr - total
-    window.set_view_index(window.active_view(), curr, len(window.views_in_group(1)))
+    window.set_view_index(window.active_view(), curr, len(window.views_in_group(curr)))
 
 class MySplitMoveToPrev(sublime_plugin.WindowCommand):
   def run(self):
@@ -86,7 +86,7 @@ class MySplitMoveToPrev(sublime_plugin.WindowCommand):
     curr = curr - 1
     if curr == -1:
       curr = curr + total
-    window.set_view_index(window.active_view(), curr, len(window.views_in_group(1)))
+    window.set_view_index(window.active_view(), curr, len(window.views_in_group(curr)))
 
 # http://www.sublimetext.com/forum/viewtopic.php?f=6&t=5842
 # https://gist.github.com/1320281/ade9d769ea76ac5f882c8a0f0238efae13e905e9
