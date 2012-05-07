@@ -54,5 +54,11 @@
   { "keys": ["ctrl+x", "3"], "command": "my_split_horizontal", "context": [{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }]},
   { "keys": [""], "command": "myke_kill" },
   { "keys": ["ctrl+c"], "command": "myke_kill", "context": [{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }]},
-  { "keys": ["f12"], "command": "toggle_tabs" }
+  { "keys": ["f12"], "command": "toggle_tabs" },
+  { "keys": ["f2"], "command": "next_bookmark" },
+  { "keys": ["shift+f2"], "command": "prev_bookmark" },
+  { "keys": ["ctrl+f2"], "command": "toggle_bookmark" },
+  { "keys": ["ctrl+shift+f2"], "command": "clear_bookmarks" },
+  { "keys": ["alt+f2"], "command": "select_all_bookmarks" },
+  { "keys": ["shift+f6"], "command": "side_bar_rename" }
 ]

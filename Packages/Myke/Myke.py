@@ -11,7 +11,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
     # how do I reliably detect currently open project?!
     view = self.window.active_view()
     self.project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
-    self.current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or project_root
+    self.current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or self.project_root
     self.current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
     self.current_dir = os.path.dirname(self.current_dir) if self.current_dir else self.project_root
     if view and view.settings().get("repl_external_id") == "myke_console":
@@ -20,7 +20,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       self.current_file = last_line
 
     myke_require_prefix = view.settings().get("myke_require_prefix") if view else None
-    view.settings().set("myke_require_prefix", False)
+    view.settings().set("myke_require_prefix", False) if view else None
     if myke_require_prefix:
       self.window.show_input_panel("Command prefix:", "", self.prefix_input, None, None)
     else:
@@ -38,11 +38,11 @@ class MykeCommand(sublime_plugin.WindowCommand):
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "blame":
-      incantation = "myke /S " + self.cmd + " \"" + current_file + "\"" + " " + self.args
+      incantation = "myke /S " + self.cmd + " \"" + self.current_file + "\"" + " " + self.args
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True)
     elif self.cmd == "clean":
-      incantation = "myke clean /S \"" + current_file + "\"" + " " + self.args
+      incantation = "myke clean /S \"" + self.current_file + "\"" + " " + self.args
       print("Running " + incantation)
       subprocess.Popen(incantation, shell = True)
     elif self.cmd == "console_main":
