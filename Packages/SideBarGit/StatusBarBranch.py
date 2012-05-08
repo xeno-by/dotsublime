@@ -2,6 +2,7 @@ import sublime, sublime_plugin
 from sidebar.SideBarGit import SideBarGit
 from sidebar.SideBarSelection import SideBarSelection
 import threading
+import os
 
 class Object():
 	pass
@@ -11,12 +12,26 @@ s = sublime.load_settings('SideBarGit.sublime-settings')
 class StatusBarBranch(sublime_plugin.EventListener):
 
 	def on_load(self, v):
-		if s.get('statusbar_branch') and v.file_name():
-			StatusBarBranchGet(v.file_name(), v).start()
+		file_name = self.effective_file_name(v)
+		if s.get('statusbar_branch') and file_name:
+			StatusBarBranchGet(file_name, v).start()
 
 	def on_activated(self, v):
-		if s.get('statusbar_branch') and v.file_name():
-			StatusBarBranchGet(v.file_name(), v).start()
+		file_name = self.effective_file_name(v)
+		if s.get('statusbar_branch') and file_name:
+			StatusBarBranchGet(file_name, v).start()
+
+	def on_modified(self, v):
+		file_name = self.effective_file_name(v)
+		if s.get('statusbar_branch') and file_name != v.file_name():
+			StatusBarBranchGet(file_name, v).start()
+
+	def effective_file_name(self, v):
+    # how do I reliably detect currently open project?!
+		project_root = v.settings().get("myke_project_root") or (v.window().folders()[0] if v.window() else None) if v else None
+		current_file = (v.settings().get("myke_current_file") or v.file_name() if v else None) or project_root
+		return current_file
+
 
 class StatusBarBranchGet(threading.Thread):
 
