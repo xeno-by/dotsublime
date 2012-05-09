@@ -37,12 +37,24 @@ class MykeCommand(sublime_plugin.WindowCommand):
   def menuitem_selected(self, selected_index):
     if selected_index != -1:
       menuitem = self.menu[selected_index]
-      self.run("menu", menuitem[:1])
+      hotkey = menuitem[:1]
+      if hotkey == "s":
+        self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
+      else:
+        self.run("menu", hotkey)
+
+  def jenkins_confirmed(self, selected_index):
+    if selected_index == 0:
+      self.run("menu", "s")
 
   def launch_myke(self):
     if self.cmd == "menu":
       if not self.args:
-        self.menu = ["1. Deploy to Kur", "2. Deploy to Kep", "z. Submit pull request", "s. Build in Jenkins", "a. Show branch at GitHub", "q. Show commit at GitHub"]
+        incantation = "myke /S menu " + self.args
+        print("Running " + incantation + " at " + self.current_dir)
+        p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
+        output, _ = p.communicate()
+        self.menu = output.split('\r\n')[:-1]
         self.window.show_quick_panel(self.menu, self.menuitem_selected)
         return
 
