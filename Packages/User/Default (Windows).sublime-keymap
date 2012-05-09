@@ -18,7 +18,7 @@
   { "keys": ["ctrl+shift+j"], "command": "myke", "args": {"cmd": "blame"}},
   { "keys": ["ctrl+shift+l"], "command": "myke", "args": {"cmd": "logall"}},
   { "keys": ["ctrl+shift+;"], "command": "myke", "args": {"cmd": "logthis"}},
-  { "keys": ["ctrl+shift+pageup"], "command": "myke", "args": {"cmd": "deploy"}},
+  { "keys": ["ctrl+shift+pageup"], "command": "myke", "args": {"cmd": "menu"}},
   { "keys": ["ctrl+\\"], "command": "myke_select_test_suite"},
   { "keys": ["ctrl+'"], "command": "myke_prefix"},
   { "keys": ["f4"], "command": "next_result" },

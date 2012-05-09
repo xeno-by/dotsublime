@@ -25,6 +25,7 @@
 	"default_encoding": "UTF-8",
 	"default_line_ending": "unix",
 	"detect_indentation": true,
+	"detect_slow_plugins": false,
 	"draw_indent_guides": false,
 	"ensure_newline_at_eof_on_save": false,
 	"fallback_encoding": "Cyrillic (Windows 1251)",

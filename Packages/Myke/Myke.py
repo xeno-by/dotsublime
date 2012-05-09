@@ -5,11 +5,13 @@ from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
   def run(self, cmd = "compile", args=""):
+    window = self.window
+    view = self.window.active_view()
+
     self.cmd = cmd
-    self.args = args or ""
+    self.args = args or (view.settings().get("myke_args") if view else None) or ""
 
     # how do I reliably detect currently open project?!
-    view = self.window.active_view()
     self.project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
     self.current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or self.project_root
     self.current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
@@ -32,19 +34,30 @@ class MykeCommand(sublime_plugin.WindowCommand):
     self.args = self.args + str(prefix)
     self.launch_myke()
 
+  def menuitem_selected(self, selected_index):
+    if selected_index != -1:
+      menuitem = self.menu[selected_index]
+      self.run("menu", menuitem[:1])
+
   def launch_myke(self):
+    if self.cmd == "menu":
+      if not self.args:
+        self.menu = ["1. Deploy to Kur", "2. Deploy to Kep", "z. Submit pull request", "s. Build in Jenkins", "a. Show branch at GitHub", "q. Show commit at GitHub"]
+        self.window.show_quick_panel(self.menu, self.menuitem_selected)
+        return
+
     if self.cmd == "log" or self.cmd == "commit":
-      incantation = "myke /S " + self.cmd + " " + self.args
-      print("Running " + incantation)
+      incantation = "myke /S smart-" + self.cmd + " " + self.args
+      print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "blame":
-      incantation = "myke /S " + self.cmd + " \"" + self.current_file + "\"" + " " + self.args
-      print("Running " + incantation)
+      incantation = "myke /S smart-" + self.cmd + " \"" + self.current_file + "\"" + " " + self.args
+      print("Running " + incantation + " at " + self.current_file)
       subprocess.Popen(incantation, shell = True)
     elif self.cmd == "clean":
       incantation = "myke clean /S \"" + self.current_file + "\"" + " " + self.args
-      print("Running " + incantation)
-      subprocess.Popen(incantation, shell = True)
+      print("Running " + incantation + " at " + self.current_dir)
+      subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "console_main":
       if (self.window.active_view() and self.window.active_view().settings().get("repl_external_id") == "myke_console"):
         self.window.run_command("next_view_in_stack")
@@ -68,7 +81,9 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.settings().set("myke_project_root", self.project_root)
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
-      self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": ["myke", "/S", self.cmd, self.current_file, self.args], "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      cmd = ["myke", "/S", self.cmd, self.current_file, self.args]
+      cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" else cmd
+      self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit):
