@@ -58,11 +58,12 @@ class MykeCommand(sublime_plugin.WindowCommand):
       if hotkey == "x":
         self.run("menu", [hotkey, self.current_file + "#L" + self.linum])
       else:
-        self.run("menu", [hotkey, self.current_file])
+        self.run("menu", [hotkey])
 
   def jenkins_confirmed(self, selected_index):
     if selected_index == 0:
-      self.run("menu", ["s", self.current_file])
+      hotkey = "s"
+      self.run("menu", [hotkey])
 
   def launch_myke(self):
     if self.cmd == "menu":
