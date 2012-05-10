@@ -4,31 +4,49 @@ import os
 from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
-  def run(self, cmd = "compile", args = []):
-    window = self.window
-    view = self.window.active_view()
-
-    self.cmd = cmd
-    self.args = args or (view.settings().get("myke_args") if view else None) or []
-
-    # how do I reliably detect currently open project?!
-    self.project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
-    self.current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or self.project_root
-    self.current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
-    self.current_dir = os.path.dirname(self.current_dir) if self.current_dir else self.project_root
-    if view and view.settings().get("repl_external_id") == "myke_console":
-      contents = view.substr(sublime.Region(0, view.size()))
-      last_line = view.substr(view.lines(sublime.Region(0, view.size()))[-1])[0:-1]
-      self.current_file = last_line
-
-    myke_require_prefix = view.settings().get("myke_require_prefix") if view else None
-    view.settings().set("myke_require_prefix", False) if view else None
-    if myke_require_prefix:
-      self.window.show_input_panel("Command prefix:", "", self.prefix_input, None, None)
+  def run(self, repeat_last = False, cmd = "compile", args = []):
+    if repeat_last:
+      settings = sublime.load_settings("Myke.sublime-settings")
+      self.cmd = settings.get("last_command")
+      self.project_root = settings.get("last_project_root")
+      self.current_file = settings.get("last_current_file")
+      self.current_dir = settings.get("last_current_dir")
+      self.args = settings.get("last_args")
+      if self.cmd:
+        self.launch_myke()
     else:
-      self.launch_myke()
+      window = self.window
+      view = self.window.active_view()
+
+      self.cmd = cmd
+      self.args = args or (view.settings().get("myke_args") if view else None) or []
+
+      # how do I reliably detect currently open project?!
+      self.project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
+      self.current_file = (view.settings().get("myke_current_file") or view.file_name() if view else None) or self.project_root
+      self.current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
+      self.current_dir = os.path.dirname(self.current_dir) if self.current_dir else self.project_root
+      if view and view.settings().get("repl_external_id") == "myke_console":
+        contents = view.substr(sublime.Region(0, view.size()))
+        last_line = view.substr(view.lines(sublime.Region(0, view.size()))[-1])[0:-1]
+        self.current_file = last_line
+
+      settings = sublime.load_settings("Myke.sublime-settings")
+      require_prefix = settings.get("require_prefix")
+      persistent_require_prefix = settings.get("persistent_require_prefix")
+      last_prefix = settings.get("last_prefix") or ""
+      if not persistent_require_prefix:
+        settings.set("require_prefix", False)
+      sublime.save_settings("Myke.sublime-settings")
+      if require_prefix:
+        self.window.show_input_panel("Command prefix:", last_prefix, self.prefix_input, None, None)
+      else:
+        self.launch_myke()
 
   def prefix_input(self, prefix):
+    settings = sublime.load_settings("Myke.sublime-settings")
+    settings.set("last_prefix", prefix)
+    sublime.save_settings("Myke.sublime-settings")
     view = self.window.active_view()
     self.args = self.args + prefix.split(" ")
     self.launch_myke()
@@ -92,9 +110,20 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.settings().set("myke_project_root", self.project_root)
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
+      settings = sublime.load_settings("Myke.sublime-settings")
+      settings.set("last_command", self.cmd)
+      settings.set("last_project_root", self.project_root)
+      settings.set("last_current_file", self.current_file)
+      settings.set("last_current_dir", self.current_dir)
+      settings.set("last_args", self.args)
+      sublime.save_settings("Myke.sublime-settings")
       cmd = ["myke", "/S", self.cmd, self.current_file] + self.args
       cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd == "remote" or self.cmd.startswith("smart") else cmd
       self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+
+class MykeBangBangCommand(sublime_plugin.WindowCommand):
+  def run(self):
+    self.window.run_command("myke", {"repeat_last": True})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit):
