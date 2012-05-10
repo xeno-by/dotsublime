@@ -4,7 +4,7 @@ import os
 from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
-  def run(self, repeat_last = False, cmd = "compile", args = []):
+  def run(self, cmd = "compile", args = [], repeat_last = False):
     self.settings = MykeSettings()
     if repeat_last:
       self.cmd = self.settings.last_command
@@ -50,6 +50,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
     if selected_index != -1:
       menuitem = self.menu[selected_index]
       hotkey = menuitem[:1]
+      print "hotkey is " + hotkey
       if hotkey == "s":
         self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
       else:
@@ -219,7 +220,6 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
     if result_file_regex or result_line_regex:
       view.settings().set("result_file_regex", result_file_regex)
       view.settings().set("result_line_regex", result_line_regex)
-      print(env["WorkingDir"])
       view.settings().set("result_base_dir", env["WorkingDir"])
       window.focus_view(view)
 

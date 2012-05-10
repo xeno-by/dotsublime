@@ -22,77 +22,88 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.checkout)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.checkout, 0, index)
     elif selected_index == 1:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.new_branch)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.new_branch, 0, index)
     elif selected_index == 2:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.rename_branch)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.rename_branch, 0, index)
     elif selected_index == 3:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.delete_branch)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.delete_branch, 0, index)
     elif selected_index == 4:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.merge)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.merge, 0, index)
     elif selected_index == 5:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.rebase)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.rebase, 0, index)
     elif selected_index == 6:
       incantation = "myke /S smart-list-commits"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.cherry_pick)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.cherry_pick, 0, index)
     elif selected_index == 7:
       incantation = "myke /S smart-list-branch-commits"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.reset_hard)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.reset_hard, 0, index)
     elif selected_index == 8:
       incantation = "myke /S smart-list-branch-commits"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.reset_mixed)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.reset_mixed, 0, index)
     elif selected_index == 9:
       incantation = "myke /S smart-list-branches"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.navigate_branches)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.navigate_branches, 0, index)
     elif selected_index == 10:
       incantation = "myke /S smart-list-commits"
       print("Running " + incantation + " at " + self.current_dir)
       p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
-      self.window.show_quick_panel(self.menu, self.navigate_commits)
+      index = (i for i,v in enumerate(self.menu) if v.startswith("* ")).next()
+      self.window.show_quick_panel(self.menu, self.navigate_commits, 0, index)
 
   def get_selection(self, selected_index):
     raw = self.menu[selected_index]
