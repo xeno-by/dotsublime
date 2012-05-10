@@ -12,7 +12,7 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
     self.current_dir = view.settings().get("myke_current_file") or view.file_name() if view else None
     self.current_dir = os.path.dirname(self.current_dir) if self.current_dir else self.project_root
 
-    menu = ["1. Checkout", "2. New branch", "3. Rename branch", "4. Delete branch", "5. Merge", "6. Rebase", "7. Cherry-pick", "8. Reset hard", "9. Reset mixed"]
+    menu = ["1. Checkout", "2. New branch", "3. Rename branch", "4. Delete branch", "5. Merge", "6. Rebase", "7. Cherry-pick", "8. Reset hard", "9. Reset mixed", "a. Navigate branches", "q. Navigate commits"]
     self.window.show_quick_panel(menu, self.command_selected)
 
   def command_selected(self, selected_index):
@@ -79,6 +79,20 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
       output, _ = p.communicate()
       self.menu = output.split('\r\n')[:-1]
       self.window.show_quick_panel(self.menu, self.reset_mixed)
+    elif selected_index == 9:
+      incantation = "myke /S smart-list-branches"
+      print("Running " + incantation + " at " + self.current_dir)
+      p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
+      output, _ = p.communicate()
+      self.menu = output.split('\r\n')[:-1]
+      self.window.show_quick_panel(self.menu, self.navigate_branches)
+    elif selected_index == 10:
+      incantation = "myke /S smart-list-commits"
+      print("Running " + incantation + " at " + self.current_dir)
+      p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
+      output, _ = p.communicate()
+      self.menu = output.split('\r\n')[:-1]
+      self.window.show_quick_panel(self.menu, self.navigate_commits)
 
   def get_selection(self, selected_index):
     raw = self.menu[selected_index]
@@ -149,3 +163,13 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
   def reset_mixed_confirmed(self, selected_index):
     if selected_index == 0:
       self.window.run_command("myke", {"cmd": "smart-mixed-reset", "args": [self.selection]})
+
+  def navigate_branches(self, selected_index):
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-list-branch-commits", "args": [self.get_selection(selected_index)]})
+
+  def navigate_commits(self, selected_index):
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-show-commit", "args": [self.get_selection(selected_index)]})
