@@ -94,7 +94,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
       cmd = ["myke", "/S", self.cmd, self.current_file, self.args]
-      cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" else cmd
+      cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd.startswith("smart") else cmd
       self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
 class MykeContinuationCommand(sublime_plugin.TextCommand):
