@@ -5,13 +5,13 @@ from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
   def run(self, repeat_last = False, cmd = "compile", args = []):
+    self.settings = MykeSettings()
     if repeat_last:
-      settings = sublime.load_settings("Myke.sublime-settings")
-      self.cmd = settings.get("last_command")
-      self.project_root = settings.get("last_project_root")
-      self.current_file = settings.get("last_current_file")
-      self.current_dir = settings.get("last_current_dir")
-      self.args = settings.get("last_args")
+      self.cmd = self.settings.last_command
+      self.project_root = self.settings.last_project_root
+      self.current_file = self.settings.last_current_file
+      self.current_dir = self.settings.last_current_dir
+      self.args = self.settings.last_args
       if self.cmd:
         self.launch_myke()
     else:
@@ -31,22 +31,17 @@ class MykeCommand(sublime_plugin.WindowCommand):
         last_line = view.substr(view.lines(sublime.Region(0, view.size()))[-1])[0:-1]
         self.current_file = last_line
 
-      settings = sublime.load_settings("Myke.sublime-settings")
-      require_prefix = settings.get("require_prefix")
-      persistent_require_prefix = settings.get("persistent_require_prefix")
-      last_prefix = settings.get("last_prefix") or ""
-      if not persistent_require_prefix:
-        settings.set("require_prefix", False)
-      sublime.save_settings("Myke.sublime-settings")
-      if require_prefix:
-        self.window.show_input_panel("Command prefix:", last_prefix, self.prefix_input, None, None)
+      if self.settings.require_prefix:
+        if not self.settings.persistent_require_prefix:
+          self.settings.require_prefix = False
+          self.settings.save()
+        self.window.show_input_panel("Command prefix:", self.settings.last_prefix or "", self.prefix_input, None, None)
       else:
         self.launch_myke()
 
   def prefix_input(self, prefix):
-    settings = sublime.load_settings("Myke.sublime-settings")
-    settings.set("last_prefix", prefix)
-    sublime.save_settings("Myke.sublime-settings")
+    self.settings.last_prefix = prefix
+    self.settings.save()
     view = self.window.active_view()
     self.args = self.args + prefix.split(" ")
     self.launch_myke()
@@ -110,16 +105,90 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.settings().set("myke_project_root", self.project_root)
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
-      settings = sublime.load_settings("Myke.sublime-settings")
-      settings.set("last_command", self.cmd)
-      settings.set("last_project_root", self.project_root)
-      settings.set("last_current_file", self.current_file)
-      settings.set("last_current_dir", self.current_dir)
-      settings.set("last_args", self.args)
-      sublime.save_settings("Myke.sublime-settings")
+      self.settings.last_command = self.cmd
+      self.settings.last_project_root = self.project_root
+      self.settings.last_current_file = self.current_file
+      self.settings.last_current_dir = self.current_dir
+      self.settings.last_args = self.args
+      self.settings.save()
       cmd = ["myke", "/S", self.cmd, self.current_file] + self.args
       cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd == "remote" or self.cmd.startswith("smart") else cmd
       self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+
+  def load_settings(self):
+    return
+
+class MykeSettings(object):
+  def __init__(self):
+    self.init_from_registry()
+
+  def init_from_sublime_settings(self):
+    settings = sublime.load_settings("Myke.sublime-settings")
+    self.last_command = settings.get("last_command")
+    self.last_project_root = settings.get("last_project_root")
+    self.last_current_file = settings.get("last_current_file")
+    self.last_current_dir = settings.get("last_current_dir")
+    self.last_args = settings.get("last_args")
+    self.last_prefix = settings.get("last_prefix")
+    self.require_prefix = settings.get("require_prefix")
+    self.persistent_require_prefix = settings.get("persistent_require_prefix")
+
+  def init_from_registry(self):
+    hkcu = ConnectRegistry(None, HKEY_CURRENT_USER)
+    key = OpenKey(hkcu, r"Software\Far2\KeyMacros\Vars", 0, KEY_ALL_ACCESS)
+    env = {}
+    for i in range(1024):
+      try:
+        name, value, t = EnumValue(key, i)
+      except EnvironmentError:
+        break
+      if name.startswith("%%Settings"):
+        env[name[10:]] = value
+    CloseKey(key)
+    CloseKey(hkcu)
+    self.last_command = env.get("LastCommand")
+    self.last_project_root = env.get("LastProjectRoot")
+    self.last_current_file = env.get("LastCurrentFile")
+    self.last_current_dir = env.get("LastCurrentDir")
+    self.last_args = (env.get("LastArgs") or "").split(" ")
+    self.last_prefix = env.get("LastPrefix")
+    self.require_prefix = bool(env.get("RequirePrefix"))
+    self.persistent_require_prefix = bool(env.get("PersistentRequirePrefix"))
+    return env
+
+  def save(self):
+    self.save_to_registry()
+
+  def save_to_sublime_settings(self):
+    settings = sublime.load_settings("Myke.sublime-settings")
+    settings.set("last_command", self.last_command)
+    settings.set("last_project_root", self.last_project_root)
+    settings.set("last_current_file", self.last_current_file)
+    settings.set("last_current_dir", self.last_current_dir)
+    settings.set("last_args", self.last_args)
+    settings.set("last_prefix", self.last_prefix)
+    settings.set("require_prefix", self.require_prefix)
+    settings.set("persistent_require_prefix", self.persistent_require_prefix)
+    sublime.save_settings("Myke.sublime-settings")
+
+  def save_to_registry(self):
+    hkcu = ConnectRegistry(None, HKEY_CURRENT_USER)
+    key = OpenKey(hkcu, r"Software\Far2\KeyMacros\Vars", 0, KEY_ALL_ACCESS)
+    env = {}
+    try:
+      SetValueEx(key, "%%SettingsLastCommand", 0, REG_SZ, str(self.last_command or ""))
+      SetValueEx(key, "%%SettingsLastProjectRoot", 0, REG_SZ, str(self.last_project_root or ""))
+      SetValueEx(key, "%%SettingsLastCurrentFile", 0, REG_SZ, str(self.last_current_file or ""))
+      SetValueEx(key, "%%SettingsLastCurrentDir", 0, REG_SZ, str(self.last_current_dir or ""))
+      SetValueEx(key, "%%SettingsLastArgs", 0, REG_SZ, " ".join(self.last_args or []))
+      SetValueEx(key, "%%SettingsLastPrefix", 0, REG_SZ, str(self.last_prefix or ""))
+      SetValueEx(key, "%%SettingsRequirePrefix", 0, REG_SZ, str("True" if self.require_prefix else ""))
+      SetValueEx(key, "%%SettingsPersistentRequirePrefix", 0, REG_SZ, str("True" if self.persistent_require_prefix else ""))
+    except EnvironmentError:
+      print "Encountered problems writing into the Registry..."
+    CloseKey(key)
+    CloseKey(hkcu)
+    return env
 
 class MykeBangBangCommand(sublime_plugin.WindowCommand):
   def run(self):
