@@ -5,6 +5,11 @@ from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
   def run(self, cmd = "compile", args = [], repeat_last = False):
+    window = self.window
+    view = self.window.active_view()
+    self.view = view
+    row, col = self.view.rowcol(self.view.sel()[0].a)
+    self.linum = str(row + 1)
     self.settings = MykeSettings()
     if repeat_last:
       self.cmd = self.settings.last_command
@@ -15,9 +20,6 @@ class MykeCommand(sublime_plugin.WindowCommand):
       if self.cmd:
         self.launch_myke()
     else:
-      window = self.window
-      view = self.window.active_view()
-
       self.cmd = cmd
       self.args = args or (view.settings().get("myke_args") if view else None) or []
 
@@ -53,12 +55,14 @@ class MykeCommand(sublime_plugin.WindowCommand):
       print "hotkey is " + hotkey
       if hotkey == "s":
         self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
+      if hotkey == "x":
+        self.run("menu", [hotkey, self.current_file + "#L" + self.linum])
       else:
-        self.run("menu", [hotkey])
+        self.run("menu", [hotkey, self.current_file])
 
   def jenkins_confirmed(self, selected_index):
     if selected_index == 0:
-      self.run("menu", "s")
+      self.run("menu", ["s", self.current_file])
 
   def launch_myke(self):
     if self.cmd == "menu":

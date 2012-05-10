@@ -9,7 +9,7 @@
   { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "remote", "args": ["update"]}},
   { "keys": ["ctrl+delete"], "command": "myke", "args": {"cmd": "clean"}},
   { "keys": ["alt+b+r"], "command": "myke", "args": {"cmd": "rebuild"}},
-  { "keys": ["alt+b", "alt+r"], "command": "myke", "args": {"cmd": "rebuild"}},
+//  { "keys": ["alt+b", "alt+r"], "command": "myke", "args": {"cmd": "rebuild"}},
   { "keys": ["ctrl+shift+b"], "command": "myke", "args": {"cmd": "compile"}},
   { "keys": ["alt+shift+b"], "command": "myke", "args": {"cmd": "compile-alt"}},
   { "keys": ["ctrl+shift+enter"], "command": "myke", "args": {"cmd": "run"}},
