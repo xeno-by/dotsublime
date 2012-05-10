@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
 from _winreg import *
+import os
 
 class MykePrefixCommand(sublime_plugin.WindowCommand):
   def run(self):
@@ -12,18 +13,19 @@ class MykePrefixCommand(sublime_plugin.WindowCommand):
 # how do I reuse a class between multiple files?
 class MykeSettings(object):
   def __init__(self):
-    self.init_from_registry()
+    self.init_from_sublime_settings()
 
   def init_from_sublime_settings(self):
-    settings = sublime.load_settings("Myke.sublime-settings")
-    self.last_command = settings.get("last_command")
-    self.last_project_root = settings.get("last_project_root")
-    self.last_current_file = settings.get("last_current_file")
-    self.last_current_dir = settings.get("last_current_dir")
-    self.last_args = settings.get("last_args")
-    self.last_prefix = settings.get("last_prefix")
-    self.require_prefix = settings.get("require_prefix")
-    self.persistent_require_prefix = settings.get("persistent_require_prefix")
+    global_settings = sublime.load_settings("Myke.sublime-settings")
+    settings = global_settings.get(str(os.getpid())) or {}
+    self.last_command = settings.get("last_command", None)
+    self.last_project_root = settings.get("last_project_root", None)
+    self.last_current_file = settings.get("last_current_file", None)
+    self.last_current_dir = settings.get("last_current_dir", None)
+    self.last_args = settings.get("last_args", None)
+    self.last_prefix = settings.get("last_prefix", None)
+    self.require_prefix = settings.get("require_prefix", False)
+    self.persistent_require_prefix = settings.get("persistent_require_prefix", False)
 
   def init_from_registry(self):
     hkcu = ConnectRegistry(None, HKEY_CURRENT_USER)
@@ -49,18 +51,20 @@ class MykeSettings(object):
     return env
 
   def save(self):
-    self.save_to_registry()
+    self.save_to_sublime_settings()
 
   def save_to_sublime_settings(self):
-    settings = sublime.load_settings("Myke.sublime-settings")
-    settings.set("last_command", self.last_command)
-    settings.set("last_project_root", self.last_project_root)
-    settings.set("last_current_file", self.last_current_file)
-    settings.set("last_current_dir", self.last_current_dir)
-    settings.set("last_args", self.last_args)
-    settings.set("last_prefix", self.last_prefix)
-    settings.set("require_prefix", self.require_prefix)
-    settings.set("persistent_require_prefix", self.persistent_require_prefix)
+    global_settings = sublime.load_settings("Myke.sublime-settings")
+    settings = {}
+    settings["last_command"] = self.last_command
+    settings["last_current_file"] = self.last_current_file
+    settings["last_project_root"] = self.last_project_root
+    settings["last_current_dir"] = self.last_current_dir
+    settings["last_args"] = self.last_args
+    settings["last_prefix"] = self.last_prefix
+    settings["require_prefix"] = self.require_prefix
+    settings["persistent_require_prefix"] = self.persistent_require_prefix
+    global_settings.set(str(os.getpid()), settings)
     sublime.save_settings("Myke.sublime-settings")
 
   def save_to_registry(self):
