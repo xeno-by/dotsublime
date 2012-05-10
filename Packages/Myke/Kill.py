@@ -12,7 +12,8 @@ class MykeKill(sublime_plugin.WindowCommand):
       is_console = True
 
     window.run_command("exec", {"kill": True })
-    view.run_command("repl_kill")
+    if view:
+      view.run_command("repl_kill")
 
     if is_console:
       # window.focus_view(view)

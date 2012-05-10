@@ -363,7 +363,9 @@ class ReplViewNextCommand(sublime_plugin.TextCommand):
 
 class ReplKillCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        repl_view(self.view).view_kill()
+        repl = repl_view(self.view)
+        if repl:
+            repl.view_kill()
 
 
 class SublimeReplListener(sublime_plugin.EventListener):

@@ -58,7 +58,10 @@ class AsyncProcess(object):
     def kill(self):
         if not self.killed:
             self.killed = True
-            self.proc.kill()
+            # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
+            #self.proc.kill()
+            print "[exec] killing " + str(self.proc.pid)
+            subprocess.Popen("mykill /tree " + str(self.proc.pid), creationflags=0x08000000)
             self.listener = None
 
     def poll(self):
@@ -97,11 +100,9 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         if kill:
             if self.proc:
-                # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
-                #self.proc.kill()
-                print "[exec] killing " + str(self.proc.proc.pid)
-                subprocess.Popen("mykill /tree " + str(self.proc.proc.pid), creationflags=0x08000000)
+                self.proc.kill()
                 self.proc = None
+                self.output_view.settings().set("pid", "")
                 self.append_data(None, "[Cancelled]")
             return
 
@@ -169,6 +170,7 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         try:
             # Forward kwargs to AsyncProcess
             self.proc = AsyncProcess(cmd, merged_env, self, **kwargs)
+            self.output_view.settings().set("pid", self.proc.proc.pid)
             self.cont = cont
         except err_type as e:
             self.append_data(None, str(e) + "\n")
@@ -230,3 +232,12 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
     def on_finished(self, proc):
         sublime.set_timeout(functools.partial(self.finish, proc), 0)
+
+class ExecListener(sublime_plugin.EventListener):
+  def on_close(self, view):
+    pid = view.settings().get("pid")
+    if pid:
+      # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
+      #self.proc.kill()
+      print "[exec] killing " + str(pid)
+      subprocess.Popen("mykill /tree " + str(pid), creationflags=0x08000000)

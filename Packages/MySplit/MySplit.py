@@ -11,7 +11,9 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     new.set_viewport_position(view.viewport_position())
     for sel in view.sel():
       new.sel().add(sel)
-    window.set_view_index(new, 1, len(window.views_in_group(1)))
+    group, index = window.get_view_index(new)
+    if group != 1:
+      window.set_view_index(new, 1, len(window.views_in_group(1)))
 
 class MyLayout1(sublime_plugin.WindowCommand):
   def run(self):

@@ -1,8 +1,9 @@
 {
-	"auto_upgrade_last_run": 1336606901,
+	"auto_upgrade_last_run": 1336630401,
 	"installed_packages":
 	[
 		"BracketHighlighter",
+		"Edit History",
 		"FileDiffs",
 		"Git",
 		"HexViewer",

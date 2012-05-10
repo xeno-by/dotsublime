@@ -5,7 +5,8 @@
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }]},
   { "keys": ["alt+shift+insert"], "command": "copy_path" },
   { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console_main"}},
-  { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "console_new"}},
+//  { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "console_new"}},
+  { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "remote", "args": ["update"]}},
   { "keys": ["ctrl+delete"], "command": "myke", "args": {"cmd": "clean"}},
   { "keys": ["alt+b+r"], "command": "myke", "args": {"cmd": "rebuild"}},
   { "keys": ["alt+b", "alt+r"], "command": "myke", "args": {"cmd": "rebuild"}},
@@ -61,5 +62,7 @@
   { "keys": ["ctrl+f2"], "command": "toggle_bookmark" },
   { "keys": ["ctrl+shift+f2"], "command": "clear_bookmarks" },
   { "keys": ["alt+f2"], "command": "select_all_bookmarks" },
-  { "keys": ["shift+f6"], "command": "side_bar_rename" }
+  { "keys": ["shift+f6"], "command": "side_bar_rename" },
+  { "keys": ["super+["], "command": "previous_edit" },
+  { "keys": ["super+]"], "command": "next_edit" }
 ]
