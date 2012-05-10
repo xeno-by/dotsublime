@@ -88,46 +88,64 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
     return self.selection
 
   def checkout(self, selected_index):
-    self.window.run_command("myke", {"cmd": "smart-checkout", "args": self.get_selection(selected_index)})
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-checkout", "args": [self.get_selection(selected_index)]})
 
   def new_branch(self, selected_index):
+    if selected_index == -1:
+      return
     self.window.show_input_panel("New branch name:", self.get_selection(selected_index), self.new_branch_input, None, None)
 
   def new_branch_input(self, name):
     self.window.run_command("myke", {"cmd": "smart-branch-new-select", "args": [self.selection, name]})
 
   def rename_branch(self, selected_index):
+    if selected_index == -1:
+      return
     self.window.show_input_panel("New branch name:", self.get_selection(selected_index), self.rename_branch_input, None, None)
 
   def rename_branch_input(self, name):
     self.window.run_command("myke", {"cmd": "smart-branch-rename", "args": [self.selection, name]})
 
   def delete_branch(self, selected_index):
+    if selected_index == -1:
+      return
     self.window.show_quick_panel(["Yes, delete branch " + self.get_selection(selected_index), "No, do not delete"], self.delete_branch_confirmed)
 
   def delete_branch_confirmed(self, selected_index):
     if selected_index == 0:
-      self.window.run_command("myke", {"cmd": "smart-branch-remote-delete", "args": self.selection})
+      self.window.run_command("myke", {"cmd": "smart-branch-remote-delete", "args": [self.selection]})
 
   def merge(self, selected_index):
-    self.window.run_command("myke", {"cmd": "smart-merge", "args": self.get_selection(selected_index)})
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-merge", "args": [self.get_selection(selected_index)]})
 
   def rebase(self, selected_index):
-    self.window.run_command("myke", {"cmd": "smart-rebase", "args": self.get_selection(selected_index)})
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-rebase", "args": [self.get_selection(selected_index)]})
 
   def cherry_pick(self, selected_index):
-    self.window.run_command("myke", {"cmd": "smart-cherry-pick", "args": self.get_selection(selected_index)})
+    if selected_index == -1:
+      return
+    self.window.run_command("myke", {"cmd": "smart-cherry-pick", "args": [self.get_selection(selected_index)]})
 
   def reset_hard(self, selected_index):
+    if selected_index == -1:
+      return
     self.window.show_quick_panel(["Yes, reset hard up to " + self.get_selection(selected_index), "No, do not reset"], self.reset_hard_confirmed)
 
   def reset_hard_confirmed(self, selected_index):
     if selected_index == 0:
-      self.window.run_command("myke", {"cmd": "smart-hard-reset", "args": self.selection})
+      self.window.run_command("myke", {"cmd": "smart-hard-reset", "args": [self.selection]})
 
   def reset_mixed(self, selected_index):
+    if selected_index == -1:
+      return
     self.window.show_quick_panel(["Yes, reset mixed up to " + self.get_selection(selected_index), "No, do not reset"], self.reset_mixed_confirmed)
 
   def reset_mixed_confirmed(self, selected_index):
     if selected_index == 0:
-      self.window.run_command("myke", {"cmd": "smart-mixed-reset", "args": self.selection})
+      self.window.run_command("myke", {"cmd": "smart-mixed-reset", "args": [self.selection]})

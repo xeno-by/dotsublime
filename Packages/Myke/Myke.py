@@ -4,12 +4,12 @@ import os
 from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
-  def run(self, cmd = "compile", args=""):
+  def run(self, cmd = "compile", args = []):
     window = self.window
     view = self.window.active_view()
 
     self.cmd = cmd
-    self.args = args or (view.settings().get("myke_args") if view else None) or ""
+    self.args = args or (view.settings().get("myke_args") if view else None) or []
 
     # how do I reliably detect currently open project?!
     self.project_root = (view.settings().get("myke_project_root") if view else None) or self.window.folders()[0]
@@ -30,8 +30,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
 
   def prefix_input(self, prefix):
     view = self.window.active_view()
-    self.args = self.args if not self.args else self.args + " "
-    self.args = self.args + str(prefix)
+    self.args = self.args + prefix.split(" ")
     self.launch_myke()
 
   def menuitem_selected(self, selected_index):
@@ -41,7 +40,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       if hotkey == "s":
         self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
       else:
-        self.run("menu", hotkey)
+        self.run("menu", [hotkey])
 
   def jenkins_confirmed(self, selected_index):
     if selected_index == 0:
@@ -50,7 +49,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
   def launch_myke(self):
     if self.cmd == "menu":
       if not self.args:
-        incantation = "myke /S menu " + self.args
+        incantation = "myke /S menu " + " ".join(self.args)
         print("Running " + incantation + " at " + self.current_dir)
         p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
         output, _ = p.communicate()
@@ -59,15 +58,15 @@ class MykeCommand(sublime_plugin.WindowCommand):
         return
 
     if self.cmd == "log" or self.cmd == "commit":
-      incantation = "myke /S smart-" + self.cmd + " " + self.args
+      incantation = "myke /S smart-" + self.cmd + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "blame":
-      incantation = "myke /S smart-" + self.cmd + " \"" + self.current_file + "\"" + " " + self.args
+      incantation = "myke /S smart-" + self.cmd + " \"" + self.current_file + "\"" + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_file)
       subprocess.Popen(incantation, shell = True)
     elif self.cmd == "clean":
-      incantation = "myke clean /S \"" + self.current_file + "\"" + " " + self.args
+      incantation = "myke clean /S \"" + self.current_file + "\"" + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "console_main":
@@ -80,11 +79,11 @@ class MykeCommand(sublime_plugin.WindowCommand):
             found = True
             self.window.focus_view(view)
         if not found:
-          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console", self.args], "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif self.cmd == "console_new":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console", self.args], "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif self.cmd == "repl":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl", self.args], "cwd": self.project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
     else:
       view_name = "myke " + self.cmd
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())
@@ -93,7 +92,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       wannabe.settings().set("myke_project_root", self.project_root)
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
-      cmd = ["myke", "/S", self.cmd, self.current_file, self.args]
+      cmd = ["myke", "/S", self.cmd, self.current_file] + self.args
       cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd.startswith("smart") else cmd
       self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
