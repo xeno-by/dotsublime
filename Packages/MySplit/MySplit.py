@@ -15,6 +15,22 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     if group != 1:
       window.set_view_index(new, 1, len(window.views_in_group(1)))
 
+class MoveFileToSplit(sublime_plugin.WindowCommand):
+  def run(self):
+    window = self.window
+    view = window.active_view()
+    layout = window.get_layout()
+    if len(layout["rows"]) == 2 and len(layout["cols"]) == 2:
+      window.run_command("set_layout", {"cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]})
+    group, index = window.get_view_index(view)
+    curr = window.active_group()
+    total = window.num_groups()
+    curr = curr + 1
+    if curr == total:
+      curr = curr - total
+    if group != curr:
+      window.set_view_index(view, curr, len(window.views_in_group(1)))
+
 class MyLayout1(sublime_plugin.WindowCommand):
   def run(self):
     window = self.window

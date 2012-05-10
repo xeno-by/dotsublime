@@ -38,6 +38,7 @@
   { "keys": ["ctrl+g"], "command": "show_overlay", "args": {"overlay": "goto", "text": ":"} },
   { "keys": ["ctrl+]"], "command": "show_overlay", "args": {"overlay": "goto", "text": "#"} },
   { "keys": ["ctrl+t"], "command": "clone_file_and_split" },
+  { "keys": ["ctrl+shift+t"], "command": "move_file_to_split" },
   { "keys": ["alt+shift+2"], "command": "my_layout2" },
   { "keys": ["alt+shift+8"], "command": "my_layout8" },
   { "keys": ["alt+shift+1"], "command": "my_layout1" },
