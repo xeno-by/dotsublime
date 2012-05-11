@@ -6,7 +6,7 @@ class MykeKill(sublime_plugin.WindowCommand):
   def run(self):
     window = self.window
     view = window.active_view()
-    print "cwd is: " + view.settings().get("cwd")
+    print "cwd is: " + str(view.settings().get("cwd"))
 
     is_console = False
     if (view and view.settings().get("repl_external_id") == "myke_console"):

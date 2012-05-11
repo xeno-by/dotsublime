@@ -134,6 +134,12 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
+	{ "keys": ["ctrl+pageup"], "command": "repl_ctrl_pageup",
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 
 
 	{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},

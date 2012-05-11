@@ -238,22 +238,26 @@ class ReplView(object):
     def write(self, unistr):
         """Writes output from Repl into this view."""
         # string is assumet to be already correctly encoded
-        self.mutex.acquire()
-        stamp = time.time()
+        # self.mutex.acquire()
+        # stamp = time.time()
         # print "writing " + unistr
+        # try:
+        #     print "enter write: " + str(stamp)
+        #xeno.by: hack!
+        unistr = unistr.replace("cd ..\r\n", "")
+        unistr = unistr.replace("cd ..\n", "")
+        unistr = unistr.replace("cd ..", "")
+        v = self._view
+        edit = v.begin_edit()
         try:
-            # print "enter write: " + str(stamp)
-            v = self._view
-            edit = v.begin_edit()
-            try:
-                v.insert(edit, self._output_end, unistr)
-                self._output_end += len(unistr)
-            finally:
-                v.end_edit(edit)
-            self.scroll_to_end()
-            # print "exit write: " + str(stamp)
+            v.insert(edit, self._output_end, unistr)
+            self._output_end += len(unistr)
         finally:
-            self.mutex.release()
+            v.end_edit(edit)
+        self.scroll_to_end()
+        #     print "exit write: " + str(stamp)
+        # finally:
+        #     self.mutex.release()
 
     def scroll_to_end(self):
         v = self._view
@@ -500,6 +504,22 @@ class ReplShiftHomeCommand(sublime_plugin.TextCommand):
         else:
             for i in range(1, delta + 1):
                 w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+
+class ReplCtrlPageupCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("prev_view")
+        else:
+            input = rv.user_input()
+            w.run_command("repl_escape")
+            rv.append_input_text("cd ..", edit)
+            w.run_command("repl_enter")
+            sublime.set_timeout(lambda: rv.append_input_text(input, edit), 200)
 
 
 class ReplInsertFilenameCommand(sublime_plugin.TextCommand):

@@ -109,6 +109,7 @@ class MykeGitMenu(sublime_plugin.WindowCommand):
     raw = self.menu[selected_index]
     if raw.startswith("* "):
       raw = raw[2:]
+    raw = raw.strip()
     if " " in raw:
       raw = raw[:raw.index(" ")]
     self.selection = raw

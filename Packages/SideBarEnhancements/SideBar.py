@@ -977,6 +977,7 @@ class SideBarDeleteCommand(sublime_plugin.WindowCommand):
 			print 'trying send to trash'
 			try:
 				for item in SideBarSelection(paths).getSelectedItemsWithoutChildItems():
+					print str(item)
 					if s.get('close_affected_buffers_when_deleting_even_if_dirty', False):
 						item.close_associated_buffers()
 						print 'closed associated buffers'

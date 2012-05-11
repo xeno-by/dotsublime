@@ -41,7 +41,7 @@ class MyFilterCommand(sublime_plugin.TextCommand):
     output, error = p.communicate(view.substr(region).encode('utf-8'))
 
     if error:
-      sublime.errorMessage(error.decode('utf-8'))
+      sublime.error_message(error.decode('utf-8'))
     else:
       view.replace(edit, region, output.decode('utf-8'))
 

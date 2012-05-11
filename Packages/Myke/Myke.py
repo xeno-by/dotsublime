@@ -57,19 +57,18 @@ class MykeCommand(sublime_plugin.WindowCommand):
       if hotkey == "s":
         self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
       if hotkey == "x":
-        self.run("menu", [hotkey, self.current_file + "#L" + self.linum])
+        self.run("menu", [menuitem, self.current_file + "#L" + self.linum])
       else:
-        self.run("menu", [hotkey])
+        self.run("menu", [menuitem])
 
   def jenkins_confirmed(self, selected_index):
     if selected_index == 0:
-      hotkey = "s"
-      self.run("menu", [hotkey])
+      self.run("menu", ["s. Build in Jenkins"])
 
   def launch_myke(self):
     if self.cmd == "menu":
       if not self.args:
-        incantation = "myke /S menu " + " ".join(self.args)
+        incantation = "myke /S menu" + (" " if len(self.args) > 0 else "") + " ".join(self.args)
         print("Running " + incantation + " at " + self.current_dir)
         p = subprocess.Popen(incantation, shell = True, stdout = subprocess.PIPE, cwd = self.current_dir)
         output, _ = p.communicate()
@@ -112,6 +111,13 @@ class MykeCommand(sublime_plugin.WindowCommand):
       self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.current_dir, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
     else:
       view_name = "myke " + self.cmd
+      if self.cmd == "menu":
+        menuitem = self.args[0]
+        hotkey = menuitem[:1]
+        caption = menuitem[3:]
+        caption = caption[:1].lower() + caption[1:]
+        view_name = "myke " + caption
+        self.args[0] = hotkey
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())
       wannabe = wannabes[0] if len(wannabes) else self.window.new_file()
       wannabe.set_name(view_name)
@@ -126,7 +132,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       self.settings.save()
       cmd = ["myke", "/S", self.cmd, self.current_file] + self.args
       cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd == "remote" or self.cmd.startswith("smart") else cmd
-      self.window.run_command("exec", {"title": "myke " + self.cmd, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      self.window.run_command("exec", {"title": view_name, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
 
   def load_settings(self):
     return

@@ -1,3 +1,3 @@
 {
-	"last_command": "uniq"
+	"last_command": "java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:typer src/compiler/scala/tools/nsc/typechecker/Typers.scala"
 }

@@ -186,3 +186,28 @@
 -cd lib
 -kur
 -java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:typer src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-kur
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:typer src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:cleanup src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-kur
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:cleanup src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-kur
+-cd sandbox
+-java -cp ../lib/fjbg.jar;../build/locker/classes/compiler;../build/locker/classes/library scala.tools.nsc.Main -cp ../build/locker/classes/library Test.scala
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-cd ..
+-typeTag[Int]
+-2 + 2
+-2 + 2
+-2 + 2
+-typeTag[List[Int]]
