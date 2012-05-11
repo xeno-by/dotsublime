@@ -8,4 +8,5 @@ class CharacterPosition(sublime_plugin.EventListener):
     self.update_status(view)
 
   def update_status(self, view):
-    view.set_status("zzCharacter", "Character %d" % (view.sel()[0].a + 1))
+    row, col = view.rowcol(view.size())
+    view.set_status("zzMyStatus", "Lines %d, Character %d" % (row + 1, view.sel()[0].a + 1))
