@@ -2,6 +2,7 @@
   { "keys": ["alt+left"], "command": "navigation_history_back"},
   { "keys": ["alt+right"], "command": "navigation_history_forward"},
   { "keys": ["ctrl+shift+f4"], "command": "close_other_tabs"},
+  { "keys": ["enter"], "command": "repl_enter", "args": {}, "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }]},
   { "keys": ["alt+shift+insert"], "command": "copy_path" },
 //  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console_main"}},
@@ -65,5 +66,6 @@
   { "keys": ["ctrl+shift+f2"], "command": "clear_bookmarks" },
   { "keys": ["alt+f2"], "command": "select_all_bookmarks" },
   { "keys": ["shift+f6"], "command": "side_bar_rename" },
-  { "keys": ["ctrl+shift+."], "command": "my_filter"}
+  { "keys": ["ctrl+shift+."], "command": "my_filter"},
+  { "keys": ["ctrl+shift+z"], "command": "reopen_last_file" }
 ]

@@ -3,7 +3,7 @@ import sublime, sublime_plugin
 class EnterToJumpToResultListener(sublime_plugin.EventListener):
   def on_query_context(self, view, key, operator, operand, match_all):
     if key == "in_results_file":
-      return view.settings().has("result_file_regex")
+      return view.settings().has("result_file_regex") and not view.settings().get("repl")
 
     return None
 

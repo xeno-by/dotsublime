@@ -10,6 +10,8 @@ import sublime_plugin
 import repl
 import os
 import buzhug
+from threading import Lock
+import time
 
 repl_views = {}
 
@@ -196,6 +198,7 @@ class ReplView(object):
             view.set_syntax_file(syntax)
 
         self._output_end = view.size()
+        self.mutex = Lock()
 
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -235,14 +238,22 @@ class ReplView(object):
     def write(self, unistr):
         """Writes output from Repl into this view."""
         # string is assumet to be already correctly encoded
-        v = self._view
-        edit = v.begin_edit()
+        self.mutex.acquire()
+        stamp = time.time()
+        print "writing " + unistr
         try:
-            v.insert(edit, self._output_end, unistr)
-            self._output_end += len(unistr)
+            print "enter write: " + str(stamp)
+            v = self._view
+            edit = v.begin_edit()
+            try:
+                v.insert(edit, self._output_end, unistr)
+                self._output_end += len(unistr)
+            finally:
+                v.end_edit(edit)
+            self.scroll_to_end()
+            print "exit write: " + str(stamp)
         finally:
-            v.end_edit(edit)
-        self.scroll_to_end()
+            self.mutex.release()
 
     def scroll_to_end(self):
         v = self._view
@@ -277,7 +288,7 @@ class ReplView(object):
         if data:
             self.write(data)
         if is_still_working:
-            sublime.set_timeout(self.update_view_loop, 100)
+            sublime.set_timeout(self.update_view_loop, 200)
         else:
             self.write("\n***Repl Closed***\n""")
             self._view.set_read_only(True)
@@ -328,6 +339,10 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
                 if view.id() == view_id:
                     found = view
             view = found or window.new_file()
+            # xeno.by: should be calculated dynamically!
+            view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
+            view.settings().set("result_line_regex", "")
+            #view.settings().set("result_base_dir", env["WorkingDir"])
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
             view.set_scratch(True)
@@ -340,17 +355,30 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            v.run_command("insert", {"characters": "\n"})
+            return
         if v.sel()[0].begin() != v.size():
             v.sel().clear()
             v.sel().add(sublime.Region(v.size()))
             # v.run_command("insert", {"characters": "\n"})
             # return
-        rv = repl_view(v)
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
         rv.adjust_end()
         rv.repl.write(command)
+
+
+class ReplEscapeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("move_to", {"to": "eof", "extend": False})
+        w.run_command("repl_shift_home")
+        w.run_command("right_delete")
 
 
 class ReplLeftCommand(sublime_plugin.TextCommand):

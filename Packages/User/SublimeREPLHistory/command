@@ -86,3 +86,53 @@
 -wedsds
 -java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
 -ls
+-scalac
+-scalac /?
+-scalac --help
+-scalac
+-scalac --help
+-scalac --help
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-brary>cd ../..
+-cd ../..
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-a
+-erRefactoring>d
+-erRefactoring>d
+-cd ../..
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-a
+-erRefactoring>d
+-bash java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-main(Driver.scala:65)\r\n  at scala.tools.nsc.Main.main(Main.scala)\r\n\nteSig(Namers.scala:8d
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-(Driver.scala:65)\r\n  at scala.tools.nsc.Main.main(Main.scala)\r\n\na:1326)\r\n  at scala.tool
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-a
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-r
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-r
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-a
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-a
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-la.tools.nsc.Driver.main(Driver.scala:65)\r\n  at scala.tools.nsc.Main.main(Main.scala)\r\n\nds
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-r
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-echo

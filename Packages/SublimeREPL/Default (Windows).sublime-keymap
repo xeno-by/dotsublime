@@ -23,6 +23,12 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
+	{ "keys": ["escape"], "command": "repl_escape", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 	{ "keys": ["enter"], "command": "repl_enter", "args": {},
 	"context":
 		[
