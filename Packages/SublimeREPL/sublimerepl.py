@@ -341,14 +341,70 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
         if v.sel()[0].begin() != v.size():
-            v.run_command("insert", {"characters": "\n"})
-            return
+            v.sel().clear()
+            v.sel().add(sublime.Region(v.size()))
+            # v.run_command("insert", {"characters": "\n"})
+            # return
         rv = repl_view(v)
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
         rv.adjust_end()
         rv.repl.write(command)
+
+
+class ReplLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+
+class ReplHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move_to", {"to": "bol", "extend": False})
+        else:
+            for i in range(1, delta + 1):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move_to", {"to": "bol", "extend": True})
+        else:
+            for i in range(1, delta + 1):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": True})
 
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):

@@ -29,6 +29,9 @@
       "path": "/C/Projects/Kepler/test/pending"
     },
     {
+      "path": "/C/Projects/BuildXMLs/Kepler"
+    },
+    {
       "folder_exclude_patterns":
       [
         "_site"

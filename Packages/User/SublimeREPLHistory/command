@@ -66,3 +66,23 @@
 -mrc
 -mrq
 -gr
+-rq
+-mrq -Xprompt
+-mrq -Xprompt
+-cd sandbox
+-scalac -Xprompt Test.scala
+-s
+-cd ../..
+-cd ../..
+-java -cp locker/classes/compiler;locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -Xprompt src/library/*
+-oring>java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -Xprompt src/library/*
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -Xprompt src/library/*
+-, s)tack, r)esume: a
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/*
+-q
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-q
+-bash
+-wedsds
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt src/library/**
+-ls

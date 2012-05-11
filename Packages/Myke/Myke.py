@@ -95,21 +95,21 @@ class MykeCommand(sublime_plugin.WindowCommand):
         incantation = incantation + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
-    elif self.cmd == "console_main":
-      if (self.window.active_view() and self.window.active_view().settings().get("repl_external_id") == "myke_console"):
-        self.window.run_command("next_view_in_stack")
-      else:
-        found = False
-        for view in self.window.views():
-          if view.settings().get("repl_external_id") == "myke_console":
-            found = True
-            self.window.focus_view(view)
-        if not found:
-          self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+    # elif self.cmd == "console_main":
+    #   if (self.window.active_view() and self.window.active_view().settings().get("repl_external_id") == "myke_console"):
+    #     self.window.run_command("next_view_in_stack")
+    #   else:
+    #     found = False
+    #     for view in self.window.views():
+    #       if view.settings().get("repl_external_id") == "myke_console":
+    #         found = True
+    #         self.window.focus_view(view)
+    #     if not found:
+    #       self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.current_dir, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif self.cmd == "console_new":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.project_root, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.current_dir, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif self.cmd == "repl":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.project_root, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.current_dir, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
     else:
       view_name = "myke " + self.cmd
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())

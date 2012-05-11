@@ -29,6 +29,30 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
+	{ "keys": ["left"], "command": "repl_left", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["home"], "command": "repl_home", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["shift+left"], "command": "repl_shift_left", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["shift+home"], "command": "repl_shift_home", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 
 
 	{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
