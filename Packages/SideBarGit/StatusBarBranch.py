@@ -24,7 +24,7 @@ class StatusBarBranch(sublime_plugin.EventListener):
 
 	def on_modified(self, v):
 		file_name = self.effective_file_name(v)
-		if s.get('statusbar_branch') and file_name != v.file_name() and v.name() != "Find Results":
+		if s.get('statusbar_branch') and file_name != v.file_name() and "myke " in v.name():
 			curr_time = time.time()
 			last_time = self.last_time if hasattr(self, "last_time") else 0
 			self.last_time = curr_time

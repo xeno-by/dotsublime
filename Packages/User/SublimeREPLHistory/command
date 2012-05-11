@@ -167,3 +167,20 @@
 -.profile
 -java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler src/compiler/scala/tools/nsc/typechecker/Typers.scala
 -java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:ty[er src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:typer src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Xprint:typer src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-cd lib
+-cd lib
+-time sleep 1000
+-cd lib
+-time sleep 1000
+-cd lib
+-cd lib
+-time sleep 100
+-cd lib
+-cd .
+-time sleep 1000
+-kur
+-kur
+-cd lib

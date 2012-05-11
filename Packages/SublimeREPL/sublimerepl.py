@@ -424,6 +424,10 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
             # v.run_command("insert", {"characters": "\n"})
             # return
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
+        bol = v.line(v.sel()[0]).begin()
+        cwd = v.substr(sublime.Region(bol, rv._output_end - 1));
+        v.settings().set("cwd", cwd)
+        print "cwd updated: " +  v.settings().get("cwd")
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
         rv.adjust_end()
