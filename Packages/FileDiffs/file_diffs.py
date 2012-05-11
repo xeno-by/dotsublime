@@ -1,6 +1,7 @@
 # coding: utf8
 import os
 import re
+import subprocess
 
 import sublime
 import sublime_plugin
@@ -18,6 +19,10 @@ TAB = u'Diff file with Open Tab…'
 
 
 FILE_DIFFS = [CLIPBOARD, SAVED, FILE, TAB]
+
+
+# UI = u'Sublime'
+UI = u'Mydiff'
 
 
 class FileDiffMenuCommand(sublime_plugin.TextCommand):
@@ -89,22 +94,43 @@ class FileDiffCommand(sublime_plugin.TextCommand):
             if to_file is None:
                 to_file = 'to_file'
 
+        self.from_content = from_content
+        self.to_content = to_content
+        self.from_file = from_file
+        self.to_file = to_file
         diff = difflib.unified_diff(from_content, to_content, from_file, to_file)
 
         return ''.join(diff)
 
     def show_diff(self, diff):
         if diff:
-            panel = self.view.window().new_file()
-            panel.set_scratch(True)
-            panel.set_syntax_file('Packages/Diff/Diff.tmLanguage')
-            panel_edit = panel.begin_edit('file_diffs')
-            panel.insert(panel_edit, 0, diff)
-            # cursor = 0
-            # for line in diff:
-            #     panel.insert(panel_edit, cursor, line)
-            #     cursor += len(line)
-            panel.end_edit(panel_edit)
+            if UI == u'Sublime':
+                panel = self.view.window().new_file()
+                panel.set_scratch(True)
+                panel.set_syntax_file('Packages/Diff/Diff.tmLanguage')
+                panel_edit = panel.begin_edit('file_diffs')
+                panel.insert(panel_edit, 0, diff)
+                # cursor = 0
+                # for line in diff:
+                #     panel.insert(panel_edit, cursor, line)
+                #     cursor += len(line)
+                panel.end_edit(panel_edit)
+            elif UI == u'Mydiff':
+                from_file = self.from_file
+                if not os.path.exists(from_file):
+                    hfrom, from_file = tempfile.mkstemp(from_file)
+                    os.write(hfrom, self.from_content)
+                    os.fsync(hfrom)
+                    os.close(hfrom)
+                to_file = self.to_file
+                if not os.path.exists(to_file):
+                    hto, to_file = tempfile.mkstemp(to_file)
+                    os.write(hto, self.to_content)
+                    os.fsync(hto)
+                    os.close(hto)
+                subprocess.call(["mydiff", from_file, to_file])
+            else:
+                sublime.error_message('Unknown diff UI: ' + UI)
         else:
             sublime.status_message('No Difference')
 
