@@ -8,8 +8,9 @@ class MykeCommand(sublime_plugin.WindowCommand):
     window = self.window
     view = self.window.active_view()
     self.view = view
-    row, col = self.view.rowcol(self.view.sel()[0].a)
-    self.linum = str(row + 1)
+    if self.view:
+      row, col = self.view.rowcol(self.view.sel()[0].a)
+      self.linum = str(row + 1)
     self.settings = MykeSettings()
     if repeat_last:
       self.cmd = self.settings.last_command
@@ -76,16 +77,22 @@ class MykeCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(self.menu, self.menuitem_selected)
         return
 
-    if self.cmd == "log" or self.cmd == "commit":
-      incantation = "myke /S smart-" + self.cmd + " " + " ".join(self.args)
+    if self.cmd == "smart-logall" or self.cmd == "smart-commit":
+      incantation = "myke /S " + self.cmd
+      if len(self.args) > 0:
+        incantation = incantation + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
-    elif self.cmd == "blame":
-      incantation = "myke /S smart-" + self.cmd + " \"" + self.current_file + "\"" + " " + " ".join(self.args)
+    elif self.cmd == "smart-blame" or self.cmd == "smart-logthis":
+      incantation = "myke /S " + self.cmd + " \"" + self.current_file + "\""
+      if len(self.args) > 0:
+        incantation = incantation + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_file)
       subprocess.Popen(incantation, shell = True)
     elif self.cmd == "clean":
-      incantation = "myke clean /S \"" + self.current_file + "\"" + " " + " ".join(self.args)
+      incantation = "myke clean /S \"" + self.current_file + "\""
+      if len(self.args) > 0:
+        incantation = incantation + " " + " ".join(self.args)
       print("Running " + incantation + " at " + self.current_dir)
       subprocess.Popen(incantation, shell = True, cwd = self.current_dir)
     elif self.cmd == "console_main":
@@ -215,8 +222,9 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
       window.run_command("exec", {"title": view.name(), "cmd": [cont], "cont": "myke_continuation", "shell": "true"})
       return
 
+    success = True if env["Status"] == "0" else False
     meaningful = env["Meaningful"] == "1" if "Meaningful" in env else None
-    if not meaningful:
+    if success and not meaningful:
       window.run_command("close_file")
 
     result_file_regex = env["ResultFileRegex"] if "ResultFileRegex" in env else ""
@@ -229,10 +237,10 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
       window.focus_view(view)
 
     view.settings().erase("no_history")
-    pt = view.text_point(1, 1)
-    view.sel().clear()
-    view.sel().add(sublime.Region(pt))
-    view.show(pt)
+#    pt = view.text_point(1, 1)
+#    view.sel().clear()
+#    view.sel().add(sublime.Region(pt))
+#    view.show(pt)
 
     message = "Myke %s upon %s" % (env["Action"], env["Target"])
     args = env["Args"] if "Args" in env else None
