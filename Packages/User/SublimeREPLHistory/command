@@ -136,3 +136,32 @@
 -java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
 -s
 -echo
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-r
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library -Xprompt @C:\\Users\\xeno.by\\AppData\\Local\\Temp\\scalacfork3141034510008537561.tmp
+-s
+-cd sandbox
+-java -cp build/locker/classes/compiler;build/locker/classes/library;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library Test.scala
+-java -cp ../build/locker/classes/compiler;../build/locker/classes/library;../lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library Test.scala
+-java -cp ../build/locker/classes/compiler;../build/locker/classes/library;../lib/fjbg.jar scala.tools.nsc.Main -cp ../build/locker/classes/library Test.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-ls
+-ls
+-ls
+-java lib/
+-java lib/
+-java lib/
+-java li
+-.
+-.
+-.pr
+-.pro
+-lib/ant/
+-.pr
+-.pro
+-.pro
+-.profile

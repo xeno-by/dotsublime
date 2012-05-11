@@ -240,9 +240,9 @@ class ReplView(object):
         # string is assumet to be already correctly encoded
         self.mutex.acquire()
         stamp = time.time()
-        print "writing " + unistr
+        # print "writing " + unistr
         try:
-            print "enter write: " + str(stamp)
+            # print "enter write: " + str(stamp)
             v = self._view
             edit = v.begin_edit()
             try:
@@ -251,7 +251,7 @@ class ReplView(object):
             finally:
                 v.end_edit(edit)
             self.scroll_to_end()
-            print "exit write: " + str(stamp)
+            # print "exit write: " + str(stamp)
         finally:
             self.mutex.release()
 
@@ -352,6 +352,63 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             sublime.error_message(repr(e))
 
 
+class SublimeReplCompletionListener(sublime_plugin.EventListener):
+  def on_query_completions(self, view, prefix, locations):
+    v = view
+    rv = repl_view(v)
+    if v.settings().has("repl"):
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta <= 0:
+            return []
+        else:
+            bol = v.line(v.sel()[0]).begin()
+            cwd = v.substr(sublime.Region(bol, rv._output_end - 1));
+            input = rv.user_input()
+            path = cwd + "\\" + input
+            liof = path.rindex("\\")
+            dir = path[:(liof + 1)]
+            completee = path[(liof + 1):]
+            liof = max(completee.rindex(" ") if " " in completee else -1, completee.rindex(";") if ";" in completee else -1)
+            if liof != -1:
+                completee = completee[(liof+1):]
+            completee = completee.replace("/", "\\")
+            liof = completee.rindex("\\") if "\\" in completee else -1
+            if liof != -1:
+                dir = dir + completee[:(liof + 1)]
+                completee = completee[(liof + 1):]
+            print "dir = " + dir + ", completee = " + completee
+            print "files = " + str(os.listdir(dir))
+            matches = [name for name in os.listdir(dir) if name.lower().startswith(completee.lower())]
+            print "matches = " + str(matches)
+            completions = [(m, m) for m in matches]
+            return (completions, sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
+    else:
+        return []
+
+
+class ReplTabCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("insert_best_completion", {"default": "", "exact": False})
+
+
+class ReplTabNextCompletionCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("insert_best_completion", {"default": "", "exact": False})
+
+
+class ReplEscapeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("move_to", {"to": "eof", "extend": False})
+        w.run_command("repl_shift_home")
+        w.run_command("right_delete")
+
+
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
@@ -372,13 +429,18 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
         rv.repl.write(command)
 
 
-class ReplEscapeCommand(sublime_plugin.TextCommand):
+class ReplBackspaceCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
         w = v.window()
-        w.run_command("move_to", {"to": "eof", "extend": False})
-        w.run_command("repl_shift_home")
-        w.run_command("right_delete")
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("left_delete")
+        elif delta == 0:
+            return
+        else:
+            w.run_command("left_delete")
 
 
 class ReplLeftCommand(sublime_plugin.TextCommand):
@@ -437,11 +499,15 @@ class ReplShiftHomeCommand(sublime_plugin.TextCommand):
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        rv = repl_view(self.view)
+        rv.scroll_to_end()
         repl_view(self.view).view_previous_command(edit)
 
 
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        rv = repl_view(self.view)
+        rv.scroll_to_end()
         repl_view(self.view).view_next_command(edit)
 
 
