@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
 import subprocess
@@ -10,15 +10,16 @@ import repl
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, 
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
                  env=None, cwd=None, extend_env=None, soft_quit=""):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         self._cmd = cmd
+        self._cwd = cwd
         self._soft_quit = soft_quit
         self.popen = subprocess.Popen(
-                        cmd, 
+                        cmd,
                         startupinfo=self.startupinfo(),
-                        bufsize=1, 
+                        bufsize=1,
                         cwd=self.cwd(cwd),
                         env=self.env(env, extend_env),
                         stderr=subprocess.STDOUT,
@@ -75,12 +76,12 @@ class SubprocessRepl(repl.Repl):
         return self.popen.poll() is None
 
     def read_bytes(self):
-        # this is windows specific problem, that you cannot tell if there 
+        # this is windows specific problem, that you cannot tell if there
         # are more bytes ready, so we read only 1 at a times
         return self.popen.stdout.read(1)
 
     def write_bytes(self, bytes):
-        si = self.popen.stdin 
+        si = self.popen.stdin
         si.write(bytes)
         si.flush()
 

@@ -342,6 +342,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             # xeno.by: should be calculated dynamically!
             view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
             view.settings().set("result_line_regex", "")
+            view.settings().set("cwd", r._cwd)
             #view.settings().set("result_base_dir", env["WorkingDir"])
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv

@@ -21,4 +21,4 @@ class MykeKill(sublime_plugin.WindowCommand):
       # window.run_command("clone_file")
       # window.focus_view(view)
       # window.run_command("close_file")
-      window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": """C:\Projects\Perf_Bad""", "external_id": "myke_console", "view_id": view.id(), "syntax": "Packages/Text/Plain Text.tmLanguage"})
+      window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"], "cwd": view.settings().get("cwd"), "external_id": "myke_console", "view_id": view.id(), "syntax": "Packages/Text/Plain Text.tmLanguage"})

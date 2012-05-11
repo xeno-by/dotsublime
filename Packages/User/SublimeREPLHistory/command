@@ -165,3 +165,5 @@
 -.pro
 -.pro
 -.profile
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler src/compiler/scala/tools/nsc/typechecker/Typers.scala
+-java -cp lib/scala-library.jar;lib/scala-compiler.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler src/compiler/scala/tools/nsc/typechecker/Typers.scala
