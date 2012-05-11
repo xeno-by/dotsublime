@@ -502,6 +502,51 @@ class ReplShiftHomeCommand(sublime_plugin.TextCommand):
                 w.run_command("move", {"by": "characters", "forward": False, "extend": True})
 
 
+class ReplInsertFilenameCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.edit = edit
+        self.names = FilenameList(self.view.window())
+        self.view.window().show_quick_panel(self.names.paths, self.file_selected)
+
+    def file_selected(self, selected_index):
+        if selected_index != -1:
+            self.view.replace(self.edit, self.view.sel()[0], self.names.paths[selected_index])
+            self.view.window().run_command("move", {"by": "characters", "forward": True})
+
+
+class FilenameList(object):
+    def __init__(self, window):
+        self.paths = []
+        for root in window.folders():
+            # self.paths.append(root)
+
+            for base, dirs, files in os.walk(root):
+                for file in files:
+                    if file.endswith(".scala"):
+                        self.paths.append(os.path.join(base, file))
+
+class ReplInsertDirnameCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.edit = edit
+        self.names = DirnameList(self.view.window())
+        self.view.window().show_quick_panel(self.names.paths, self.file_selected)
+
+    def file_selected(self, selected_index):
+        if selected_index != -1:
+            self.view.insert(self.edit, self.view.sel(0).b, self.names.paths[selected_index])
+
+
+class DirnameList(object):
+    def __init__(self, window):
+        self.paths = []
+        for root in window.folders():
+            self.paths.append(root)
+
+            for base, dirs, files in os.walk(root):
+                for dir in dirs:
+                    self.paths.append(os.path.join(base, file))
+
+
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = repl_view(self.view)

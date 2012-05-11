@@ -122,6 +122,18 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
+	{ "keys": ["super+insert"], "command": "repl_insert_filename", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["super+shift+insert"], "command": "repl_insert_dirname", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 
 
 	{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
