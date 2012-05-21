@@ -56,7 +56,9 @@ class MykeCommand(sublime_plugin.WindowCommand):
       print "hotkey is " + hotkey
       if hotkey == "s":
         self.window.show_quick_panel(["Yes, run build in Jenkins", "No, cancel this command"], self.jenkins_confirmed)
-      if hotkey == "x":
+      elif hotkey == "x":
+        self.run("menu", [menuitem, self.current_file + "#L" + self.linum])
+      elif hotkey == "c":
         self.run("menu", [menuitem, self.current_file + "#L" + self.linum])
       else:
         self.run("menu", [menuitem])
@@ -108,7 +110,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
     elif self.cmd == "console_new":
       self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "console"] + self.args, "cwd": self.current_dir, "external_id": "myke_console", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     elif self.cmd == "repl":
-      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.current_dir, "external_id": "myke_repl", "syntax": "Packages/Scala/Scala.tmLanguage"})
+      self.window.run_command("repl_open", {"type": "subprocess", "encoding": "utf8", "cmd": ["myke.exe", "/S", "repl"] + self.args, "cwd": self.current_dir, "external_id": "myke_repl", "syntax": "Packages/Text/Plain Text.tmLanguage"})
     else:
       view_name = "myke " + self.cmd
       if self.cmd == "menu":

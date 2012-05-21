@@ -211,3 +211,83 @@
 -2 + 2
 -2 + 2
 -typeTag[List[Int]]
+-gcp 4d4438bac9b906
+-kur
+-bash ./pull-binary-libs.sh
+-typeTag[Int]
+-typeTag[List[Int]]
+-typeTag[Int]
+-2 + 2
+-typeTag[Int]
+-typeTag[List[Int]]
+-typeTag[Int]
+-typeTag[List[Int]]
+-typeTag[Int]
+-2 + 2
+-typeTag[Int]
+-typeTag[List[Int]]
+-typeTag[List[Int]]
+-typeTag[List[Int]]
+-import scala.reflect.makro.Context
+-def impl(c: Context) = c.literal("hello world")
+-def foo = macro impl
+-foo
+-import scala.reflect.makro.Context
+-def impl(c: Context) = c.literal("hello world")
+-foo
+-def foo = macro impl
+-foo
+-2 + 2
+-typeTag[Int]
+-import scala.reflect.makro.Context
+-def impl(c: Context) = c.literal("hello world")
+-def foo = macro impl
+-foo
+-parse
+-new TypeCreator { def apply[U <: Universe](m: U # Mirror)(implicit u: U): u.Type = ??? }
+-parse
+-$b.TypeTag[T]($m, new $anon())
+-typeTag[Int]
+-typeTag[List[Int]
+-]
+-typeTag[Int]
+-typeTag[List[Int]]
+-typeTag[Int]
+-import scala.reflect.mirror._
+-reify(2)
+-reify{ val x = 2 ]
+-reify{ val x = 2 }
+-val y = 10
+-reify(y)
+-{ val y = 10; reify(y) }
+-val x_ = 2
+-val x_:Int = 2
+-val x_ :Int = 2
+-Set(1, 2) map (x => x)
+-Set(1, 2) map (x => x * 0)
+-val s: List[Int] = Set(1, 2)
+-val s: Iterable[Int] = Set(1, 2)
+-s map (x => x)
+-s map (x => x * 0)
+-new Iterable[Int]{}
+-new Traversable[Int]{}
+-kur
+-myke compile -Ydebug -Ytyper-debug > log.txt
+-kur
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug -Ytyper-debug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug -Ytyper-debug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala > log.txt
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala > log.txt
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug -Ytyper-debug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala 2>&1 > log.txt
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug -Ytyper-debug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala > log.txt 2>&1
+-java -cp lib/scala-compiler.jar;lib/scala-library.jar;lib/fjbg.jar scala.tools.nsc.Main -cp build/locker/classes/library;build/locker/classes/compiler -Ydebug -Ytyper-debug C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\Taggers.scala > log.txt 2>&1
+-typeTag[Int]
+-2 + 2
+-class ann extends annotation
+-class ann extends Annotation
+-class ann extends annotation.Annotation
+-2: @ann
+-typeTag[List[Int]]
+-typeTag[List[Int]]
+-+ 2
+-scala.reflect.runtime.universe.typeTag[Int]

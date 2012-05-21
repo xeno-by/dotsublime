@@ -50,7 +50,7 @@ class StatusBarBranchGet(threading.Thread):
 		for repo in SideBarGit().getSelectedRepos(SideBarSelection([self.file_name]).getSelectedItems()):
 			object = Object()
 			object.item = repo.repository
-			object.command = ['git', 'branch']
+			object.command = ['myke', 'branch']
 			object.silent = True
 			SideBarGit().run(object)
 			sublime.set_timeout(lambda:self.on_done(SideBarGit.last_stdout.decode('utf-8')), 0)

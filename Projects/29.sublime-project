@@ -6,38 +6,23 @@
       [
         "*.js"
       ],
-      "path": "/C/Projects/Kepler/src/library"
+      "path": "/C/Projects/Scala29/src/library"
     },
     {
       "file_exclude_patterns":
       [
         "*.js"
       ],
-      "path": "/C/Projects/Kepler/src/compiler"
+      "path": "/C/Projects/Scala29/src/compiler"
     },
     {
-      "path": "/C/Projects/Donor/src/partest"
+      "path": "/C/Projects/Scala29/sandbox"
     },
     {
-      "path": "/C/Projects/Kepler/src/continuations"
+      "path": "/C/Projects/BuildXMLs/Scala29"
     },
     {
-      "path": "/C/Projects/Kepler/sandbox"
-    },
-    {
-      "path": "/C/Projects/Kepler/sandbox3"
-    },
-    {
-      "path": "/D/Dropbox/Scratchpad/Scala"
-    },
-    {
-      "path": "/C/Projects/Kepler/test/files"
-    },
-    {
-      "path": "/C/Projects/Kepler/test/pending"
-    },
-    {
-      "path": "/C/Projects/BuildXMLs/Kepler"
+      "path": "/C/Program Files (x86)/scripts"
     },
     {
       "folder_exclude_patterns":
@@ -48,9 +33,6 @@
     },
     {
       "path": "/C/Projects/Meta2012"
-    },
-    {
-      "path": "/C/Program Files (x86)/scripts"
     },
     {
       "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"

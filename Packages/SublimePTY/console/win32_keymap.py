@@ -25,12 +25,31 @@ KEYMAP = {
     "f10": win32con.VK_F10,
     "f11": win32con.VK_F11,
     "f12": win32con.VK_F11,
+    "pageup": win32con.VK_PRIOR,
+    "pagedown": win32con.VK_NEXT,
+    "escape": win32con.VK_ESCAPE
     }
+
+CONTROL_KEY_STATE_FLAGS = {
+    "ctrl": win32con.LEFT_CTRL_PRESSED,
+    "shift": win32con.SHIFT_PRESSED,
+    "alt": win32con.LEFT_ALT_PRESSED,
+    "super": 0
+}
+
+def flag_value(flags_dict, **kwds):
+    """ compute flag value for dictionary with true/false values"""
+    flag = 0
+    for k,v in kwds.items():
+        if v:
+            flag |= flags_dict[str(k)]
+    return flag
 
 def make_input_key(key, **kwds):
     kc = win32console.PyINPUT_RECORDType(win32console.KEY_EVENT)
     kc.KeyDown = True
     kc.RepeatCount = 1
+    kc.ControlKeyState = flag_value(CONTROL_KEY_STATE_FLAGS, **kwds)
 
     if key in KEYMAP:    
         kc.Char = unicode(chr(KEYMAP[key]))
@@ -41,24 +60,3 @@ def make_input_key(key, **kwds):
     else:
         raise RuntimeError("no such key %s"% (key,))
     return kc
-
-
-
-    # kc = win32console.PyINPUT_RECORDType(win32console.KEY_EVENT)
-    # kc.KeyDown = True
-    # kc.RepeatCount = 1
-    # cnum = ord(c)
-    # if cnum == 3:
-    #     pid_list = win32console.GetConsoleProcessList()
-    #     win32console.GenerateConsoleCtrlEvent(win32con.CTRL_C_EVENT, 0)
-    #     return 
-    # else:
-    #     kc.Char = unicode(c)
-    #     if str(cnum) in CONQUE_WINDOWS_VK:
-    #         kc.VirtualKeyCode = CONQUE_WINDOWS_VK[str(cnum)]
-    #     else:
-    #         kc.VirtualKeyCode = ctypes.windll.user32.VkKeyScanA(cnum)
-    #         #kc.VirtualKeyCode = ctypes.windll.user32.VkKeyScanA(cnum+96)
-    #         #kc.ControlKeyState = win32con.LEFT_CTRL_PRESSED
-
-    # return kc

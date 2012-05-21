@@ -8,8 +8,11 @@ import pyte
 import keymap
 import os
 import sys
+from collections import namedtuple
 
-
+Coord = namedtuple("Coord", ["x", "y"])
+ColorSpec = namedtuple("ColorSpec", ["scope", "regions", "key"])
+ON_WINDOWS = os.name == "nt" 
 
 try:
     import tty
@@ -17,7 +20,8 @@ try:
 except ImportError:
     pass
 
-sys.path.append(os.getcwdu())
+PACKAGE_DIR = os.getcwdu()
+sys.path.append(PACKAGE_DIR)
 
 class Supervisor(object):
     def __init__(self):
@@ -39,6 +43,8 @@ class Supervisor(object):
 class Process(object):
     DEFAULT_COLUMNS = 80
     DEFAULT_LINES   = 24
+    MIN_COLUMNS     = 10
+    MIN_LINES       = 2 
 
     def __init__(self, supervisor):
         from uuid import uuid4
@@ -68,16 +74,12 @@ class Process(object):
         return self._lines
 
     def available_columns(self):
-        ac = self.DEFAULT_COLUMNS
-        for v in self._views:
-            ac = min(ac, v.available_columns())
-        return ac
+        ac = min((v.available_columns() for v in self._views))
+        return max(ac, self.MIN_COLUMNS)
 
     def available_lines(self):
-        al = self.DEFAULT_LINES
-        for v in self._views:
-            al = min(al, v.available_lines())
-        return al
+        al = min((v.available_lines() for v in self._views))
+        return max(al, self.MIN_LINES)
 
     def start(self):
         raise NotImplemented
@@ -92,6 +94,9 @@ class Process(object):
         raise NotImplemented
 
     def send_keypress(self, key, ctrl=False, alt=False, shift=False, super=False):
+        raise NotImplemented
+
+    def send_click(self, row, col, **kwds):
         raise NotImplemented
 
     def read(self):
@@ -208,41 +213,115 @@ class PtyProcess(Process):
         self._read()
 
 
+colors = [
+    "black",
+    "darkblue",  #ok
+    "darkgreen", #ok
+    "darkcyan",  #ok
+    "darkred", 
+    "darkmagenta",
+    "brown",
+    "white",
+    "lightgrey", #ok
+    "blue",  #ok
+    "green", #ok
+    "cyan",  #ok
+    "red",   #ok
+    "magenta",
+    "yellow", # ok
+    "white"
+]
+
+def fg_color(char_attribute):
+    col = colors[char_attribute & 0x0F]
+    if col == "white":
+        return "default"
+    return col
+
+def bg_color(char_attribute):
+    ca = (char_attribute & 0xF0) >> 4
+    col = colors[ca & 0x0F]
+    if col == "black":
+        return "default"
+    return col
+
+
 class Win32Process(Process):
     KEYMAP = keymap.WIN32
-    SIZE_REFRESH_EACH = 100 # reads
+    SIZE_REFRESH_EACH = 50 # reads
 
-    def start(self):
-        from console.console_client import ConsoleClient
-        self._cc = ConsoleClient("localhost", 8828)
+    def __init__(self, *args, **kwds):
         self._lines = {}
         self._reads = 1
         self._width = 0
         self._height = 0
+        self._last_cursor_pos = None
+        self._cc = None
+        super(Win32Process, self).__init__(*args, **kwds)
+
+    def start(self):
+        from console.console_client import ConsoleClient
+        self._cc = ConsoleClient("localhost", 8828)
 
     def stop(self):
         pass
 
     def is_running(self):
-        return True 
+        return self._cc.is_running
 
     def send_bytes(self, bytes):
         self._cc.write_console_input(bytes)
 
     def send_keypress(self, key, ctrl=False, alt=False, shift=False, super=False):
-        self._cc.send_keypress(key, ctrl=ctrl, alt=alt, shift=shift, super=super)
+        if (ctrl and not (alt or shift or super) and key=='c'):
+            self._cc.send_ctrl_c()
+        else:
+            self._cc.send_keypress(key, ctrl=ctrl, alt=alt, shift=shift, super=super)
+        self.read()
+
+    def send_click(self, row, col, **kwds):
+        self._cc.send_click(row, col, **kwds)
         self.read()
 
     def read(self):
-        lines = {}
-        for k,v in self._cc.read().items():
-            lines[int(k)] = v
-        for v in self._views:
-            v.diff_refresh(lines)
-
+        if not self._cc:
+            return # dead or not started yet
+        full = False
+        with_colors = True
         self._reads = (self._reads + 1) % self.SIZE_REFRESH_EACH
         if not self._reads:
             self._size_refresh()
+            full = True
+
+        (_lines, _cursor_pos, _colors) = self._cc.read(full, with_colors)
+        cursor_pos = Coord(*_cursor_pos) # we need .x .y access
+        if not full and self._last_cursor_pos == cursor_pos:
+            cursor_pos = None
+        else:
+            self._last_cursor_pos = cursor_pos
+
+        translated_colors = self._translate_colors(_colors)
+            
+        lines = {}
+        for k,v in _lines.items():
+            lines[int(k)] = v
+        for v in self._views:
+            if full:
+                v.full_refresh(lines, cursor_pos, translated_colors)
+            else:
+                v.diff_refresh(lines, cursor_pos, translated_colors)
+
+    def _translate_colors(self, colors):
+        translated_colors = {}
+        for line_str, line in colors.items():
+            start = int(line_str) * (len(line) + 1)
+            for idx, colornum in enumerate(line):
+                scope = fg_color(colornum) + "." + bg_color(colornum)
+                reg = (start + idx, start + idx + 1)
+                key = line_str + "." + str(idx)
+                translated_colors[key] = ColorSpec(scope, [reg], key)    
+                
+        return translated_colors
 
     def _size_refresh(self):
         height = self.available_lines()
@@ -259,15 +338,19 @@ class SublimeView(object):
         v = view or self._new_view()
         self._view = v
         self._process = None
-        
-        v.settings().set("sublimepty", True)
-        v.settings().set("line_numbers", False)
-        v.settings().set("caret_style", "blink")
-        v.settings().set("auto_complete", False)
-        v.settings().set("draw_white_space", "none")
-        v.settings().set("word_wrap", False)
-        v.settings().set("gutter", False)
-        #v.settings().set("color_scheme", "Packages/SublimePTY/SublimePTY.tmTheme")
+        settings = v.settings()
+        settings.set("sublimepty", True)
+        settings.set("line_numbers", False)
+        settings.set("caret_style", "blink")
+        settings.set("auto_complete", False)
+        settings.set("draw_white_space", "none")
+        settings.set("word_wrap", False)
+        settings.set("gutter", False)
+        settings.set("color_scheme", os.path.join(PACKAGE_DIR, "SublimePTY.tmTheme"))
+        if ON_WINDOWS: # better defaults
+            settings.set("font_face", "Consolas Bold") 
+            settings.set("font_options", ["directwrite"])
+            settings.set("font_size", 11)
         v.set_scratch(True)
         v.set_name("TERMINAL")
 
@@ -295,11 +378,11 @@ class SublimeView(object):
 
     def available_columns(self):
         (w, h) = self._view.viewport_extent()
-        return w // self._view.em_width()
+        return int(w // self._view.em_width())
 
     def available_lines(self):
         (w, h) = self._view.viewport_extent()
-        return h // self._view.line_height()
+        return int(h // self._view.line_height())
 
     def _set_cursor(self, cursor):
         import sublime
@@ -308,8 +391,18 @@ class SublimeView(object):
         self._view.sel().clear()
         tp = self._view.text_point(cursor.y, cursor.x)
         self._view.sel().add(sublime.Region(tp, tp))
+
+    def _apply_colors(self, translated_colors):
+        import sublime
+        v = self._view
+        for cs in translated_colors.values():
+            v.erase_regions(cs.key)
+            if cs.scope == "default.default":  # partial colors mode
+                continue
+            v.add_regions(str(cs.key), [sublime.Region(*x) for x in cs.regions], cs.scope, "", sublime.DRAW_EMPTY_AS_OVERWRITE)
+            
         
-    def full_refresh(self, lines, cursor=None):
+    def full_refresh(self, lines, cursor=None, translated_colors=None):
         import sublime
         v = self._view
         ed = v.begin_edit()
@@ -319,11 +412,13 @@ class SublimeView(object):
             l = lines[idx]
             p = v.text_point(idx, 0)
             v.insert(ed, p, l + "\n")
+        if translated_colors:
+            self._apply_colors(translated_colors)
         if cursor:
             self._set_cursor(cursor)
         v.end_edit(ed)
 
-    def diff_refresh(self, lines_dict, cursor=None):
+    def diff_refresh(self, lines_dict, cursor=None, translated_colors=None):
         import sublime
         v = self._view
         ed = v.begin_edit()
@@ -331,6 +426,9 @@ class SublimeView(object):
             p = v.text_point(lineno, 0)
             line_region = v.line(p)
             v.replace(ed, line_region, text)
+        if translated_colors:
+            self._apply_colors(translated_colors)
         if cursor:
             self._set_cursor(cursor)
         v.end_edit(ed)
+

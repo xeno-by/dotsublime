@@ -2,16 +2,40 @@
   "folders":
   [
     {
+      "file_exclude_patterns":
+      [
+        "*.js"
+      ],
       "path": "/C/Projects/KeplerUnderRefactoring/src/library"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.js"
+      ],
       "path": "/C/Projects/KeplerUnderRefactoring/src/compiler"
+    },
+    {
+      "path": "/C/Projects/KeplerUnderRefactoring/src/continuations"
+    },
+    {
+      "path": "/C/Projects/KeplerUnderRefactoring/sandbox"
     },
     {
       "path": "/C/Projects/BuildXMLs/KeplerUnderRefactoring"
     },
     {
       "path": "/C/Program Files (x86)/scripts"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "_site"
+      ],
+      "path": "/C/Projects/Pages"
+    },
+    {
+      "path": "/C/Projects/Meta2012"
     },
     {
       "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"
