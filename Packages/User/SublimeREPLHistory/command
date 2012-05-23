@@ -291,3 +291,12 @@
 -typeTag[List[Int]]
 -+ 2
 -scala.reflect.runtime.universe.typeTag[Int]
+-      final class $typecreator1 extends scala.reflect.base.TypeCreator {\n        def apply[U >: Nothing <: scala.reflect.base.Universe with Singleton]($m$untyped: scala.reflect.base.MirrorOf[U]): U#Type = {\n          val $u: U = $m$untyped.universe\n          val $m: scala.reflect.base.MirrorOf[$u.type] = $m$untyped.asInstanceOf[scala.reflect.base.MirrorOf[$u.type]]\n          $u.TypeRef($u.NoType, $m.staticClass("..."), Nil)\n          $u.ConstantType.apply($u.Constant.apply(2))\n        }\n      };
+-class C
+-object Holder {
+-implicit class PimpMyC(c: C) {
+-def foo = ???
+-}
+-new C().foo
+-import Holder.PimpMyC
+-new C().foo

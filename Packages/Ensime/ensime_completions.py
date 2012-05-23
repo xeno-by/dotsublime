@@ -27,12 +27,19 @@ def ensime_completion(p):
 class EnsimeCompletionsListener(sublime_plugin.EventListener): 
  
   def on_query_completions(self, view, prefix, locations):
+    #if view.is_dirty():
+    #  view.run_command("save")
     if not view.match_selector(locations[0], "source.scala") and not view.match_selector(locations[0], "source.java"):
       return []
- 
-    data = ensime_environment.ensime_env.client().complete_member(view.file_name(), locations[0])
+    env = ensime_environment.ensime_env
+    if env.client() is None:
+      print("Ensime Server doesn't appear to be started")
+      return []
+    data = env.client().complete_member(view.file_name(), locations[0])
     if data is None: 
+      print("Returned data was None")
       return [] 
+    print("Got data for completion:%s", data)
     friend = sexp.sexp_to_key_map(data[1][1])
     comps = friend[":completions"] if ":completions" in friend else []
     comp_list = [ensime_completion(sexp.sexp_to_key_map(p)) for p in friend[":completions"]]

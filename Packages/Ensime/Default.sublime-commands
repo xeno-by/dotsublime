@@ -1,0 +1,34 @@
+[
+	{
+		"caption": "Ensime: Check Type",
+		"command": "ensime_inspect_type_at_point"
+	},
+	{
+		"caption": "Ensime: Start Server",
+		"command": "ensime_server",
+		"args": {"start": true}
+	},
+	{
+		"caption": "Ensime: Stop Server",
+		"command": "ensime_server",
+		"args": {"kill": true}
+	},
+	{
+		"caption": "Ensime: Organize Imports",
+		"command": "ensime_organize_imports"
+	},
+	{
+		"caption": "Ensime: Show Server Messages",
+		"command": "ensime_server",
+		"args": {"show_output": true}
+	},
+	{
+		"caption": "Ensime: Show Client Messages",
+		"command": "ensime_show_message_view"
+	},
+	{
+		"caption": "Ensime: Reformat Source",
+		"command": "ensime_reformat_source"
+	}
+
+]

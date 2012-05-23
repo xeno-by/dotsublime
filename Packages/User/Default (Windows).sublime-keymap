@@ -68,5 +68,6 @@
   { "keys": ["alt+f2"], "command": "select_all_bookmarks" },
   { "keys": ["shift+f6"], "command": "side_bar_rename" },
   { "keys": ["ctrl+shift+."], "command": "my_filter"},
-  { "keys": ["ctrl+shift+z"], "command": "reopen_last_file" }
+  { "keys": ["ctrl+shift+z"], "command": "reopen_last_file" },
+  { "keys": ["super+shift+c"], "command": "side_bar_duplicate" }
 ]
