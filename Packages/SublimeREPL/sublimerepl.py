@@ -452,8 +452,13 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
         print "cwd updated: " +  v.settings().get("cwd")
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
-        rv.adjust_end()
-        rv.repl.write(command)
+        if command == "cls\n":
+            v.run_command("repl_escape")
+            v.replace(edit, sublime.Region(0, bol), "")
+            rv._output_end = v.sel()[0].begin()
+        else:
+            rv.adjust_end()
+            rv.repl.write(command)
 
 
 class ReplBackspaceCommand(sublime_plugin.TextCommand):
