@@ -300,3 +300,21 @@
 -new C().foo
 -import Holder.PimpMyC
 -new C().foo
+-sbkur
+-myke compile .
+-y\r\n\r\nC:\\Projects\\KeplerUnderRefactoring\\sandbox>myke compile
+-myke compile
+-myke compile .
+-ls
+-myke compile .
+-sbkur
+-myke compile .
+-y\r\n\r\nC:\\Projects\\KeplerUnderRefactoring\\sandbox>cls
+-sbkur
+-myke compile .
+-y\r\n\r\nC:\\Projects\\KeplerUnderRefactoring\\sandbox>ls
+-ls
+-cls
+-a
+-sds
+-ls

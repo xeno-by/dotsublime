@@ -78,6 +78,14 @@ class MykeCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(self.menu, self.menuitem_selected)
         return
 
+    if self.view and self.view.settings().get("repl_external_id") == "myke_console":
+      self.view.run_command("repl_escape")
+      cmd = ["myke", self.cmd, "."] + self.args
+      cmd = cmd[:2] + cmd[3:] if self.cmd == "menu" or self.cmd == "remote" or self.cmd.startswith("smart") else cmd
+      self.view.run_command("insert", {"characters": " ".join(cmd)}) # todo: escaping
+      self.view.run_command("repl_enter") # todo: also process continuations
+      return
+
     if self.cmd == "smart-logall" or self.cmd == "smart-commit":
       incantation = "myke /S " + self.cmd
       if len(self.args) > 0:

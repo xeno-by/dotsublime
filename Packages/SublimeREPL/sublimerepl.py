@@ -271,9 +271,7 @@ class ReplView(object):
         if not edit:
             self._view.end_edit(e)
 
-    def new_output(self):
-        """Returns new data from Repl and bool indicating if Repl is still
-           working"""
+    def new_output_unfiltered(self):
         q = self._repl_reader.queue
         data = ""
         try:
@@ -284,6 +282,26 @@ class ReplView(object):
                 data += packet
         except Queue.Empty:
             return data, True
+
+    def is_myke_console(self):
+        return self._view.settings().get("repl_external_id") == "myke_console"
+
+    def new_output(self):
+        """Returns new data from Repl and bool indicating if Repl is still
+           working"""
+        (data, is_still_working) = self.new_output_unfiltered()
+        if data and self.is_myke_console():
+            if not hasattr(self, "chars_to_skip"):
+                self.chars_to_skip = 105
+            if self.chars_to_skip > 0:
+                if len(data) <= self.chars_to_skip:
+                    data = ""
+                    self.chars_to_skip -= len(data)
+                else:
+                    data = data[self.chars_to_skip:]
+                    self.chars_to_skip = 0
+            # print str(self.chars_to_skip)
+        return data, is_still_working
 
     def update_view_loop(self):
         if hasattr(self, "killed") and self.killed:
