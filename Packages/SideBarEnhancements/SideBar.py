@@ -178,6 +178,8 @@ class SideBarFilesOpenWithCommand(sublime_plugin.WindowCommand):
 			if sublime.platform() == 'osx':
 				subprocess.Popen(['open', '-a', application, item.nameSystem()], cwd=item.dirnameSystem())
 			elif sublime.platform() == 'windows':
+				for k, v in os.environ.iteritems():
+					application_dir = application_dir.replace('%'+k+'%', v).replace('%'+k.lower()+'%', v)
 				subprocess.Popen([application_name, item.pathSystem()], cwd=application_dir, shell=True)
 			else:
 				subprocess.Popen([application_name, item.nameSystem()], cwd=item.dirnameSystem())
@@ -977,7 +979,6 @@ class SideBarDeleteCommand(sublime_plugin.WindowCommand):
 			print 'trying send to trash'
 			try:
 				for item in SideBarSelection(paths).getSelectedItemsWithoutChildItems():
-					print str(item)
 					if s.get('close_affected_buffers_when_deleting_even_if_dirty', False):
 						item.close_associated_buffers()
 						print 'closed associated buffers'

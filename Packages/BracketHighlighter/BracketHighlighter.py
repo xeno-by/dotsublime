@@ -662,7 +662,7 @@ class BracketHighlighter(object):
         quote = None
         lastChar = None
         matched = False
-        viewSize = self.view.size() - 1
+        viewSize = self.view.size()
         not_quoted = False
 
         # Left quote
@@ -676,7 +676,7 @@ class BracketHighlighter(object):
                 if scout == 0:
                     begin = scout
                     for char_type in self.brackets['bh_quote']['open'].split(' '):
-                        if lastChar == char_type:
+                        if char == char_type:
                             quote, begin = self.check_special_strings_start(lastChar, begin, viewSize)
                             break
                     if quote == None and self.find_brackets_in_any_string:

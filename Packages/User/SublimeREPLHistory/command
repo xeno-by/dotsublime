@@ -352,3 +352,16 @@
 -y\r\n\r\nC:\\Projects\\KeplerUnderRefactoring\\sandbox>cls
 -cls
 -myke compile .
+-sbkur
+-myke compile .
+-sbkur
+-myke compile .
+-myke compile .
+-sbkur
+-myke compile .
+-def f1 = manifest[Array[_]]
+-def f1 = typeOf[Array[_]]
+-def f1 = scala.reflect.runtime.universe.typeOf[Array[_]]
+-f1
+-run(Thread.java:662)\n\n\nscala> ru.typeOf[List[Nothing]]
+-scala.reflect.runtime.universe.typeOf[List[Nothing]]
