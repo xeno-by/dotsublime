@@ -68,6 +68,14 @@
         "command": "git_stash_pop"
     }
     ,{
+        "caption": "Git: Stash Apply",
+        "command": "git_stash_apply"
+    }
+    ,{
+        "caption": "Git: Stash Drop",
+        "command": "git_stash_drop"
+    }
+    ,{
         "caption": "Git: Add Current File",
         "command": "git_add"
     }
@@ -78,6 +86,10 @@
     ,{
         "caption": "Git: Checkout Current File",
         "command": "git_checkout"
+    }
+    ,{
+        "caption": "Git: Fetch",
+        "command": "git_fetch"
     }
     ,{
         "caption": "Git: Pull",
@@ -111,10 +123,14 @@
         "caption": "Git: Open...",
         "command": "git_open_file"
     }
-	,{
-		"caption": "Git: Reset (unstage) Current File",
-		"command": "git_reset_head"
-	}
+    ,{
+        "caption": "Git: Reset (unstage) Current File",
+        "command": "git_reset_head"
+    }
+    ,{
+        "caption": "Git: Reset (unstage) All",
+        "command": "git_reset_head_all"
+    }
     ,{
         "caption": "Git: Add Selected Hunk",
         "command": "git_add_selected_hunk"

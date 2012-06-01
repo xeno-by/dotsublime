@@ -1,12 +1,12 @@
 {
-	"auto_upgrade_last_run": 1338223257,
+	"auto_upgrade_last_run": 1338537707,
 	"installed_packages":
 	[
 		"BracketHighlighter",
 		"FileDiffs",
 		"Git",
+		"GotoRecent",
 		"HexViewer",
-		"LaTeXTools",
 		"Package Control",
 		"Quick File Creator",
 		"SideBarEnhancements",
