@@ -13,6 +13,13 @@
       [
         "*.js"
       ],
+      "path": "/C/Projects/Kepler/src/reflect"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js"
+      ],
       "path": "/C/Projects/Kepler/src/compiler"
     },
     {
