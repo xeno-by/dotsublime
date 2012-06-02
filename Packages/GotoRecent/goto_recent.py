@@ -25,7 +25,8 @@ class GotoRecentCommand(sublime_plugin.WindowCommand):
 
       if self.window.active_view():
         current_file = self.window.active_view().file_name()
-        self.unshift(current_file)
+        if current_file:
+          self.unshift(current_file)
 
       self.window.open_file(target_file)
 
