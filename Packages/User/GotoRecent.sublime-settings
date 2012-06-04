@@ -4,16 +4,472 @@
 		"recent_files":
 		[
 			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\internal\\package.scala"
+				"2012-06-04-10-50-12-perf_good-compile.log",
+				"C:\\Users\\xeno.by\\.myke_important\\2012-06-04-10-50-12-perf_good-compile.log"
+			],
+			[
+				"2012-06-04-11-05-51-perf_good-compile.log",
+				"C:\\Users\\xeno.by\\.myke_important\\2012-06-04-11-05-51-perf_good-compile.log"
+			],
+			[
+				"Default (Windows).sublime-keymap",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\User\\Default (Windows).sublime-keymap"
+			],
+			[
+				"Default (Windows).sublime-keymap",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\Default\\Default (Windows).sublime-keymap"
+			],
+			[
+				"Myke.py",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\Myke\\Myke.py"
+			],
+			[
+				"last.cs",
+				"C:\\Program Files (x86)\\scripts\\last.cs"
+			],
+			[
+				"Traces.py",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\Myke\\Traces.py"
+			],
+			[
+				"myke.cs",
+				"C:\\Program Files (x86)\\scripts\\myke.cs"
+			],
+			[
+				"SublimeQuickFileCreator.py",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\Quick File Creator\\SublimeQuickFileCreator.py"
+			],
+			[
+				"TreeInfo.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\TreeInfo.scala"
+			],
+			[
+				"ScratchPadMaker.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\ScratchPadMaker.scala"
+			],
+			[
+				"CommentWriter.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\scratchpad\\CommentWriter.scala"
+			],
+			[
+				"SourceInserter.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\scratchpad\\SourceInserter.scala"
+			],
+			[
+				"Macros.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Macros.scala"
+			],
+			[
+				"Pickler.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\Pickler.scala"
+			],
+			[
+				"SymbolTable.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\SymbolTable.scala"
+			],
+			[
+				"Trees.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\Trees.scala"
+			],
+			[
+				"TreePrinters.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\TreePrinters.scala"
+			],
+			[
+				"TreeGen.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\TreeGen.scala"
+			],
+			[
+				"Global.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\Global.scala"
+			],
+			[
+				"SymbolLoaders.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\SymbolLoaders.scala"
+			],
+			[
+				"RefChecks.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\RefChecks.scala"
+			],
+			[
+				"UnCurry.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\transform\\UnCurry.scala"
+			],
+			[
+				"Erasure.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\transform\\Erasure.scala"
+			],
+			[
+				"Phases.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\Phases.scala"
+			],
+			[
+				"implicits.check",
+				"C:\\Projects\\KeplerUnderRefactoring\\test\\files\\neg\\implicits.check"
+			],
+			[
+				"ContextErrors.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\ContextErrors.scala"
+			],
+			[
+				"Types.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\Types.scala"
+			],
+			[
+				"Typers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Typers.scala"
+			],
+			[
+				"SourceFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\util\\SourceFile.scala"
+			],
+			[
+				"MemoryLeaksTest.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\test\\files\\presentation\\memory-leaks\\MemoryLeaksTest.scala"
+			],
+			[
+				"ZipArchive.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\tools\\nsc\\io\\ZipArchive.scala"
+			],
+			[
+				"FastTrack.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\FastTrack.scala"
 			],
 			[
 				"build.xml",
 				"C:\\Projects\\BuildXMLs\\KeplerUnderRefactoring\\build.xml"
 			],
 			[
-				"myke-999-starr.cs",
-				"C:\\Program Files (x86)\\scripts\\myke-999-starr.cs"
+				"2012-06-03-19-50-01-kur-open.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-19-50-01-kur-open.log"
+			],
+			[
+				"TypeTags.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\base\\TypeTags.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\classfile\\package.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\package.scala"
+			],
+			[
+				"AbstractFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\tools\\nsc\\io\\AbstractFile.scala"
+			],
+			[
+				"AbstractFileApi.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\AbstractFileApi.scala"
+			],
+			[
+				"Position.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\util\\Position.scala"
+			],
+			[
+				"ParIterableLike.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\parallel\\ParIterableLike.scala"
+			],
+			[
+				"TraversableOnce.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\TraversableOnce.scala"
+			],
+			[
+				"TraversableProxyLike.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\TraversableProxyLike.scala"
+			],
+			[
+				"ArrayTagTraversableFactory.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\generic\\ArrayTagTraversableFactory.scala"
+			],
+			[
+				"GenericArrayTagCompanion.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\generic\\GenericArrayTagCompanion.scala"
+			],
+			[
+				"GenericArrayTagTraversableTemplate.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\generic\\GenericArrayTagTraversableTemplate.scala"
+			],
+			[
+				"TraversableForwarder.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\generic\\TraversableForwarder.scala"
+			],
+			[
+				"PagedSeq.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\immutable\\PagedSeq.scala"
+			],
+			[
+				"StringLike.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\immutable\\StringLike.scala"
+			],
+			[
+				"ArrayStack.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\mutable\\ArrayStack.scala"
+			],
+			[
+				"UnrolledBuffer.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\mutable\\UnrolledBuffer.scala"
+			],
+			[
+				"Exception.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\util\\control\\Exception.scala"
+			],
+			[
+				"ArrayTag.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\ArrayTag.scala"
+			],
+			[
+				"2012-06-03-18-39-22-kur-run.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-18-39-22-kur-run.log"
+			],
+			[
+				"2012-06-03-18-01-43-kur-rebuild.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-18-01-43-kur-rebuild.log"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\runtime\\package.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\runtime\\package.scala"
+			],
+			[
+				"Parsers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\makro\\runtime\\Parsers.scala"
+			],
+			[
+				"PartialFunction.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\PartialFunction.scala"
+			],
+			[
+				"ConsoleFileManager.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\ConsoleFileManager.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\package.scala"
+			],
+			[
+				"Symbols.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Symbols.scala"
+			],
+			[
+				"IMain.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interpreter\\IMain.scala"
+			],
+			[
+				"HtmlFactory.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\doc\\html\\HtmlFactory.scala"
+			],
+			[
+				"AbstractFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\AbstractFile.scala"
+			],
+			[
+				"Directory.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\Directory.scala"
+			],
+			[
+				"File.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\File.scala"
+			],
+			[
+				"NoAbstractFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\NoAbstractFile.scala"
+			],
+			[
+				"Path.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\Path.scala"
+			],
+			[
+				"VirtualFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\VirtualFile.scala"
+			],
+			[
+				"ZipArchive.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\ZipArchive.scala"
+			],
+			[
+				"ScalaClassLoader.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\ScalaClassLoader.scala"
+			],
+			[
+				"TestFile.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\TestFile.scala"
+			],
+			[
+				"t2104.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\test\\files\\jvm\\t2104.scala"
+			],
+			[
+				"Exceptional.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\Exceptional.scala"
+			],
+			[
+				"compat.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\compat.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\internal\\package.scala"
+			],
+			[
+				"Inliners.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\opt\\Inliners.scala"
+			],
+			[
+				"MethodSynthesis.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\MethodSynthesis.scala"
+			],
+			[
+				"Context.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\Context.scala"
+			],
+			[
+				"Universe.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Universe.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\runtime\\package.scala"
+			],
+			[
+				"Definitions.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Definitions.scala"
+			],
+			[
+				"Namers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Namers.scala"
+			],
+			[
+				"GenJVM.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\jvm\\GenJVM.scala"
+			],
+			[
+				"JavaMirrors.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\runtime\\JavaMirrors.scala"
+			],
+			[
+				"2012-06-03-13-42-18-kur-compile.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-13-42-18-kur-compile.log"
+			],
+			[
+				"GenASM.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\jvm\\GenASM.scala"
+			],
+			[
+				"Extractors.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\utils\\Extractors.scala"
+			],
+			[
+				"TraceSymbolActivity.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\util\\TraceSymbolActivity.scala"
+			],
+			[
+				"Unapplies.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Unapplies.scala"
+			],
+			[
+				"Trees.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\base\\Trees.scala"
+			],
+			[
+				"Trees.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Trees.scala"
+			],
+			[
+				"Trees.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Trees.scala"
+			],
+			[
+				"SymbolTable.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\SymbolTable.scala"
+			],
+			[
+				"SymbolCreations.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\SymbolCreations.scala"
+			],
+			[
+				"Scanners.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\parser\\Scanners.scala"
+			],
+			[
+				"StdNames.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\StdNames.scala"
+			],
+			[
+				"Implicits.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Implicits.scala"
+			],
+			[
+				"ToolBoxFactory.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\ToolBoxFactory.scala"
+			],
+			[
+				"PatternMatching.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\PatternMatching.scala"
+			],
+			[
+				"Origins.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\util\\Origins.scala"
+			],
+			[
+				"Typers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\makro\\runtime\\Typers.scala"
+			],
+			[
+				"Typers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\Typers.scala"
+			],
+			[
+				"origins.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\test\\files\\run\\origins.scala"
+			],
+			[
+				"TraversableOnceMethods.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\interfaces\\TraversableOnceMethods.scala"
+			],
+			[
+				"StdTags.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\StdTags.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\package.scala"
+			],
+			[
+				"ClassAndJarInfo.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\ClassAndJarInfo.scala"
+			],
+			[
+				"package.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\package.scala"
+			],
+			[
+				"Shield.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\Shield.scala"
+			],
+			[
+				"ToolBox.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\ToolBox.scala"
+			],
+			[
+				"DummyMirror.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\DummyMirror.scala"
+			],
+			[
+				"ToolBoxes.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ToolBoxes.scala"
+			],
+			[
+				"Trees.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\Trees.scala"
+			],
+			[
+				"Typers.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\makro\\Typers.scala"
 			],
 			[
 				"myke-999-kep.cs",
@@ -24,12 +480,100 @@
 				"C:\\Program Files (x86)\\scripts\\myke-999-donor.cs"
 			],
 			[
-				"myke-100-vcs.cs",
-				"C:\\Program Files (x86)\\scripts\\myke-100-vcs.cs"
-			],
-			[
 				"partest.cs",
 				"C:\\Program Files (x86)\\scripts\\partest.cs"
+			],
+			[
+				"AntRunner.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\AntRunner.scala"
+			],
+			[
+				"Preferences.sublime-settings",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\User\\Preferences.sublime-settings"
+			],
+			[
+				"README.md",
+				"C:\\Users\\xeno.by\\AppData\\Roaming\\Sublime Text 2\\Packages\\Theme - Soda Refined\\README.md"
+			],
+			[
+				"ReflectiveRunner.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\ReflectiveRunner.scala"
+			],
+			[
+				"CompileManager.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\CompileManager.scala"
+			],
+			[
+				"DirectRunner.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\DirectRunner.scala"
+			],
+			[
+				"Worker.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\Worker.scala"
+			],
+			[
+				"SBTRunner.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\SBTRunner.scala"
+			],
+			[
+				"FileManager.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\FileManager.scala"
+			],
+			[
+				"PartestTask.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\PartestTask.scala"
+			],
+			[
+				"NestUI.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\nest\\NestUI.scala"
+			],
+			[
+				"DirectTest.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\DirectTest.scala"
+			],
+			[
+				"CompilerTest.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\CompilerTest.scala"
+			],
+			[
+				"antlib.xml",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\partest\\scala\\tools\\partest\\antlib.xml"
+			],
+			[
+				"tool-windows.tmpl",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\ant\\templates\\tool-windows.tmpl"
+			],
+			[
+				"2012-06-03-01-04-30-kur-rebuild.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-01-04-30-kur-rebuild.log"
+			],
+			[
+				"2012-06-03-01-10-46-universal-smart-commit.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-01-10-46-universal-smart-commit.log"
+			],
+			[
+				"2012-06-03-01-10-44-universal-smart-commit.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-01-10-44-universal-smart-commit.log"
+			],
+			[
+				"2012-06-03-01-12-32-kur-compile-alt.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-03-01-12-32-kur-compile-alt.log"
+			],
+			[
+				"GenICode.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\icode\\GenICode.scala"
+			],
+			[
+				"Flags.scala",
+				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\Flags.scala"
+			],
+			[
+				"myke-999-starr.cs",
+				"C:\\Program Files (x86)\\scripts\\myke-999-starr.cs"
+			],
+			[
+				"myke-100-vcs.cs",
+				"C:\\Program Files (x86)\\scripts\\myke-100-vcs.cs"
 			],
 			[
 				"myke-999-kep5.cs",
@@ -64,20 +608,12 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\reporters\\Reporter.scala"
 			],
 			[
-				"Exceptional.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\Exceptional.scala"
-			],
-			[
 				"ConsoleReporter.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\reporters\\ConsoleReporter.scala"
 			],
 			[
 				"JavaScanners.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\javac\\JavaScanners.scala"
-			],
-			[
-				"IMain.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interpreter\\IMain.scala"
 			],
 			[
 				"Tester.scala",
@@ -92,10 +628,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\REPL.scala"
 			],
 			[
-				"Scanners.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ast\\parser\\Scanners.scala"
-			],
-			[
 				"FreshNameCreator.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\FreshNameCreator.scala"
 			],
@@ -104,16 +636,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\util\\StringOps.scala"
 			],
 			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\package.scala"
-			],
-			[
 				"2012-06-02-21-51-04-kur-compile.log",
 				"C:\\Users\\xeno.by\\.myke\\2012-06-02-21-51-04-kur-compile.log"
-			],
-			[
-				"ToolBoxFactory.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\ToolBoxFactory.scala"
 			],
 			[
 				"SpecializeTypes.scala",
@@ -130,10 +654,6 @@
 			[
 				"SimpleBuildManager.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\SimpleBuildManager.scala"
-			],
-			[
-				"Typers.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Typers.scala"
 			],
 			[
 				"NamesDefaults.scala",
@@ -172,16 +692,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\tests\\core\\SourcesCollector.scala"
 			],
 			[
-				"ScratchPadMaker.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\ScratchPadMaker.scala"
-			],
-			[
 				"RefinedBuildManager.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\RefinedBuildManager.scala"
-			],
-			[
-				"SourceInserter.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\scratchpad\\SourceInserter.scala"
 			],
 			[
 				"InteractiveReporter.scala",
@@ -220,14 +732,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\doc\\DocFactory.scala"
 			],
 			[
-				"Inliners.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\opt\\Inliners.scala"
-			],
-			[
-				"GenJVM.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\jvm\\GenJVM.scala"
-			],
-			[
 				"Members.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\backend\\icode\\Members.scala"
 			],
@@ -250,10 +754,6 @@
 			[
 				"ScalaDoc.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\ScalaDoc.scala"
-			],
-			[
-				"SourceFile.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\util\\SourceFile.scala"
 			],
 			[
 				"Positions.scala",
@@ -292,10 +792,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\CompilationUnits.scala"
 			],
 			[
-				"Global.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\Global.scala"
-			],
-			[
 				"TestResources.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interactive\\tests\\core\\TestResources.scala"
 			],
@@ -332,14 +828,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\tools\\nsc\\io\\File.scala"
 			],
 			[
-				"ZipArchive.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\tools\\nsc\\io\\ZipArchive.scala"
-			],
-			[
-				"AbstractFile.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\tools\\nsc\\io\\AbstractFile.scala"
-			],
-			[
 				"SymbolTable.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\SymbolTable.scala"
 			],
@@ -350,10 +838,6 @@
 			[
 				"JavaUniverse.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\runtime\\JavaUniverse.scala"
-			],
-			[
-				"Position.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\util\\Position.scala"
 			],
 			[
 				"Position.scala",
@@ -374,14 +858,6 @@
 			[
 				"ClassPath.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\ClassPath.scala"
-			],
-			[
-				"MethodSynthesis.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\MethodSynthesis.scala"
-			],
-			[
-				"ContextErrors.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\ContextErrors.scala"
 			],
 			[
 				"TypeStrings.scala",
@@ -448,10 +924,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\runtime\\ReflectSetup.scala"
 			],
 			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\runtime\\package.scala"
-			],
-			[
 				"JavaMirrors.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\runtime\\JavaMirrors.scala"
 			],
@@ -462,10 +934,6 @@
 			[
 				"AbstractFileClassLoader.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interpreter\\AbstractFileClassLoader.scala"
-			],
-			[
-				"AbstractFile.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\AbstractFile.scala"
 			],
 			[
 				"Javap.scala",
@@ -484,14 +952,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\TableDef.scala"
 			],
 			[
-				"Phases.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\Phases.scala"
-			],
-			[
-				"Types.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\Types.scala"
-			],
-			[
 				"ConstantPool.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\ConstantPool.scala"
 			],
@@ -508,44 +968,16 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\reflect\\scala\\reflect\\internal\\JvmClassInfo.scala"
 			],
 			[
-				"compat.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\compat.scala"
-			],
-			[
 				"Mirrors.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Mirrors.scala"
-			],
-			[
-				"PatternMatching.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\PatternMatching.scala"
 			],
 			[
 				"Exprs.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Exprs.scala"
 			],
 			[
-				"FastTrack.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\FastTrack.scala"
-			],
-			[
-				"Macros.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Macros.scala"
-			],
-			[
-				"Trees.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Trees.scala"
-			],
-			[
-				"Trees.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Trees.scala"
-			],
-			[
 				"StdAttachments.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\StdAttachments.scala"
-			],
-			[
-				"UnCurry.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\transform\\UnCurry.scala"
 			],
 			[
 				"Tags.scala",
@@ -588,24 +1020,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\TreeGen.scala"
 			],
 			[
-				"SymbolTable.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\SymbolTable.scala"
-			],
-			[
-				"Symbols.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Symbols.scala"
-			],
-			[
 				"SymbolFlags.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\SymbolFlags.scala"
-			],
-			[
-				"SymbolCreations.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\SymbolCreations.scala"
-			],
-			[
-				"StdNames.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\StdNames.scala"
 			],
 			[
 				"StdCreators.scala",
@@ -676,10 +1092,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\ExistentialsAndSkolems.scala"
 			],
 			[
-				"Definitions.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Definitions.scala"
-			],
-			[
 				"Constants.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\Constants.scala"
 			],
@@ -708,14 +1120,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\AbstractFileApi.scala"
 			],
 			[
-				"Implicits.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Implicits.scala"
-			],
-			[
-				"Trees.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\base\\Trees.scala"
-			],
-			[
 				"MetaParser.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\classfile\\MetaParser.scala"
 			],
@@ -725,23 +1129,11 @@
 			],
 			[
 				"Erasure.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\transform\\Erasure.scala"
-			],
-			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\package.scala"
-			],
-			[
-				"Erasure.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\transform\\Erasure.scala"
 			],
 			[
 				"RequiredFile.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\RequiredFile.scala"
-			],
-			[
-				"JavaMirrors.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\runtime\\JavaMirrors.scala"
 			],
 			[
 				"Taggings.scala",
@@ -756,24 +1148,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\runtime\\AbstractFile.scala"
 			],
 			[
-				"StdTags.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\StdTags.scala"
-			],
-			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\runtime\\package.scala"
-			],
-			[
 				"TagInterop.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\api\\TagInterop.scala"
-			],
-			[
-				"TypeTags.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\base\\TypeTags.scala"
-			],
-			[
-				"ArrayTag.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\ArrayTag.scala"
 			],
 			[
 				"WrappedArrayBuilder.scala",
@@ -806,10 +1182,6 @@
 			[
 				"Predef.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\Predef.scala"
-			],
-			[
-				"Origins.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\util\\Origins.scala"
 			],
 			[
 				"Attachments.scala",
@@ -856,28 +1228,12 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\Invoked.scala"
 			],
 			[
-				"ScalaClassLoader.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\util\\ScalaClassLoader.scala"
-			],
-			[
-				"ClassAndJarInfo.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\io\\ClassAndJarInfo.scala"
-			],
-			[
-				"Exception.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\util\\control\\Exception.scala"
-			],
-			[
 				"Marshal.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\util\\Marshal.scala"
 			],
 			[
 				"Future.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\concurrent\\Future.scala"
-			],
-			[
-				"ParIterableLike.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\collection\\parallel\\ParIterableLike.scala"
 			],
 			[
 				"ClassTag.scala",
@@ -912,16 +1268,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\util\\PathResolver.scala"
 			],
 			[
-				"package.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\package.scala"
-			],
-			[
 				"WrappedProperties.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\WrappedProperties.scala"
-			],
-			[
-				"Shield.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\reflect\\Shield.scala"
 			],
 			[
 				"DestructureTypes.scala",
@@ -960,16 +1308,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\phases\\Calculate.scala"
 			],
 			[
-				"Parsers.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\makro\\runtime\\Parsers.scala"
-			],
-			[
 				"ContextReifiers.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\makro\\runtime\\ContextReifiers.scala"
-			],
-			[
-				"TraceSymbolActivity.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\internal\\util\\TraceSymbolActivity.scala"
 			],
 			[
 				"Transforms.scala",
@@ -1006,10 +1346,6 @@
 			[
 				"Byte.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\Byte.scala"
-			],
-			[
-				"Context.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\Context.scala"
 			],
 			[
 				"Enclosures.scala",
@@ -1140,10 +1476,6 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\ScalaSignature.java"
 			],
 			[
-				"Typers.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\makro\\Typers.scala"
-			],
-			[
 				"t5418.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\test\\pending\\run\\t5418.scala"
 			],
@@ -1158,10 +1490,6 @@
 			[
 				"2012-06-02-01-18-37-kur-compile.log",
 				"C:\\Users\\xeno.by\\.myke\\2012-06-02-01-18-37-kur-compile.log"
-			],
-			[
-				"Extractors.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\reflect\\reify\\utils\\Extractors.scala"
 			],
 			[
 				"Evals.scala",
@@ -1348,16 +1676,8 @@
 				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\interpreter\\Naming.scala"
 			],
 			[
-				"Universe.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\library\\scala\\reflect\\api\\Universe.scala"
-			],
-			[
 				"t5273_2a_newpatmat.scala",
 				"C:\\Projects\\KeplerUnderRefactoring\\test\\pending\\run\\t5273_2a_newpatmat.scala"
-			],
-			[
-				"SymbolTable.scala",
-				"C:\\Projects\\KeplerUnderRefactoring\\src\\compiler\\scala\\tools\\nsc\\symtab\\SymbolTable.scala"
 			],
 			[
 				"t5334_1.scala",
@@ -1862,8 +2182,48 @@
 				"C:\\Projects\\Kepler\\src\\compiler\\scala\\reflect\\internal\\Definitions.scala"
 			],
 			[
+				"Taggings.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Taggings.scala"
+			],
+			[
+				"RefChecks.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\typechecker\\RefChecks.scala"
+			],
+			[
+				"Typers.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Typers.scala"
+			],
+			[
 				"Macros.scala",
 				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Macros.scala"
+			],
+			[
+				"FastTrack.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\reflect\\FastTrack.scala"
+			],
+			[
+				"Flags.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\reflect\\internal\\Flags.scala"
+			],
+			[
+				"Global.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\Global.scala"
+			],
+			[
+				"2012-06-02-23-27-01-kur-compile.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-02-23-27-01-kur-compile.log"
+			],
+			[
+				"2012-06-02-23-27-12-kep-compile.log",
+				"C:\\Users\\xeno.by\\.myke\\2012-06-02-23-27-12-kep-compile.log"
+			],
+			[
+				"Namers.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\tools\\nsc\\typechecker\\Namers.scala"
+			],
+			[
+				"HasFlags.scala",
+				"C:\\Projects\\Kepler\\src\\compiler\\scala\\reflect\\internal\\HasFlags.scala"
 			],
 			[
 				"Metalevels.scala",

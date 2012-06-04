@@ -366,3 +366,6 @@
 -run(Thread.java:662)\n\n\nscala> ru.typeOf[List[Nothing]]
 -scala.reflect.runtime.universe.typeOf[List[Nothing]]
 -a:908)\r\n  at java.lang.Thread.run(Thread.java:662)
+-typeTag[List[Int]]
+-reify
+-typeTag
