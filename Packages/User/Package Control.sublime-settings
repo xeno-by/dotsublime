@@ -1,5 +1,5 @@
 {
-	"auto_upgrade_last_run": 1338795910,
+	"auto_upgrade_last_run": 1338667023,
 	"installed_packages":
 	[
 		"BracketHighlighter",
@@ -11,8 +11,7 @@
 		"Quick File Creator",
 		"SideBarEnhancements",
 		"SideBarGit",
-		"Theme - Soda",
-		"Theme - Soda Refined"
+		"Theme - Soda"
 	],
 	"repositories":
 	[
