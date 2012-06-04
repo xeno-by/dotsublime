@@ -70,7 +70,8 @@ and don't need to be repeated here. Anything listed here will take precedence, h
 			{ "key": "has_prev_field", "operator": "equal", "operand": true }
 		]
 	},
-	{ "keys": ["escape"], "command": "hide_panel", "context":
+	{ "keys": ["escape"], "command": "hide_panel", "args": {"cancel": true},
+		"context":
 		[
 			{ "key": "panel_visible", "operator": "equal", "operand": true }
 		]
