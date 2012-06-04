@@ -14,7 +14,8 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     group, index = window.get_view_index(new)
     if group != 1:
       window.set_view_index(new, 1, len(window.views_in_group(1)))
-#    window.focus_view(view)
+    window.focus_view(view)
+    window.focus_view(new)
 
 class MoveFileToSplit(sublime_plugin.WindowCommand):
   def run(self):

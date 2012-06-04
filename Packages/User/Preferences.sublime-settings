@@ -38,6 +38,7 @@
 	"match_brackets_square": false,
 	"match_tags": false,
 	"overlay_scroll_bars": "enabled",
+	"preview_on_click": false,
 	"save_on_focus_lost": true,
 	"shift_tab_unindent": false,
 	"smart_indent": true,
