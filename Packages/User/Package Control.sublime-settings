@@ -1,21 +1,21 @@
 {
-	"auto_upgrade_last_run": 1338848669,
-	"installed_packages":
-	[
-		"BracketHighlighter",
-		"FileDiffs",
-		"Git",
-		"GotoRecent",
-		"HexViewer",
-		"Package Control",
-		"Quick File Creator",
-		"SideBarEnhancements",
-		"SideBarGit",
-		"Theme - Soda",
-		"Theme - Soda Refined"
-	],
-	"repositories":
-	[
-		"http://wuub.net/sublimepty-alpha.json"
-	]
+  "auto_upgrade_last_run": 1338848669,
+  "installed_packages":
+  [
+    "BracketHighlighter",
+    "FileDiffs",
+    "Git",
+    "GotoRecent",
+    "HexViewer",
+    "Package Control",
+    "Quick File Creator",
+    "SideBarEnhancements",
+    "SideBarGit",
+    "Theme - Soda",
+    "Theme - Soda Refined"
+  ],
+  "repositories":
+  [
+    "http://wuub.net/sublimepty-alpha.json"
+  ]
 }
