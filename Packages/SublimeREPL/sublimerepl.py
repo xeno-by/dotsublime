@@ -189,16 +189,17 @@ class PersistentHistory(History):
 
 class ReplView(object):
     def __init__(self, view, repl, syntax):
-        view.settings().set("repl_external_id", repl.external_id)
-        view.settings().set("repl_id", repl.id)
-        view.settings().set("repl", True)
         self.repl = repl
         self._view = view
         if syntax:
             view.set_syntax_file(syntax)
 
         self._output_end = view.size()
-        self.mutex = Lock()
+
+        view.settings().set("repl_external_id", repl.external_id)
+        view.settings().set("repl_id", repl.id)
+        view.settings().set("repl", True)
+        view.settings().set("translate_tabs_to_spaces", False)
 
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -229,8 +230,10 @@ class ReplView(object):
     def adjust_end(self):
         if self.repl.suppress_echo:
             v = self._view
+            vsize = v.size()
+            self._output_end = min(vsize, self._output_end)
             edit = v.begin_edit()
-            v.erase(edit, sublime.Region(self._output_end, v.size()))
+            v.erase(edit, sublime.Region(self._output_end, vsize))
             v.end_edit(edit)
         else:
             self._output_end = self._view.size()
@@ -238,15 +241,6 @@ class ReplView(object):
     def write(self, unistr):
         """Writes output from Repl into this view."""
         # string is assumet to be already correctly encoded
-        # self.mutex.acquire()
-        # stamp = time.time()
-        # print "writing " + unistr
-        # try:
-        #     print "enter write: " + str(stamp)
-        #xeno.by: hack!
-        unistr = unistr.replace("cd ..\r\n", "")
-        unistr = unistr.replace("cd ..\n", "")
-        unistr = unistr.replace("cd ..", "")
         v = self._view
         edit = v.begin_edit()
         try:
@@ -255,9 +249,6 @@ class ReplView(object):
         finally:
             v.end_edit(edit)
         self.scroll_to_end()
-        #     print "exit write: " + str(stamp)
-        # finally:
-        #     self.mutex.release()
 
     def scroll_to_end(self):
         v = self._view
@@ -527,22 +518,6 @@ class ReplShiftHomeCommand(sublime_plugin.TextCommand):
         else:
             for i in range(1, delta + 1):
                 w.run_command("move", {"by": "characters", "forward": False, "extend": True})
-
-
-class ReplCtrlPageupCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv = repl_view(v)
-        delta = v.sel()[0].begin() - rv._output_end
-        if delta < 0:
-            w.run_command("prev_view")
-        else:
-            input = rv.user_input()
-            w.run_command("repl_escape")
-            rv.append_input_text("cd ..", edit)
-            w.run_command("repl_enter")
-            sublime.set_timeout(lambda: rv.append_input_text(input, edit), 200)
 
 
 class ReplInsertFilenameCommand(sublime_plugin.TextCommand):
