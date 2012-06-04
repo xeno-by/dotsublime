@@ -126,8 +126,8 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         #xeno.by: hack: would be much nicer if we could communicate with myke about these
         # sure, it sets the regexes after the build, but that's not very convenient, especially given that we can press Ctrl+C before the build ends
-        file_regex = file_regex if file_regex and file_regex != "weird value stubs" else "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)"
-        line_regex = line_regex if line_regex and line_regex != "weird value stubs" else ""
+        file_regex = file_regex if file_regex and file_regex != "hello from myke" else "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)"
+        line_regex = line_regex if line_regex and line_regex != "hello from myke" else ""
 
         # Default the to the current files directory if no working directory was given
         if (working_dir == "" and self.window.active_view()
@@ -141,6 +141,9 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         # Call get_output_panel a second time after assigning the above
         # settings, so that it'll be picked up as a result buffer
         #xeno.by: self.window.get_output_panel("exec")
+        other_view = self.window.new_file()
+        self.window.focus_view(other_view)
+        self.window.run_command("close_file")
         self.window.focus_view(self.output_view)
 
         self.encoding = encoding

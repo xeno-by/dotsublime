@@ -142,7 +142,7 @@ class MykeCommand(sublime_plugin.WindowCommand):
       self.settings.save()
       cmd = ["myke", "/S", self.cmd, self.current_file] + self.args
       cmd = cmd[:3] + cmd[4:] if self.cmd == "menu" or self.cmd == "remote" or self.cmd.startswith("smart") else cmd
-      self.window.run_command("exec", {"title": view_name, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "weird value stubs", "line_regex": "are necessary for sublime"})
+      self.window.run_command("exec", {"title": view_name, "cmd": cmd, "cont": "myke_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "hello from myke", "line_regex": "hello from myke"})
 
   def load_settings(self):
     return

@@ -172,7 +172,7 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
         # filters out temporary navs from ctrl+f and ctrl+g
         active_view_id = view.window() and view.window().active_view() and view.window().active_view().id()
         if hasattr(self, "_last_activated") and self._last_activated and self._last_activated != active_view_id:
-            print("nav_history: on_selection_modified when an overlay is active, skipped")
+            # print("nav_history: on_selection_modified when an overlay is active, skipped")
             return
 
         self.possiblyRecordMovement(view)

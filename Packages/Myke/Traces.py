@@ -1,6 +1,7 @@
 import sublime, sublime_plugin
 import subprocess
 import os
+import re
 
 class MykeLastTrace(sublime_plugin.WindowCommand):
   def run(self):
@@ -74,3 +75,38 @@ class ImportantMykeTraces(object):
       return self.last_trace
     else:
       self.last()
+
+class MykeSmartTraceLoader(sublime_plugin.EventListener):
+  def on_load(self, view):
+    if view.file_name() and view.file_name().startswith(r"C:\Users\xeno.by\.myke_important"):
+      # myke<WSP>rebuild<WSP>C:\Projects\KeplerUnderRefactoring<WSP>args
+      first_line = view.substr(view.line(sublime.Region(0, 0)))
+      m = re.search(r"myke (.*?) (.*)", first_line)
+      if m:
+        action = m.group(1)
+        targs = m.group(2)
+        if not targs.startswith("\""):
+          iof = targs.index(" ")
+          target = targs[:iof]
+          s_args = targs[(iof + 1):]
+        else:
+          iof = targs.index("\"", 1)
+          target = targs[:iof][1:-1]
+          s_args = targs[(iof + 2):]
+        args = s_args.split(" ") if s_args else []
+        print "target = " + target
+        print "args = " + str(args)
+
+        view.settings().set("myke_command", action)
+        view.settings().set("myke_current_file", target)
+        view.settings().set("myke_args", args)
+        view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
+        view.settings().set("result_line_regex", "")
+        view.settings().set("result_base_dir", "")
+
+        # this is necessary for result_* settings to be applied
+        window = view.window()
+        other_view = window.new_file()
+        window.focus_view(other_view)
+        window.run_command("close_file")
+        window.focus_view(view)
