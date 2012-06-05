@@ -63,6 +63,9 @@
       "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"
     },
     {
+      "path": "/C/Projects/libgit2sharp"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.sublime_session",

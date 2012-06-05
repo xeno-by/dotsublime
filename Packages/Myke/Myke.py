@@ -234,11 +234,14 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
 
     result_file_regex = env["ResultFileRegex"] if "ResultFileRegex" in env else ""
     result_line_regex = env["ResultLineRegex"] if "ResultLineRegex" in env else ""
-    working_dir = env["WorkingDir"]
+    result_base_dir = env["ResultBaseDir"] if "ResultBaseDir" in env else (env["WorkingDir"] or "")
     if result_file_regex or result_line_regex:
       view.settings().set("result_file_regex", result_file_regex)
       view.settings().set("result_line_regex", result_line_regex)
-      view.settings().set("result_base_dir", env["WorkingDir"])
+      view.settings().set("result_base_dir", result_base_dir)
+      other_view = window.new_file()
+      window.focus_view(other_view)
+      window.run_command("close_file")
       window.focus_view(view)
 
     view.settings().erase("no_history")
