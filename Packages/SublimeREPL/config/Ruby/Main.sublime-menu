@@ -1,0 +1,32 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "Ruby",
+                 "id": "repl_ruby",
+                 "mnemonic": "r",
+                 "args": {
+                    "type": "subprocess",
+                    "external_id": "ruby",
+                    "encoding": "utf8",
+                    "cmd": {"windows": ["irb.bat", "--noreadline", "--inf-ruby-mode"],
+                            "linux": ["irb", "--noreadline", "--inf-ruby-mode"],
+                            "osx": ["irb", "--noreadline", "--inf-ruby-mode"]},
+                    "soft_quit": "\nexit\n",
+                    "cwd": "$file_path",
+                    "cmd_postfix": "\n", // postfix 
+                    "suppress_echo": true,
+                    "syntax": "Packages/Ruby/Ruby.tmLanguage"
+                    }
+                }
+            ]   
+        }]
+    }
+]

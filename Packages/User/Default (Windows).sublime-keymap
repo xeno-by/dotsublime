@@ -4,9 +4,7 @@
   { "keys": ["ctrl+shift+f4"], "command": "close_other_tabs"},
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }, {"key": "setting.repl", "operator": "equal", "operand": false }]},
   { "keys": ["alt+shift+insert"], "command": "copy_path" },
-//  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console_main"}},
-  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console_new"}},
-//  { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "console_new"}},
+  { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console"}},
   { "keys": ["ctrl+shift+o"], "command": "myke", "args": {"cmd": "remote", "args": ["update"]}},
   { "keys": ["ctrl+delete"], "command": "myke", "args": {"cmd": "clean"}},
   { "keys": ["alt+b+r"], "command": "myke", "args": {"cmd": "rebuild"}},
@@ -70,5 +68,13 @@
   { "keys": ["ctrl+shift+."], "command": "my_filter"},
   { "keys": ["ctrl+shift+z"], "command": "reopen_last_file" },
   { "keys": ["super+shift+c"], "command": "side_bar_duplicate" },
-  { "keys": ["ctrl+e"], "command": "goto_recent" }
+  { "keys": ["ctrl+e"], "command": "goto_recent" },
+  { "keys": ["ctrl+up"], "command": "repl_view_previous", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
+  { "keys": ["ctrl+down"], "command": "repl_view_next", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
+  { "keys": ["tab"], "command": "insert_best_completion", "args": {"default": "", "exact": true}, "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
+  { "keys": ["tab"], "command": "insert_best_completion", "args": {"default": "", "exact": false}, "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "setting.tab_completion", "operator": "equal", "operand": true }]},
+  { "keys": ["tab"], "command": "replace_completion_with_next_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "last_command", "operator": "equal", "operand": "insert_best_completion" }, { "key": "setting.tab_completion", "operator": "equal", "operand": true }]},
+  { "keys": ["tab"], "command": "commit_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible" }]},
+  { "keys": ["enter"], "command": "commit_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible" }]},
+  { "keys": ["escape"], "command": "hide_auto_complete", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": true }]}
 ]

@@ -1,0 +1,57 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"caption": "Python",
+                 
+                 "children":[
+                    {"command": "repl_open", 
+                     "caption": "Python",
+                     "id": "repl_python",
+                     "mnemonic": "p",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": ["python", "-i", "-u"],
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python"
+                        }
+                    },
+                    {"command": "repl_open", 
+                     "caption": "Python - PDB current file",
+                     "id": "repl_python_pdb",
+                     "mnemonic": "d",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": ["python", "-i", "-u", "-m", "pdb", "$file_basename"],
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python"
+                        }
+                    },
+                    {"command": "repl_open", 
+                     "caption": "Python - RUN current file",
+                     "id": "repl_python_run",
+                     "mnemonic": "d",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": ["python", "-u", "$file_basename"],
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python"
+                        }
+                    }
+                ]}
+            ]   
+        }]
+    }
+]
