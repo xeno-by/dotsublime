@@ -7,7 +7,7 @@
         "*.js",
         "*.orig"
       ],
-      "path": "/C/Projects/Kepler/src/library"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/src/library"
     },
     {
       "file_exclude_patterns":
@@ -15,7 +15,7 @@
         "*.js",
         "*.orig"
       ],
-      "path": "/C/Projects/Kepler/src/reflect"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/src/reflect"
     },
     {
       "file_exclude_patterns":
@@ -23,31 +23,28 @@
         "*.js",
         "*.orig"
       ],
-      "path": "/C/Projects/Kepler/src/compiler"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/src/compiler"
     },
     {
-      "path": "/C/Projects/Donor/src/partest"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/src/continuations"
     },
     {
-      "path": "/C/Projects/Kepler/src/continuations"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/src/partest"
     },
     {
-      "path": "/C/Projects/Kepler/sandbox"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/sandbox"
     },
     {
-      "path": "/C/Projects/Kepler/sandbox3"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/test/files"
     },
     {
-      "path": "/D/Dropbox/Scratchpad/Scala"
+      "path": "/C/Projects/KeplerUnderRefactoring_Stable/test/pending"
     },
     {
-      "path": "/C/Projects/Kepler/test/files"
+      "path": "/C/Projects/BuildXMLs/KeplerUnderRefactoring_Stable"
     },
     {
-      "path": "/C/Projects/Kepler/test/pending"
-    },
-    {
-      "path": "/C/Projects/BuildXMLs/Kepler"
+      "path": "/C/Program Files (x86)/scripts"
     },
     {
       "folder_exclude_patterns":
@@ -58,9 +55,6 @@
     },
     {
       "path": "/C/Projects/Meta2012"
-    },
-    {
-      "path": "/C/Program Files (x86)/scripts"
     },
     {
       "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"

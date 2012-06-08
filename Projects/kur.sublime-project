@@ -4,21 +4,24 @@
     {
       "file_exclude_patterns":
       [
-        "*.js"
+        "*.js",
+        "*.orig"
       ],
       "path": "/C/Projects/KeplerUnderRefactoring/src/library"
     },
     {
       "file_exclude_patterns":
       [
-        "*.js"
+        "*.js",
+        "*.orig"
       ],
       "path": "/C/Projects/KeplerUnderRefactoring/src/reflect"
     },
     {
       "file_exclude_patterns":
       [
-        "*.js"
+        "*.js",
+        "*.orig"
       ],
       "path": "/C/Projects/KeplerUnderRefactoring/src/compiler"
     },

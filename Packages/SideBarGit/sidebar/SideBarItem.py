@@ -5,6 +5,7 @@ import re
 import shutil
 
 from SideBarProject import SideBarProject
+import desktop
 
 class Object():
 	pass
@@ -93,7 +94,7 @@ class SideBarItem:
 		if path == '':
 			return '.'
 		else:
-			return './'+re.sub('^/+', '', path)
+			return re.sub('^/+', '', path)
 
 	def forCwdSystemPathRelativeFromRecursive(self, relativeFrom):
 		relative = SideBarItem(relativeFrom, os.path.isdir(relativeFrom))
@@ -102,9 +103,9 @@ class SideBarItem:
 			return '.'
 		else:
 			if self.isDirectory():
-				return './'+re.sub('^/+', '', path)+'/'
+				return re.sub('^/+', '', path)+'/'
 			else:
-				return './'+re.sub('^/+', '', path)
+				return re.sub('^/+', '', path)
 
 	def dirnameSystem(self):
 		import sys
@@ -139,11 +140,6 @@ class SideBarItem:
 			import subprocess
 			subprocess.Popen([self.nameSystem()], cwd=self.dirnameSystem(), shell=True)
 		else:
-			import sys
-			path = os.path.join(sublime.packages_path(), 'SideBarEnhancements')
-			if path not in sys.path:
-				sys.path.append(path)
-			import desktop
 			desktop.open(self.path())
 
 	def edit(self):
