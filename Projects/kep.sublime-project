@@ -50,6 +50,15 @@
       "path": "/C/Projects/BuildXMLs/Kepler"
     },
     {
+      "path": "/C/Projects/SublimeScala/ScalaRefactoring"
+    },
+    {
+      "path": "/C/Projects/SublimeScala/Scalariform"
+    },
+    {
+      "path": "/C/Projects/SublimeScala/Ensime"
+    },
+    {
       "folder_exclude_patterns":
       [
         "_site"
