@@ -1,6 +1,7 @@
 import os, os.path, sys, stat, functools
 import sublime, sublime_plugin
-from ensime_server import EnsimeOnly
+from ensime_server import ConnectedEnsimeOnly
+from ensime_client import EnsimeMessageHandler
 import ensime_environment
 import sexp
 
@@ -56,13 +57,12 @@ def highlight_errors(view, notes):
       ensime_env.settings.get("error_icon", "cross"),
       sublime.DRAW_OUTLINED)
 
-class EnsimeHighlightCommand(sublime_plugin.WindowCommand):
+class EnsimeHighlightCommand(ConnectedEnsimeOnly, sublime_plugin.WindowCommand):
 
   def is_enabled(self, enable = True):
     now = not not ensime_env.settings.get("error_highlight")
     wannabe = not not enable
-    client = ensime_environment.ensime_env.client()
-    running = client and hasattr(client, "connected") and client.connected
+    running = ConnectedEnsimeOnly.is_enabled(self)
     return running and now != wannabe
 
   def run(self, enable = True):
@@ -76,7 +76,7 @@ class EnsimeHighlightCommand(sublime_plugin.WindowCommand):
 
 view_notes = {}
 
-class EnsimeNotes(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeNotes(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def run(self, edit, action = "add", lang = "scala", value=None):
 
@@ -107,6 +107,16 @@ def run_check(view):
     view.checked = True
     view.run_command("ensime_type_check_file")
 
+class EnsimeNotesMessageHandler(EnsimeMessageHandler):
+
+  def on_disconnect(self, reason):
+    sublime.set_timeout(self.do_erase_error_highlights, 0)
+
+  def do_erase_error_highlights(self):
+    for v in sublime.active_window().views():
+      erase_error_highlights(v)
+
+
 class BackgroundTypeChecker(sublime_plugin.EventListener):
 
 
@@ -114,7 +124,7 @@ class BackgroundTypeChecker(sublime_plugin.EventListener):
     return bool(not view.file_name() is None and view.file_name().endswith(("scala","java")))
 
   def _is_applicable_file(self, view):
-    if self._is_valid_file(view) and ensime_env.client():
+    if self._is_valid_file(view) and ensime_env.client() and ensime_env.client().client.connected:
       root = os.path.normcase(os.path.realpath(ensime_env.client().project_root))
       wannabe = os.path.normcase(os.path.realpath(view.file_name()))
       # print "root = " + root + ", wannabe = " + wannabe
@@ -134,7 +144,7 @@ class BackgroundTypeChecker(sublime_plugin.EventListener):
 
 
 
-class EnsimeInspectTypeAtPoint(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeInspectTypeAtPoint(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def handle_reply(self, data):
     d = data[1][1]

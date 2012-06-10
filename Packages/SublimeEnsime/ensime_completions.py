@@ -1,6 +1,5 @@
 import os, sys, stat, random, getpass
 import ensime_environment
-from ensime_server import EnsimeOnly
 import functools, socket, threading
 import sublime_plugin, sublime
 import sexp

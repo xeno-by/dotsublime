@@ -19,14 +19,22 @@ class EnsimeMessageHandler:
 
 class EnsimeServerClient:
 
-  def __init__(self, project_root, handler):
+  def __init__(self, project_root, handlers):
     self.project_root = project_root
     self.connected = False
     self.disconnect_pending = False
-    self.handler = handler
+    self.handlers = handlers
     self._lock = threading.RLock()
     self._connect_lock = threading.RLock()
     self._receiver = None
+
+  def notify_data(self, data):
+    for handler in self.handlers:
+      handler.on_data(data)
+
+  def notify_disconnect(self, reason):
+    for handler in self.handlers:
+      handler.on_disconnect(reason)
 
   def port(self):
     return int(open(ensime_environment.ensime_env.port_file).read())
@@ -43,7 +51,7 @@ class EnsimeServerClient:
           nxt = strip(res[msglen:])
           while len(nxt) > 0 or len(msg) > 0:
             form = sexp.read(msg)
-            sublime.set_timeout(functools.partial(self.handler.on_data, form), 0)
+            sublime.set_timeout(functools.partial(self.notify_data, form), 0)
             if len(nxt) > 0:
               msglen = int(nxt[:6], 16) + 6
               msg = nxt[6:msglen]
@@ -59,7 +67,7 @@ class EnsimeServerClient:
         print e
         reason = "server" if not self.disconnect_pending else "client"
         self.disconnect_pending = False
-        self.handler.on_disconnect(reason)
+        self.notify_disconnect(reason)
         self.set_connected(False)
 
   def set_connected(self, val):
@@ -97,7 +105,7 @@ class EnsimeServerClient:
         self.connect()
       self.client.send(request)
     except:
-      self.handler.disconnect("server")
+      self.notify_disconnect("server")
       self.set_connected(False)
 
   def sync_send(self, request, msg_id):
@@ -118,7 +126,7 @@ class EnsimeServerClient:
             nxt = strip(res[msglen:])
             while len(nxt) > 0 or len(msg) > 0:
               if len(nxt) > 0:
-                sublime.set_timeout(functools.partial(self.handler.on_data, sexp.read(msg)), 0)
+                sublime.set_timeout(functools.partial(self.notify_data, sexp.read(msg)), 0)
                 msglen = int(nxt[:6], 16) + 6
                 msg = nxt[6:msglen]
                 nxt = strip(nxt[msglen:])
@@ -128,7 +136,7 @@ class EnsimeServerClient:
             result = sexp.read(msg)
             keep_going = result == None or msg_id != result[-1]
             if keep_going:
-              sublime.set_timeout(functools.partial(self.handler.on_data, result), 0)
+              sublime.set_timeout(functools.partial(self.notify_data, result), 0)
           else:
             nxt = res
 
@@ -197,11 +205,11 @@ class EnsimeClient(EnsimeMessageHandler):
     self._counter = 0
     self._procedure_counter = 0
     self._counterLock = threading.RLock()
-    self.client = EnsimeServerClient(project_root, self)
+    self.client = EnsimeServerClient(project_root, [self, ensime_notes.EnsimeNotesMessageHandler()])
     self._reply_handlers = {
       ":ok": lambda d: self.message_handlers[d[-1]](d),
-      ":abort": lambda d: sublime.status_message(d[-1]),
-      ":error": lambda d: sublime.error_message(d[-1])
+      ":abort": lambda d: sublime.status_message(str(d[-1])),
+      ":error": lambda d: sublime.error_message(str(d[-1]))
     }
     self._server_message_handlers = {
       ":clear-all-scala-notes": lambda d: clear_notes("scala"),

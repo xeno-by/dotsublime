@@ -1,6 +1,6 @@
 import os, sys, stat, random, getpass
 import ensime_environment
-from ensime_server import EnsimeOnly
+from ensime_server import ConnectedEnsimeOnly
 import functools, socket, threading
 import sublime_plugin, sublime
 
@@ -12,7 +12,7 @@ def save_view(view):
   with open(view.file_name(), 'wb') as f:
     f.write(content.encode("UTF-8"))
 
-class EnsimeReformatSourceCommand(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeReformatSourceCommand(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def handle_reply(self, data):
     self.view.run_command('revert')
@@ -26,7 +26,7 @@ class EnsimeReformatSourceCommand(sublime_plugin.TextCommand, EnsimeOnly):
       vw.run_command("save")
     ensime_environment.ensime_env.client().format_source(vw.file_name(), self.handle_reply)
 
-class RandomWordsOfEncouragementCommand(sublime_plugin.WindowCommand, EnsimeOnly):
+class RandomWordsOfEncouragementCommand(ConnectedEnsimeOnly, sublime_plugin.WindowCommand):
 
   def run(self):
     if not hasattr(self, "phrases"):
@@ -45,7 +45,7 @@ class RandomWordsOfEncouragementCommand(sublime_plugin.WindowCommand, EnsimeOnly
     sublime.status_message(msg + " This could be the start of a beautiful program, " +
       getpass.getuser().capitalize()  + ".")
 
-class EnsimeTypeCheckAllCommand(sublime_plugin.WindowCommand, EnsimeOnly):
+class EnsimeTypeCheckAllCommand(ConnectedEnsimeOnly, sublime_plugin.WindowCommand):
 
   def handle_reply(self, data):
     print "got reply for type check all:"
@@ -55,7 +55,7 @@ class EnsimeTypeCheckAllCommand(sublime_plugin.WindowCommand, EnsimeOnly):
   def run(self):
     ensime_environment.ensime_env.client().type_check_all(self.handle_reply)
 
-class EnsimeTypeCheckFileCommand(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeTypeCheckFileCommand(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def handle_reply(self, data):
     print "got reply for type check file:"
@@ -70,10 +70,10 @@ class EnsimeTypeCheckFileCommand(sublime_plugin.TextCommand, EnsimeOnly):
 
       repl = self.handle_reply
       cl = ensime_environment.ensime_env.client()
-      if not cl is None:
+      if not cl is None and cl.client.connected:
         cl.type_check_file(fname, repl)
 
-class EnsimeOrganizeImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeOrganizeImportsCommand(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def handle_reply(self, edit, data):
     if data[1][1][5] == "success":
@@ -122,7 +122,7 @@ class EnsimeOrganizeImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
     if fname:
       ensime_environment.ensime_env.client().organize_imports(fname, lambda data: self.handle_reply(edit, data))
 
-class EnsimeAcceptImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
+class EnsimeAcceptImportsCommand(ConnectedEnsimeOnly, sublime_plugin.TextCommand):
 
   def handle_reply(self, edit, data):
     self.view.run_command("revert")

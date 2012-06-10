@@ -57,6 +57,8 @@ class AsyncProcess(object):
 
     # garbage collects ensime server processes that were started by sublimes, but weren't stopped
     # unfortunately, atexit doesn't work (see the commented code above), so we have to resort to this ugliness
+    # todo. ideally, this should happen automatically from ensime
+    # e.g. if -Densime.explode.when.zombied is set, then ensime automatically quits when it becomes a zombie
     if os.name == "nt":
       EnumWindows = ctypes.windll.user32.EnumWindows
       EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
@@ -168,7 +170,8 @@ class ScalaOnly:
 
 class EnsimeOnly:
   def ensime_project_file(self):
-    prj_files = [(f + "/.ensime") for f in self.window.folders() if os.path.exists(f + "/.ensime")]
+    w = self.window if hasattr(self, "window") and self.window else sublime.active_window()
+    prj_files = [(f + "/.ensime") for f in w.folders() if os.path.exists(f + "/.ensime")]
     if len(prj_files) > 0:
       return prj_files[0]
     else:
@@ -177,7 +180,16 @@ class EnsimeOnly:
       return None
 
   def is_enabled(self, kill = False):
-    return bool(ensime_environment.ensime_env.client()) and ensime_environment.ensime_env.client.ready() and bool(self.ensime_project_file())
+    c = ensime_environment.ensime_env.client()
+    return bool(c) and c.ready() and bool(self.ensime_project_file())
+
+class ConnectedEnsimeOnly:
+  def is_enabled(self):
+    c = ensime_environment.ensime_env.client()
+    # print "hello from " + str(self)
+    # from pprint import pprint
+    # pprint (vars(c))
+    return bool(c) and c.ready() and hasattr(c.client, "connected") and c.client.connected
 
 class EnsimeServerCommand(sublime_plugin.WindowCommand,
                           ProcessListener, ScalaOnly, EnsimeOnly):
@@ -357,7 +369,7 @@ class CreateEnsimeClientCommand(sublime_plugin.WindowCommand, EnsimeOnly):
     cl.set_ready()
     self.window.run_command("ensime_handshake")
 
-class EnsimeShowMessageViewCommand(sublime_plugin.WindowCommand, EnsimeOnly):
+class EnsimeShowMessageViewCommand(EnsimeOnly, sublime_plugin.WindowCommand):
 
   def run(self):
     self.window.run_command("show_panel", {"panel": "output.ensime_messages"})
