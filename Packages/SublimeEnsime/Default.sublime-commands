@@ -27,6 +27,10 @@
 		"command": "ensime_show_message_view"
 	},
 	{
+		"caption": "Ensime: Show Client/Server REPL",
+		"command": "ensime_show_client_server_repl"
+	},
+	{
 		"caption": "Ensime: Reformat Source",
 		"command": "ensime_reformat_source"
 	},

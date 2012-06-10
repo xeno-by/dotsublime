@@ -8,6 +8,13 @@ class EnsimeEnvironment:
     self._clientLock = threading.RLock()
     self._client = None
 
+    # todo. very ugly. we should think of a better solution
+    self.server_view = None
+    self.client_view = None
+    self.repl_view = None
+    self.repl_last_insert = 0
+    self.repl_lock = threading.RLock()
+
   def set_client(self, client):
     self._clientLock.acquire()
     try:
