@@ -155,7 +155,7 @@ class Popen(subprocess.Popen):
                 # We create a new job for this process, so that we can kill
                 # the process and any sub-processes
                 self._job_name = "sublime-ensime-" + str(os.getpid())
-                self._job = winprocess.CreateJobObject(None, )
+                self._job = winprocess.CreateJobObject(None, self._job_name)
                 print "created a job with name: " + self._job_name
                 winprocess.AssignProcessToJobObject(self._job, int(hp))
             else:

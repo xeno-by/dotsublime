@@ -50,7 +50,8 @@ class AsyncProcess(object):
         try:
           job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, "sublime-ensime-" + str(os.getpid()))
           killableprocess.winprocess.TerminateJobObject(job, 127)
-        except:
+        except :
+          print sys.exc_info()[1]
           pass
       else:
         os.killpg(int(previous), signal.SIGKILL)

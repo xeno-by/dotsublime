@@ -29,9 +29,19 @@
       "path": "/C/Projects/Kepler/src/compiler"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/Donor/src/partest"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/Kepler/src/continuations"
     },
     {
@@ -41,30 +51,34 @@
       "path": "/D/Dropbox/Scratchpad/Scala"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/Kepler/test/files"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/Kepler/test/pending"
     },
     {
-      "path": "/C/Projects/SublimeScala/ScalaRefactoring"
-    },
-    {
-      "path": "/C/Projects/SublimeScala/Scalariform"
-    },
-    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/SublimeScala/Ensime"
-    },
-    {
-      "path": "/C/Projects/SublimeScala/Jerkson"
-    },
-    {
-      "path": "/C/Projects/SublimeScala/Simplespec"
     },
     {
       "folder_exclude_patterns":
       [
-        "_site"
+        "_site",
+        "*.orig"
       ],
       "path": "/C/Projects/Pages"
     },
@@ -75,9 +89,17 @@
       "path": "/C/Program Files (x86)/scripts"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.orig"
+      ],
       "path": "/D/Dropbox/Software/Windows/Far Manager/Sources"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.orig"
+      ],
       "path": "/C/Projects/libgit2sharp"
     },
     {
@@ -85,7 +107,8 @@
       [
         "*.sublime_session",
         "*.sublime-project",
-        "*.sublime-workspace"
+        "*.sublime-workspace",
+        "*.orig"
       ],
       "path": "/C/Users/xeno.by/AppData/Roaming/Sublime Text 2"
     }
