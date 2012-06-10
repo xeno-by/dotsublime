@@ -11,7 +11,7 @@ def save_view(view):
   content = view.substr(sublime.Region(0, view.size()))
   with open(view.file_name(), 'wb') as f:
     f.write(content.encode("UTF-8"))
-                
+
 class EnsimeReformatSourceCommand(sublime_plugin.TextCommand, EnsimeOnly):
 
   def handle_reply(self, data):
@@ -39,10 +39,10 @@ class RandomWordsOfEncouragementCommand(sublime_plugin.WindowCommand, EnsimeOnly
         "Find closure!",
         "May the _ be with you.",
         "CanBuildFrom[List[Dream], Reality, List[Reality]]"
-      ]  
+      ]
     msgidx = random.randint(0, len(self.phrases) - 1)
     msg = self.phrases[msgidx]
-    sublime.status_message(msg + " This could be the start of a beautiful program, " + 
+    sublime.status_message(msg + " This could be the start of a beautiful program, " +
       getpass.getuser().capitalize()  + ".")
 
 class EnsimeTypeCheckAllCommand(sublime_plugin.WindowCommand, EnsimeOnly):
@@ -90,12 +90,12 @@ class EnsimeOrganizeImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
       prev = self.view.substr(sublime.Region(0, start))
 
       on_done = functools.partial(self.on_done, data[1][1][1], data[-1], ov)
- 
+
       new_cntnt = new_cntnt.replace('\r\n', '\n').replace('\r', '\n')
- 
+
       cl = ensime_environment.ensime_env.client()
       cl.window.show_quick_panel(["Accept changes", "Reject changes"], on_done)
- 
+
       ov.set_read_only(False)
       edt = ov.begin_edit()
       ov.insert(edt, 0, prelude + prev + new_cntnt)
@@ -122,7 +122,7 @@ class EnsimeOrganizeImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
     if fname:
       ensime_environment.ensime_env.client().organize_imports(fname, lambda data: self.handle_reply(edit, data))
 
-class EnsimeAcceptImportsCommand(sublime_plugin.TextCommand, EnsimeOnly): 
+class EnsimeAcceptImportsCommand(sublime_plugin.TextCommand, EnsimeOnly):
 
   def handle_reply(self, edit, data):
     self.view.run_command("revert")

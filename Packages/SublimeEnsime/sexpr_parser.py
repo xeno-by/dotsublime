@@ -1,19 +1,19 @@
 # $ProjectHeader: sexprmodule 0.2.1 Wed, 05 Apr 2000 23:33:53 -0600 nas $
-# originally from: http://arctrix.com/nas/python/ 
+# originally from: http://arctrix.com/nas/python/
 # modified to understand \-escaped quotes instead of "" escaping  - pj 20060809
 # IPC: taken from http://code.google.com/p/mhi/source/browse/sexpr.py  11 Jul 2011
 import string
 import StringIO
 from StringIO import StringIO
 # tokens
-[T_EOF, T_ERROR, T_SYMBOL, T_STRING, 
+[T_EOF, T_ERROR, T_SYMBOL, T_STRING,
  T_INTEGER, T_FLOAT, T_OPEN, T_CLOSE] = range(8)
 # states
 [S_START, S_SYMBOL, S_STRING, S_NUMBER] = range(4)
 
 SexprError = 'SexprError'
 
-def parse(expr): 
+def parse(expr):
   return SexprParser(StringIO(expr)).parse()
 
 class SexprParser:
@@ -35,7 +35,7 @@ class SexprParser:
 
   def ungetc(self, c):
     self.char = c
-    
+
   def convert_number(self, token):
     try:
       i = string.atoi(token)
@@ -106,7 +106,7 @@ class SexprParser:
         elif c in '0123456789.eE-':
           token.append(c)
         else:
-          return (T_ERROR, '%d: invalid character "%s" while reading integer' 
+          return (T_ERROR, '%d: invalid character "%s" while reading integer'
                     % (self.line_no, c))
 
   def parse(self, t=None):

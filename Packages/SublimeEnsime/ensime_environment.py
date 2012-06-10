@@ -1,4 +1,4 @@
-import threading 
+import threading
 import sublime
 
 class EnsimeEnvironment:

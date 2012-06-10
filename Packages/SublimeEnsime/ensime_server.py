@@ -1,4 +1,4 @@
-import os, sys, stat, time, datetime, re, random
+import os, ctypes, sys, signal, stat, tempfile, time, datetime, re, random
 from ensime_client import *
 import ensime_environment
 import functools, socket, threading
@@ -6,6 +6,7 @@ import sublime_plugin, sublime
 import thread
 import logging
 import subprocess
+import killableprocess
 import sexp
 from sexp import key,sym
 
@@ -29,13 +30,81 @@ class AsyncProcess(object):
     # Hide the console window on Windows
     startupinfo = None
     if os.name == "nt":
-      startupinfo = subprocess.STARTUPINFO()
-      startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+      startupinfo = killableprocess.STARTUPINFO()
+      startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
+      startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
+    creationflags = None
+    if os.name =="nt":
+      creationflags = 0x8000000 # CREATE_NO_WINDOW
 
     proc_env = os.environ.copy()
 
-    self.proc = subprocess.Popen(arg_list, stdout=subprocess.PIPE,
-      stderr=subprocess.PIPE, startupinfo=startupinfo, env=proc_env, cwd = cwd)
+    # kill ensime servers that are already running and were launched by this instance of sublime
+    # this can happen when you press ctrl+s on sublime-ensime files, sublime reloads them
+    # and suddenly SublimeServerCommand has a new singleton instance, and a process it hosts becomes a zombie
+    processes = ensime_environment.ensime_env.settings.get("processes", {})
+    previous = processes.get(str(os.getpid()), None)
+    if previous:
+      print "killing orphaned ensime server process with pid " + str(previous)
+      if os.name == "nt":
+        try:
+          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, "sublime-ensime-" + str(os.getpid()))
+          killableprocess.winprocess.TerminateJobObject(job, 127)
+        except:
+          pass
+      else:
+        os.killpg(int(previous), signal.SIGKILL)
+
+    # garbage collects ensime server processes that were started by sublimes, but weren't stopped
+    # unfortunately, atexit doesn't work (see the commented code above), so we have to resort to this ugliness
+    if os.name == "nt":
+      EnumWindows = ctypes.windll.user32.EnumWindows
+      EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
+      GetWindowText = ctypes.windll.user32.GetWindowTextW
+      GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
+      IsWindowVisible = ctypes.windll.user32.IsWindowVisible
+      GetWindowThreadProcessId = ctypes.windll.user32.GetWindowThreadProcessId
+      active_sublimes = set()
+      def foreach_window(hwnd, lParam):
+        if IsWindowVisible(hwnd):
+          length = GetWindowTextLength(hwnd)
+          buff = ctypes.create_unicode_buffer(length + 1)
+          GetWindowText(hwnd, buff, length + 1)
+          title = buff.value
+          if title.endswith("- Sublime Text 2"):
+            pid = ctypes.c_int()
+            tid = GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+            active_sublimes.add(pid.value)
+        return True
+      EnumWindows(EnumWindowsProc(foreach_window), 0)
+      for sublimepid in [sublimepid for sublimepid in processes.keys() if not int(sublimepid) in active_sublimes]:
+        ensimepid = processes[sublimepid]
+        del processes[sublimepid]
+        print "found a zombie ensime server process with pid " + str(ensimepid)
+        try:
+          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, "sublime-ensime-" + str(sublimepid))
+          killableprocess.winprocess.TerminateJobObject(job, 127)
+        except:
+          pass
+    else:
+      # todo. Vlad, please, implement similar logic for Linux
+      pass
+
+    self.proc = killableprocess.Popen(
+      arg_list,
+      stdout = subprocess.PIPE,
+      stderr = subprocess.PIPE,
+      startupinfo = startupinfo,
+      creationflags = creationflags,
+      env = proc_env,
+      cwd = cwd)
+    print "started ensime server with pid " + str(self.proc.pid)
+    processes[str(os.getpid())] = str(self.proc.pid)
+    ensime_environment.ensime_env.settings.set("processes", processes)
+    # todo. this will leak pids if there are multiple sublimes launching ensimes simultaneously
+    # and, in general, we should also address the fact that sublime-ensime assumes at most single ensime per window
+    # finally, it's unclear whether to allow multiple ensimes for the same project launched by different sublimes
+    sublime.save_settings("Ensime.sublime-settings")
 
     if self.proc.stdout:
       thread.start_new_thread(self.read_stdout, ())
@@ -103,13 +172,14 @@ class EnsimeOnly:
     if len(prj_files) > 0:
       return prj_files[0]
     else:
+      print "There are no open folders. Please open a folder containing a .ensime file."
       #sublime.error_message("There are no open folders. Please open a folder containing a .ensime file.")
       return None
 
   def is_enabled(self, kill = False):
     return bool(ensime_environment.ensime_env.client()) and ensime_environment.ensime_env.client.ready() and bool(self.ensime_project_file())
 
-class EnsimeServerCommand(sublime_plugin.WindowCommand, 
+class EnsimeServerCommand(sublime_plugin.WindowCommand,
                           ProcessListener, ScalaOnly, EnsimeOnly):
 
   def ensime_project_root(self):
@@ -123,39 +193,43 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
     return hasattr(self, 'proc') and self.proc and self.proc.poll()
 
   def is_enabled(self, **kwargs):
-    start, kill, show_output = (kwargs.get("start", False), 
-                                kwargs.get("kill", False), 
+    start, kill, show_output = (kwargs.get("start", False),
+                                kwargs.get("kill", False),
                                 kwargs.get("show_output", False))
-    return (((kill or show_output) and self.is_started()) or 
+    return (((kill or show_output) and self.is_started()) or
             (start and bool(self.ensime_project_file())))
-                
+
   def show_output_window(self, show_output = False):
     if show_output:
       self.window.run_command("show_panel", {"panel": "output.ensime_server"})
 
-  def ensime_command(self): 
+  def ensime_command(self):
     if os.name == 'nt':
       return "bin\\server.bat"
-    else: 
+    else:
       return "bin/server"
 
   def default_ensime_install_path(self):
     if os.name == 'nt':
       return "Ensime\\server"
-    else: 
-      return "Ensime/server"    
+    else:
+      return "Ensime/server"
 
 
-  def run(self, encoding = "utf-8", env = {}, 
-          start = False, quiet = True, kill = False, 
-          show_output = True):
+  def run(self, encoding = "utf-8", env = {},
+          start = False, quiet = True, kill = False,
+          show_output = None):
     print "Running: " + self.__class__.__name__
-    self.show_output = show_output
     if not hasattr(self, 'settings'):
       self.settings = sublime.load_settings("Ensime.sublime-settings")
+    self.show_output = show_output = show_output if show_output != None else self.settings.get("show_output_during_server_startup", False)
 
     server_dir = self.settings.get("ensime_server_path", self.default_ensime_install_path())
     server_path = server_dir if server_dir.startswith("/") else os.path.join(sublime.packages_path(), server_dir)
+
+    if not os.path.exists(server_path):
+      sublime.error_message("Ensime server path \"" + server_path + "\" points to a non-existent directory. Check your Ensime.sublime-settings.")
+      return
 
     if kill:
       ensime_environment.ensime_env.client().sync_req([sym("swank:shutdown-server")])
@@ -197,15 +271,18 @@ class EnsimeServerCommand(sublime_plugin.WindowCommand,
       self.show_output = show_output
       if start:
         cl = EnsimeClient(
-          ensime_environment.ensime_env.settings, 
+          ensime_environment.ensime_env.settings,
           self.window, self.ensime_project_root())
         sublime.set_timeout(
           functools.partial(ensime_environment.ensime_env.set_client, cl), 0)
         vw = self.window.active_view()
+        _, port_file = tempfile.mkstemp("ensime_port")
+        # port_file = self.ensime_project_root() + "/.ensime_port"
+        ensime_environment.ensime_env.port_file = port_file
         self.proc = AsyncProcess([server_path + '/' + self.ensime_command(),
-				  self.ensime_project_root() + "/.ensime_port"],
-				  self,
-				  server_path)
+                                  port_file],
+                                  self,
+                                  server_path)
     except err_type as e:
       print str(e)
       self.append_data(None, str(e) + '\n')
@@ -295,7 +372,7 @@ class EnsimeHandshakeCommand(sublime_plugin.WindowCommand, EnsimeOnly):
       sublime.status_message("Initializing... ")
       ensime_environment.ensime_env.client().initialize_project(self.handle_init_reply)
     else:
-      sublime.error_message("There was problem initializing ensime, msgno: " + 
+      sublime.error_message("There was problem initializing ensime, msgno: " +
                             str(server_info[2]) + ".")
 
   def run(self):

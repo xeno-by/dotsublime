@@ -1,0 +1,13 @@
+{
+	"ensime_server_path": "SublimeEnsime/server",
+	"ensime_work_dir": "SublimeEnsime/work",
+	"error_highlight": true,
+	"error_icon": "dot",
+	"error_underline": false,
+	"processes":
+	{
+		"4192": "3224"
+	},
+	"show_output_during_server_startup": false,
+	"use_auto_complete": false
+}

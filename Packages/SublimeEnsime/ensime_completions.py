@@ -17,15 +17,15 @@ class EnsimeCompletion:
 
 def ensime_completion(p):
     return EnsimeCompletion(
-      p[":name"], 
-      p[":type-sig"], 
-      p[":type-id"], 
+      p[":name"],
+      p[":type-sig"],
+      p[":type-id"],
       bool(p[":is-callable"]) if ":is-callable" in p else False,
       p[":to-insert"] if ":to-insert" in p else None)
 
 
-class EnsimeCompletionsListener(sublime_plugin.EventListener): 
- 
+class EnsimeCompletionsListener(sublime_plugin.EventListener):
+
   def on_query_completions(self, view, prefix, locations):
     #if view.is_dirty():
     #  view.run_command("save")
@@ -36,13 +36,13 @@ class EnsimeCompletionsListener(sublime_plugin.EventListener):
       print("Ensime Server doesn't appear to be started")
       return []
     data = env.client().complete_member(view.file_name(), locations[0])
-    if data is None: 
+    if data is None:
       print("Returned data was None")
-      return [] 
+      return []
     print("Got data for completion:%s", data)
     friend = sexp.sexp_to_key_map(data[1][1])
     comps = friend[":completions"] if ":completions" in friend else []
     comp_list = [ensime_completion(sexp.sexp_to_key_map(p)) for p in friend[":completions"]]
-    
+
     return ([(p.name + "\t" + p.signature, p.name) for p in comp_list], sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
-  
+

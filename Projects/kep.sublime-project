@@ -2,6 +2,9 @@
   "folders":
   [
     {
+      "path": "/C/Projects/Metadata/Kepler"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.js",
@@ -35,9 +38,6 @@
       "path": "/C/Projects/Kepler/sandbox"
     },
     {
-      "path": "/C/Projects/Kepler/sandbox3"
-    },
-    {
       "path": "/D/Dropbox/Scratchpad/Scala"
     },
     {
@@ -47,9 +47,6 @@
       "path": "/C/Projects/Kepler/test/pending"
     },
     {
-      "path": "/C/Projects/BuildXMLs/Kepler"
-    },
-    {
       "path": "/C/Projects/SublimeScala/ScalaRefactoring"
     },
     {
@@ -57,6 +54,12 @@
     },
     {
       "path": "/C/Projects/SublimeScala/Ensime"
+    },
+    {
+      "path": "/C/Projects/SublimeScala/Jerkson"
+    },
+    {
+      "path": "/C/Projects/SublimeScala/Simplespec"
     },
     {
       "folder_exclude_patterns":

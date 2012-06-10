@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "Downloading ensime server archive"
-ENSIME_VERSION=ensime_2.9.2-RC1-0.9.3.RC4
-curl -OL# https://github.com/downloads/aemoncannon/ensime/$ENSIME_VERSION.tar.gz
+ENSIME_VERSION=ensime_2.10.0-SNAPSHOT-0.9.4
+curl -OL# https://github.com/downloads/sublimescala/ensime/$ENSIME_VERSION.tar.gz
 echo "Extracting ensime server"
 tar xzf $ENSIME_VERSION.tar.gz
 mv $ENSIME_VERSION server

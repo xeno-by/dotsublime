@@ -1,4 +1,5 @@
 import os, sys, stat, time, datetime, re
+import ensime_environment
 import functools, socket, threading
 import sublime_plugin, sublime
 import sexp
@@ -21,13 +22,14 @@ class EnsimeServerClient:
   def __init__(self, project_root, handler):
     self.project_root = project_root
     self.connected = False
+    self.disconnect_pending = False
     self.handler = handler
     self._lock = threading.RLock()
     self._connect_lock = threading.RLock()
     self._receiver = None
 
   def port(self):
-    return int(open(self.project_root + "/.ensime_port").read()) 
+    return int(open(ensime_environment.ensime_env.port_file).read())
 
   def receive_loop(self):
     while self.connected:
@@ -46,15 +48,18 @@ class EnsimeServerClient:
               msglen = int(nxt[:6], 16) + 6
               msg = nxt[6:msglen]
               nxt = strip(nxt[msglen:])
-            else: 
+            else:
               msg = ""
               msglen = ""
         else:
           self.set_connected(False)
       except Exception as e:
         print "*****    ERROR     *****"
+        print "expected disconnect" if self.disconnect_pending else "unexpected disconnect"
         print e
-        self.handler.on_disconnect("server")
+        reason = "server" if not self.disconnect_pending else "client"
+        self.disconnect_pending = False
+        self.handler.on_disconnect(reason)
         self.set_connected(False)
 
   def set_connected(self, val):
@@ -95,7 +100,7 @@ class EnsimeServerClient:
       self.handler.disconnect("server")
       self.set_connected(False)
 
-  def sync_send(self, request, msg_id): 
+  def sync_send(self, request, msg_id):
     self._connect_lock.acquire()
     try:
       s = socket.socket()
@@ -105,7 +110,7 @@ class EnsimeServerClient:
         result = ""
         keep_going = True
         nxt = ""
-        while keep_going: 
+        while keep_going:
           res = nxt + s.recv(4096)
           msglen = int(res[:6], 16) + 6
           msg = res[6:msglen]
@@ -117,7 +122,7 @@ class EnsimeServerClient:
                 msglen = int(nxt[:6], 16) + 6
                 msg = nxt[6:msglen]
                 nxt = strip(nxt[msglen:])
-              else: 
+              else:
                 nxt = ""
                 break
             result = sexp.read(msg)
@@ -125,14 +130,14 @@ class EnsimeServerClient:
             if keep_going:
               sublime.set_timeout(functools.partial(self.handler.on_data, result), 0)
           else:
-            nxt = res 
-            
+            nxt = res
+
         return result
       except Exception as error:
         print error
       finally:
-        if s: 
-          s.close() 
+        if s:
+          s.close()
     except Exception as error:
       print error
     finally:
@@ -145,19 +150,19 @@ class EnsimeServerClient:
         self.client.close()
       self.connect = False
     finally:
-      self._connect_lock.release()    
+      self._connect_lock.release()
 
 class EnsimeClient(EnsimeMessageHandler):
 
   def __init__(self, settings, window, project_root):
-    def ignore(d): 
-      None      
+    def ignore(d):
+      None
 
     def clear_notes(lang):
       self.note_map = {}
       for v in self.window.views():
-        v.run_command("ensime_notes", 
-                      {"lang": lang, 
+        v.run_command("ensime_notes",
+                      {"lang": lang,
                        "action": "clear"})
 
     def add_notes(lang, data):
@@ -175,7 +180,7 @@ class EnsimeClient(EnsimeMessageHandler):
         notes = self.note_map.get(key) or []
         v.run_command(
           "ensime_notes",
-          { "lang": lang, "action": 
+          { "lang": lang, "action":
             "add", "value": notes })
 
     # maps filenames to lists of notes
@@ -203,13 +208,13 @@ class EnsimeClient(EnsimeMessageHandler):
       ":clear-all-java-notes": lambda d: clear_notes("java"),
       ":scala-notes": lambda d: add_notes("scala", d),
       ":java-notes": lambda d: add_notes("java", d),
-      ":compiler-ready": 
+      ":compiler-ready":
       lambda d: self.window.run_command("random_words_of_encouragement"),
       ":full-typecheck-finished": ignore,
       ":indexer-ready": ignore,
       ":background-message": sublime.status_message
     }
-      
+
   def ready(self):
     return self._ready
 
@@ -236,7 +241,7 @@ class EnsimeClient(EnsimeMessageHandler):
     print "on_data: " + str(data)
     self.feedback(str(data))
     # match a message with a registered response handler.
-    # if the message has no registered handler check if it's a 
+    # if the message has no registered handler check if it's a
     # background message.
     if data[0] == key(":return"):
       th = self._reply_handlers
@@ -293,26 +298,23 @@ class EnsimeClient(EnsimeMessageHandler):
       self._procedure_counter = 0
     finally:
       self._counterLock.release()
-      
-    if reason == "server":
-      sublime.error_message("The ensime server was disconnected, you might want to restart it.")
 
-  def project_file(self): 
-    if self.ready:
-      return os.path.join(self.project_root, ".ensime")
-    else:
-      return None
+    # todo. enable this when we figure out how to prevent this message from firing
+    # when we are killing an orphan, and its client whines out loud
+    # if reason == "server":
+    #   sublime.error_message("The ensime server was disconnected, you might want to restart it.")
 
   def project_config(self):
     try:
-      src = open(self.project_file()).read() if self.project_file() else "()"
+      project_file = os.path.join(self.project_root, ".ensime") if self.ready else None
+      src = open(project_file).read() if project_file else "()"
       conf = sexp.read(src)
       return conf
     except StandardError:
       return []
-    
-  
-  def prepend_length(self, data): 
+
+
+  def prepend_length(self, data):
     return "%06x" % len(data) + data
 
   def format(self, data, count = None):
@@ -321,12 +323,12 @@ class EnsimeClient(EnsimeMessageHandler):
     else:
       return [key(":swank-rpc"), data]
 
-  
-  def req(self, to_send, on_complete = None, msg_id = None): 
+
+  def req(self, to_send, on_complete = None, msg_id = None):
     msgcnt = msg_id
     if msg_id == None:
       msgcnt = self.next_message_id()
-      
+
     if self.ready() and not self.client.connected:
       self.client.connect()
 
@@ -348,8 +350,9 @@ class EnsimeClient(EnsimeMessageHandler):
     msgcnt = self.next_message_id()
     msg_str = sexp.to_string(self.format(to_send, msgcnt))
     print "SEND: " + msg_str
+    self.client.disconnect_pending = True
     return self.client.sync_send(self.prepend_length(msg_str), msgcnt)
-    
+
 
   def disconnect(self):
     self._counterLock.acquire()
@@ -360,26 +363,37 @@ class EnsimeClient(EnsimeMessageHandler):
       self._counterLock.release()
     self.client.close()
 
-  def handshake(self, on_complete): 
+  def handshake(self, on_complete):
     self.req([sym("swank:connection-info")], on_complete)
 
   def __initialize_project(self, conf, subproj_name, on_complete):
-    conf = conf + [key(":root-dir"), self.project_root]
-    conf = conf + [key(":active-subproject"), subproj_name]
+    m = sexp.sexp_to_key_map(conf)
+    if m.get(":root-dir"):
+      self.client.project_root = m[":root-dir"]
+      self.project_root = m[":root-dir"]
+    else:
+      conf = conf + [key(":root-dir"), self.project_root]
+    if not m.get(":active_subproject"):
+      conf = conf + [key(":active-subproject"), subproj_name]
     self.req([sym("swank:init-project"), conf], on_complete)
+
+  def select_subproject(self, conf, cont):
+    m = sexp.sexp_to_key_map(conf)
+    if m.get("active_subproject"):
+      cont(m[":active_subproject"])
+    else:
+      subprojects = [sexp.sexp_to_key_map(p) for p in m.get(":subprojects", [])]
+      names = [p[":name"] for p in subprojects]
+      if len(names) > 1:
+        self.window.show_quick_panel(names, lambda i: cont(names[i]))
+      elif len(names) == 1:
+        cont(names[0])
+      else:
+        cont("NA")
 
   def initialize_project(self, on_complete):
     conf = self.project_config()
-    m = sexp.sexp_to_key_map(conf)
-    subprojects = [sexp.sexp_to_key_map(p) for p in m[":subprojects"]]
-    names = [p[":name"] for p in subprojects]
-    if len(names) > 1:
-      self.window.show_quick_panel(
-        names, lambda i: self.__initialize_project(conf,names[i],on_complete))
-    elif len(names) == 1:
-      self.__initialize_project(conf,names[0],on_complete)
-    else:
-      self.__initialize_project(conf,"NA",on_complete)
+    self.select_subproject(conf, lambda name: self.__initialize_project(conf, name, on_complete))
 
   def format_source(self, file_path, on_complete):
     self.req([sym("swank:format-source"),[file_path]], on_complete)
@@ -393,21 +407,21 @@ class EnsimeClient(EnsimeMessageHandler):
   def organize_imports(self, file_path, on_complete):
     self.req([sym("swank:exec-refactor"),
               self.next_procedure_id(),
-              sym("organizeImports"), 
-              [sym("file"),file_path], 
+              sym("organizeImports"),
+              [sym("file"),file_path],
               True], on_complete)
-  
+
   def perform_organize(self, previous_id, msg_id, on_complete):
     self.req([sym("swank:exec-refactor"),
-              int(previous_id), 
-              sym("organizeImports")], 
+              int(previous_id),
+              sym("organizeImports")],
              on_complete, int(msg_id))
 
   def inspect_type_at_point(self, file_path, position, on_complete):
     self.req([sym("swank:type-at-point"),
               file_path,
-              int(position)], 
+              int(position)],
              on_complete)
-  
+
   def complete_member(self, file_path, position):
     return self.sync_req([sym("swank:completions"), file_path, position, 0])

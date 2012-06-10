@@ -7,25 +7,25 @@
                 "caption": "Ensime",
                 "children":
                 [
-                  { 
+                  {
                     "caption": "Server",
-                    "children": 
+                    "children":
                     [
                       { "caption": "Start", "command": "ensime_server", "args": { "start": true} },
                       { "caption": "Stop", "command": "ensime_server", "args": { "kill": true} },
                       { "caption": "Show output", "command": "ensime_server", "args": { "show_output": true, "quiet": true }}
-                    //{ "caption": "Initialize Server...", "command": "initialize_ensime_server" }  
+                    //{ "caption": "Initialize Server...", "command": "initialize_ensime_server" }
                     ]
                   },
                   {
                     "caption": "Source",
-                    "children": 
+                    "children":
                     [
                       { "caption": "Reformat source", "command": "ensime_reformat_source" },
                       { "caption": "Organize imports", "command": "ensime_organize_imports" },
                       { "caption": "Show message output", "command": "ensime_show_message_view"},
                       { "caption": "Show type info", "command": "ensime_inspect_type_at_point"}
-                    ]  
+                    ]
                   }
                 ]
             }

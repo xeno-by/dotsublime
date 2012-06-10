@@ -60,7 +60,7 @@ def read_list(str):
   if len(str) == 0:
     raise SyntaxError('unexpected EOF while reading list')
   if str[0] != '(':
-    raise SyntaxError('expected ( as first char of list')      
+    raise SyntaxError('expected ( as first char of list')
   str = str[1:]
   lst = []
   while(len(str) > 0):
@@ -81,7 +81,7 @@ def read_string(str):
   if len(str) == 0:
     raise SyntaxError('unexpected EOF while reading string')
   if str[0] != '"':
-    raise SyntaxError('expected ( as first char of string')      
+    raise SyntaxError('expected ( as first char of string')
   str = str[1:]
   s = ""
   escaped = False
@@ -103,7 +103,7 @@ def read_keyword(str):
   if len(str) == 0:
     raise SyntaxError('unexpected EOF while reading keyword')
   if str[0] != ':':
-    raise SyntaxError('expected : as first char of keyword')      
+    raise SyntaxError('expected : as first char of keyword')
   str = str[1:]
   s = ""
   while(len(str) > 0):

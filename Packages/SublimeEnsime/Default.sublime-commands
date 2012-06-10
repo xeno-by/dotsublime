@@ -6,12 +6,12 @@
 	{
 		"caption": "Ensime: Start Server",
 		"command": "ensime_server",
-		"args": {"start": true}
+		"args": { "start": true }
 	},
 	{
 		"caption": "Ensime: Stop Server",
 		"command": "ensime_server",
-		"args": {"kill": true}
+		"args": { "kill": true }
 	},
 	{
 		"caption": "Ensime: Organize Imports",
@@ -20,7 +20,7 @@
 	{
 		"caption": "Ensime: Show Server Messages",
 		"command": "ensime_server",
-		"args": {"show_output": true}
+		"args": { "show_output": true }
 	},
 	{
 		"caption": "Ensime: Show Client Messages",
@@ -29,6 +29,15 @@
 	{
 		"caption": "Ensime: Reformat Source",
 		"command": "ensime_reformat_source"
+	},
+	{
+		"caption": "Ensime: Enable Error Highlighting",
+		"command": "ensime_highlight",
+		"args": { "enable": true }
+	},
+	{
+		"caption": "Ensime: Disable Error Highlighting",
+		"command": "ensime_highlight",
+		"args": { "enable": false }
 	}
-
 ]

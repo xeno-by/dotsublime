@@ -29,7 +29,7 @@
   { "keys": ["super+insert"], "command": "repl_insert_filename", "args": {}, "context":[{ "key": "setting.repl", "operator": "equal", "operand": true }]},
   { "keys": ["super+shift+insert"], "command": "quick_create_directory", "args": {}, "context":[{ "key": "setting.repl", "operator": "equal", "operand": false }]},
   { "keys": ["super+shift+insert"], "command": "repl_insert_dirname", "args": {}, "context":[{ "key": "setting.repl", "operator": "equal", "operand": true }]},
-  { "keys": ["super+delete"], "command": "side_bar_delete" },
+  { "keys": ["super+delete"], "command": "my_side_bar_delete" },
   { "keys": ["ctrl+b"], "command": "my_reveal_in_side_bar" },
   { "keys": ["ctrl+shift+s"], "command": "save_all" },
   { "keys": ["ctrl+shift+a"], "command": "prompt_save_as" },
