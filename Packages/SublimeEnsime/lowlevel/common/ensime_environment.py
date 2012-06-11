@@ -1,3 +1,7 @@
+import sublime
+import os
+import threading
+
 envLock = threading.RLock()
 ensime_envs = {}
 
@@ -10,19 +14,13 @@ def get_ensime_env(window):
       envLock.release()
   return None
 
-def get_ensime_env(view):
-  if view:
-    return get_ensime_env(view.window())
-  else:
-    return None
-
 class EnsimeEnvironment(object):
   def __init__(self, window):
     # plugin-wide stuff (immutable)
     self.settings = sublime.load_settings("Ensime.sublime-settings")
     server_dir = self.settings.get("ensime_server_path", "sublime_ensime\\server" if os.name == 'nt' else "sublime_ensime/server")
-    server_path = server_dir if server_dir.startswith("/") or server_dir.contains(":/") or server_dir.contains(":\\") else os.path.join(sublime.packages_path(), server_dir)
-    server.ensime_executable = server_path + '/' + ("bin\\server.bat" if os.name == 'nt' else "bin/server")
+    server_path = server_dir if server_dir.startswith("/") or (":/" in server_dir) or (":\\" in server_dir) else os.path.join(sublime.packages_path(), server_dir)
+    self.ensime_executable = server_path + '/' + ("bin\\server.bat" if os.name == 'nt' else "bin/server")
     self.plugin_root = server_path + "/.." # we can do better
 
     # instance-specific stuff (immutable)
@@ -32,7 +30,7 @@ class EnsimeEnvironment(object):
     prj_files = [(f + "/.ensime") for f in window.folders() if os.path.exists(f + "/.ensime")]
     if len(prj_files) > 0:
       self.project_file = prj_files[0]
-      self.project_root = os.dirname(self.project_file)
+      self.project_root = os.path.dirname(self.project_file)
       try:
         src = open(self.project_file).read() if self.project_file else "()"
         self.project_config = sexp.read(src)

@@ -24,7 +24,7 @@
     "caption": "Ensime: Disable Error Highlighting",
     "command": "ensime_highlight",
     "args": { "enable": false }
-  }
+  },
   {
     "caption": "Ensime: Show Client/Server REPL",
     "command": "ensime_show_client_server_repl"
@@ -32,5 +32,5 @@
   {
     "caption": "Ensime: Check Type",
     "command": "ensime_inspect_type_at_point"
-  },
+  }
 ]

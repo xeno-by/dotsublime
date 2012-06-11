@@ -1,3 +1,5 @@
+from ensime_common import *
+
 class EnsimeInspectTypeAtPoint(EnsimeTextCommand):
   def run(self, edit):
     self.inspect_type_at_point(self.f, self.view.sel()[0].begin(), self.handle_reply)

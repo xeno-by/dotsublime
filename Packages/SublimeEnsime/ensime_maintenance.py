@@ -1,16 +1,19 @@
+from ensime_common import *
+from ensime_filters import *
+
 class EnsimeStartupCommand(NotRunningOnly, EnsimeWindowCommand):
   def run(self):
-    EnsimeController(self, [EnsimeApi]).startup()
+    EnsimeController(self).startup()
 
 class EnsimeShutdownCommand(RunningOnly, EnsimeWindowCommand):
   def run(self):
     self.controller.shutdown()
 
-class EnsimeShowClientMessagesCommand(EnsimeOnly, EnsimeWindowCommand):
+class EnsimeShowClientMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def run(self):
     self.view_show(self.cv, what)
 
-class EnsimeShowServerMessagesCommand(EnsimeOnly, EnsimeWindowCommand):
+class EnsimeShowServerMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def run(self):
     self.view_show(self.sv, what)
 
@@ -19,7 +22,7 @@ class EnsimeShowServerMessagesCommand(EnsimeOnly, EnsimeWindowCommand):
 # persistent command history and Ctrl+Up/Ctrl+Down like in SublimeREPL
 # completions for command names
 
-class EnsimeShowClientServerReplCommand(EnsimeOnly, EnsimeWindowCommand):
+class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def __init__(self, window):
     self.visible = False
     self.window = window

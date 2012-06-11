@@ -1,4 +1,7 @@
-class EnsimeReplBase(EnsimeBase):
+import sublime
+import functools
+
+class EnsimeReplBase:
   def __init__():
     self.prompt = "ensime>"
     self.fixup_timeout = 500

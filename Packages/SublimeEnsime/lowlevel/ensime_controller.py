@@ -1,6 +1,5 @@
 class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener):
-  def __init__(self, handlers):
-    self.handlers = handlers
+  def __init__(self):
     self.running = False
     self.ready = False
     self.client = None

@@ -1,14 +1,24 @@
-class EnsimeBase(object):
-  def __init__(window):
-    self.env = get_ensime_env(window)
-    self.w = window
-    self.v = window.get_active_view() if window else None
+import os
+from sublime import *
+from sublime_plugin import *
+from ensime_api import EnsimeApi
+from ensime_environment import get_ensime_env
+from ensime_repl import EnsimeReplBase
 
-  def __init__(view):
-    self.env = get_ensime_env(view)
-    self.w = view.window() if view else None
-    self.v = view
-    self.f = view.file_name() if view else None
+class EnsimeBase(object):
+  def __init__(self, owner):
+    if type(owner) == Window:
+      self.env = get_ensime_env(owner)
+      self.w = owner
+      self.v = owner.active_view()
+      self.f = None
+    elif type(owner) == View:
+      self.env = get_ensime_env(owner.window())
+      self.w = owner.window()
+      self.v = owner
+      self.f = owner.file_name()
+    else:
+      raise "unsupported owner of type: " + str(type(owner))
 
   def __getattr__(self, name):
     self.env.__getattribute__(name)
@@ -31,5 +41,15 @@ class EnsimeBase(object):
       wannabe = os.path.normcase(os.path.realpath(filename))
       return wannabe.startswith(root)
 
-class EnsimeCommon(EnsimeReplBase, EnsimeBase):
+class EnsimeCommon(EnsimeBase, EnsimeReplBase, EnsimeApi):
   pass
+
+class EnsimeWindowCommand(EnsimeCommon, WindowCommand):
+  def __init__(self, window):
+    EnsimeCommon.__init__(self, window)
+    WindowCommand.__init__(self, window)
+
+class EnsimeTextCommand(EnsimeCommon, TextCommand):
+  def __init__(self, view):
+    EnsimeCommon.__init__(self, view)
+    TextCommand.__init__(self, view)

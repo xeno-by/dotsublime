@@ -1,3 +1,7 @@
+import sublime
+from ensime_common import *
+from ensime_api import ensime_api
+
 class EnsimeHighlights(EnsimeCommon):
   def hide(self):
     self.v.erase_regions("ensime-error")
@@ -45,7 +49,7 @@ class EnsimeHighlightCommand(EnsimeWindowCommand):
 
 class EnsimeHighlightDaemon(sublime_plugin.EventListener):
   def with_api(self, view, what):
-    api = EnsimeApi(view)
+    api = ensime_api(view)
     if api.controller.connected and api.in_project(view.file_name()):
       what(api)
 

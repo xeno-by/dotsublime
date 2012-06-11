@@ -50,4 +50,4 @@ class EnsimeCodec:
     completion.to_insert = m[":to-insert"] if ":to-insert" in m else None
     return completion
 
-codec = EnsimeCodec()
+ensime_codec = EnsimeCodec()
