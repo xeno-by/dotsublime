@@ -73,6 +73,8 @@ mswindows = (sys.platform == "win32")
 
 if mswindows:
     import winprocess
+    import qijo
+    from ctypes import sizeof, addressof
 else:
     import signal
 
@@ -152,11 +154,19 @@ class Popen(subprocess.Popen):
             self.tid = tid
 
             if canCreateJob:
-                # We create a new job for this process, so that we can kill
-                # the process and any sub-processes
-                self._job_name = "sublime-ensime-" + str(os.getpid())
-                self._job = winprocess.CreateJobObject(None, self._job_name)
-                print "created a job with name: " + self._job_name
+                # We create a new job for this process, so that we can kill the process and any sub-processes
+                # xeno.by: and even better: with JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+                # the process tree will die automatically once Sublime is closed
+                job_name = "Global\\sublime-ensime-" + str(os.getpid())
+                self._job = winprocess.CreateJobObject(None, job_name)
+                print "created a job with name: " + job_name
+                jeli = qijo.QueryInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation)
+                print "the flags are currently: " + str(jeli.BasicLimitInformation.LimitFlags)
+                setattr(jeli.BasicLimitInformation._struct, "LimitFlags", qijo.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE)
+                print "the flags are changed to: " + str(jeli.BasicLimitInformation.LimitFlags)
+                status = qijo.SetInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation, addressof(jeli._struct), sizeof(jeli._struct))
+                jeli = qijo.QueryInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation)
+                print "the flags are now equal to: " + str(jeli.BasicLimitInformation.LimitFlags)
                 winprocess.AssignProcessToJobObject(self._job, int(hp))
             else:
                 print "cannot created a job"

@@ -6,6 +6,13 @@ LPDWORD = POINTER(DWORD)
 SIZE_T = c_size_t
 ULONG_PTR = POINTER(c_ulong)
 
+def ErrCheckBool(result, func, args):
+    """errcheck function for Windows functions that return a BOOL True
+    on success"""
+    if not result:
+        raise WinError()
+    return args
+
 # A ULONGLONG is a 64-bit unsigned integer.
 # Thus there are 8 bytes in a ULONGLONG.
 # XXX why not import c_ulonglong ?
@@ -60,6 +67,12 @@ JobObjectBasicAndIoAccountingInformation = 8
 # I wish I had a more canonical source
 JobObjectExtendedLimitInformation = 9
 
+# flags for job limit information
+# see http://msdn.microsoft.com/en-us/library/ms684147%28VS.85%29.aspx
+JOB_OBJECT_LIMIT_BREAKAWAY_OK = 0x00000800
+JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK = 0x00001000
+JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x000002000
+
 class JobObjectInfo(object):
     mapping = { 'JobObjectBasicAndIoAccountingInformation': 8,
                 'JobObjectExtendedLimitInformation': 9
@@ -74,7 +87,7 @@ class JobObjectInfo(object):
         assert _class in self.structures, 'Class should be one of %s; you gave %s' % (self.structures, _class)
         self.code = _class
         self.info = self.structures[_class]()
-    
+
 
 QueryInformationJobObjectProto = WINFUNCTYPE(
     BOOL,        # Return type
@@ -97,6 +110,22 @@ _QueryInformationJobObject = QueryInformationJobObjectProto(
     ('QueryInformationJobObject', windll.kernel32),
     QueryInformationJobObjectFlags
     )
+
+SetInformationJobObjectProto = WINFUNCTYPE(BOOL,      # Return Type
+                                           HANDLE,    # Job Handle
+                                           DWORD,     # Type of Class next param is
+                                           LPVOID,    # Job Object Class
+                                           DWORD      # Job Object Class Length
+                                          )
+SetInformationJobObjectProtoFlags = ((1, "hJob", None),
+                                     (1, "JobObjectInfoClass", None),
+                                     (1, "lpJobObjectInfo", None),
+                                     (1, "cbJobObjectInfoLength", 0))
+
+SetInformationJobObject = SetInformationJobObjectProto(("SetInformationJobObject",
+                                                        windll.kernel32),
+                                                        SetInformationJobObjectProtoFlags)
+SetInformationJobObject.errcheck = ErrCheckBool
 
 class SubscriptableReadOnlyStruct(object):
     def __init__(self, struct):

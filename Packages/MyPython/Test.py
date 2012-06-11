@@ -15,6 +15,9 @@
 #     EnsimeCommon.__init__(self, window)
 #     WindowCommand.__init__(self, window)
 
+#   def run(self):
+#     print str(self.window)
+
 # class EnsimeTextCommand(EnsimeCommon, TextCommand):
 #   def __init__(self, view):
 #     EnsimeCommon.__init__(self, view)

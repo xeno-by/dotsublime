@@ -7,15 +7,17 @@ class EnsimeApi:
     self.async_req(req, on_complete)
 
   def add_notes(self, notes):
-    self.notes += notes
-    for i in range(0, self.w.num_groups):
-      v = active_view_in_group(i)
+    self.env.notes += notes
+    for i in range(0, self.w.num_groups()):
+      v = self.w.active_view_in_group(i)
+      from ensime_highlighting import EnsimeHighlights
       EnsimeHighlights(v).refresh()
 
   def clear_notes(self):
-    self.notes = []
-    for i in range(0, self.w.num_groups):
-      v = active_view_in_group(i)
+    self.env.notes = []
+    for i in range(0, self.w.num_groups()):
+      v = self.w.active_view_in_group(i)
+      from ensime_highlighting import EnsimeHighlights
       EnsimeHighlights(v).refresh()
 
   def inspect_type_at_point(self, file_path, position, on_complete):

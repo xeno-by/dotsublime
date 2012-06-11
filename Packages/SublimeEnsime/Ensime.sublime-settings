@@ -5,5 +5,5 @@
   "error_highlight": true,
   "error_underline": true,
   "error_icon": "cross",
-  "log": ["highlevel", "client", "server"]
+  "log": ["ui", "client", "server"]
 }

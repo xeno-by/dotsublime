@@ -1,6 +1,7 @@
 import sublime
 import os
 import threading
+import traceback
 
 envLock = threading.RLock()
 ensime_envs = {}
@@ -12,6 +13,8 @@ def get_ensime_env(window):
     envLock.acquire()
     try:
       if not (window.id() in ensime_envs):
+        # print "NEW ENVIRONMENT FOR WINDOW " + str(window.id()) + " AKA " + str(window)
+        # traceback.print_stack()
         ensime_envs[window.id()] = EnsimeEnvironment(window)
       return ensime_envs[window.id()]
     finally:

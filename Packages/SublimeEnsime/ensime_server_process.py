@@ -12,7 +12,8 @@ class EnsimeServerListener:
     pass
 
 class EnsimeServerProcess(EnsimeCommon):
-  def __init__(self, command, listeners):
+  def __init__(self, owner, command, listeners):
+    super(type(self).__mro__[0], self).__init__(owner)
     self.killed = False
     self.listeners = listeners or []
 
@@ -24,13 +25,15 @@ class EnsimeServerProcess(EnsimeCommon):
     # HACK #1: kill ensime servers that are already running and were launched by this instance of sublime
     # this can happen when you press ctrl+s on sublime-ensime files, sublime reloads them
     # and suddenly SublimeServerCommand has a new singleton instance, and a process it hosts becomes a zombie
-    processes = self.settings.get("processes", {})
+    processes = self.env.settings.get("processes", {})
     previous = processes.get(str(os.getpid()), None)
     if previous:
       self.log_server("killing orphaned ensime server process with pid " + str(previous))
       if os.name == "nt":
         try:
-          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, "sublime-ensime-" + str(os.getpid()))
+          job_name = "Global\\sublime-ensime-" + str(os.getpid())
+          self.log_server("killing a job named: " + job_name)
+          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, job_name)
           killableprocess.winprocess.TerminateJobObject(job, 127)
         except:
           self.log_server(sys.exc_info()[1])
@@ -69,7 +72,9 @@ class EnsimeServerProcess(EnsimeCommon):
         try:
           # todo. Duh, this no longer works on Windows, but I swear it worked.
           # Due to an unknown reason, job gets killed once Sublime quits, so we have no way to dispose of the zombies later.
-          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, "sublime-ensime-" + str(sublimepid))
+          job_name = "Global\\sublime-ensime-" + str(sublimepid)
+          self.log_server("killing a job named: " + job_name)
+          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, job_name)
           killableprocess.winprocess.TerminateJobObject(job, 127)
         except:
           self.log_server(sys.exc_info()[1])
@@ -94,7 +99,7 @@ class EnsimeServerProcess(EnsimeCommon):
       env = os.environ.copy())
     self.log_server("started ensime server with pid " + str(self.proc.pid))
     processes[str(os.getpid())] = str(self.proc.pid)
-    self.settings.set("processes", processes)
+    self.env.settings.set("processes", processes)
     # todo. this will leak pids if there are multiple sublimes launching ensimes simultaneously
     # and, in general, we should also address the fact that sublime-ensime assumes at most single ensime per window
     # finally, it's unclear whether to allow multiple ensimes for the same project launched by different sublimes
@@ -120,11 +125,11 @@ class EnsimeServerProcess(EnsimeCommon):
       data = os.read(self.proc.stdout.fileno(), 2**15)
       if data != "":
         for listener in self.listeners:
-          listener.on_server_data(self, data)
+          sublime.set_timeout(lambda: listener.on_server_data(data), 0)
       else:
         self.proc.stdout.close()
         for listener in self.listeners:
-          listener.on_finished(self)
+          sublime.set_timeout(lambda: listener.on_finished(self), 0)
         break
 
   def read_stderr(self):
@@ -132,7 +137,7 @@ class EnsimeServerProcess(EnsimeCommon):
       data = os.read(self.proc.stderr.fileno(), 2**15)
       if data != "":
         for listener in self.listeners:
-          listener.on_server_data(self, data)
+          sublime.set_timeout(lambda: listener.on_server_data(data), 0)
       else:
         self.proc.stderr.close()
         break

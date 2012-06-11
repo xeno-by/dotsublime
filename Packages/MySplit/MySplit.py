@@ -38,21 +38,24 @@ class MyLayout1(sublime_plugin.WindowCommand):
     window = self.window
     view = window.active_view()
     window.run_command("set_layout", {"cols": [0.0, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1]]})
-    window.focus_view(view)
+    if view:
+      window.focus_view(view)
 
 class MyLayout2(sublime_plugin.WindowCommand):
   def run(self):
     window = self.window
     view = window.active_view()
     window.run_command("set_layout", {"cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]})
-    window.focus_view(view)
+    if view:
+      window.focus_view(view)
 
 class MyLayout8(sublime_plugin.WindowCommand):
   def run(self):
     window = self.window
     view = window.active_view()
     window.run_command("set_layout", {"cols": [0.0, 1.0], "rows": [0.0, 0.5, 1.0], "cells": [[0, 0, 1, 1], [0, 1, 1, 2]]})
-    window.focus_view(view)
+    if view:
+      window.focus_view(view)
 
 class MySplitUnsplit(sublime_plugin.WindowCommand):
   def run(self):
@@ -152,7 +155,7 @@ class ReLayouter(sublime_plugin.EventListener):
       return True
 
   def needs_relayout(self):
-    if self.window and self.window.num_groups() > 1:
+    if hasattr(self, "pv") and hasattr(self, "cv") and self.window and self.window.num_groups() > 1:
       pg, pi = self.window.get_view_index(self.pv)
       cg, ci = self.window.get_view_index(self.cv)
       if pg == cg and self.pv != self.cv:

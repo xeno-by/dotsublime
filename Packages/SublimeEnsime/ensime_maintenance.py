@@ -1,21 +1,21 @@
 from ensime_common import *
-from ensime_filters import *
+from ensime_controller import EnsimeController
 
 class EnsimeStartupCommand(NotRunningOnly, EnsimeWindowCommand):
   def run(self):
-    EnsimeController(self).startup()
+    EnsimeController(self.w).startup()
 
 class EnsimeShutdownCommand(RunningOnly, EnsimeWindowCommand):
   def run(self):
-    self.controller.shutdown()
+    self.env.controller.shutdown()
 
 class EnsimeShowClientMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def run(self):
-    self.view_show(self.cv, what)
+    self.view_show(self.env.cv, False)
 
 class EnsimeShowServerMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def run(self):
-    self.view_show(self.sv, what)
+    self.view_show(self.env.sv, False)
 
 # support `cls`
 # rebind Enter, Escape, Backspace, Left, ShiftLeft, Home, ShiftHome
@@ -24,6 +24,7 @@ class EnsimeShowServerMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
 
 class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def __init__(self, window):
+    super(type(self).__mro__[0], self).__init__(window)
     self.visible = False
     self.window = window
 

@@ -10,38 +10,38 @@ class EnsimeHighlights(EnsimeCommon):
   def show(self):
     # filter notes against self.f
     # don't forget to use os.realpath to defeat symlinks
-    errors = [self.v.full_line(note.start) for note in self.notes]
+    errors = [self.v.full_line(note.start) for note in self.env.notes]
     underlines = []
-    for note in self.notes:
+    for note in self.env.notes:
       underlines += [sublime.Region(int(pos)) for pos in range(note.start, note.end)]
-    if self.settings.get("error_highlight") and self.settings.get("error_underline"):
+    if self.env.settings.get("error_highlight") and self.env.settings.get("error_underline"):
       self.v.add_regions(
         "ensime-error-underline",
         underlines,
         "invalid.illegal",
         sublime.DRAW_EMPTY_AS_OVERWRITE)
-    if self.settings.get("error_highlight"):
+    if self.env.settings.get("error_highlight"):
       self.v.add_regions(
         "ensime-error",
         errors,
         "invalid.illegal",
-        self.settings.get("error_icon"),
+        self.env.settings.get("error_icon"),
         sublime.DRAW_OUTLINED)
 
   def refresh(self):
-    if self.settings.get("error_highlight"):
+    if self.env.settings.get("error_highlight"):
       self.show()
     else:
       self.hide()
 
-class EnsimeHighlightCommand(EnsimeWindowCommand):
+class EnsimeHighlightCommand(ConnectedEnsimeOnly, EnsimeWindowCommand):
   def is_enabled(self, enable = True):
-    now = not not self.settings.get("error_highlight")
+    now = not not self.env.settings.get("error_highlight")
     wannabe = not not enable
-    return ConnectedEnsimeOnly.is_enabled(self) and now != wannabe
+    return super(type(self).__mro__[0], self).is_enabled() and now != wannabe
 
   def run(self, enable = True):
-    self.settings.set("error_highlight", not not enable)
+    self.env.settings.set("error_highlight", not not enable)
     sublime.save_settings("Ensime.sublime-settings")
     EnsimeHighlights(self.v).hide()
     if enable:

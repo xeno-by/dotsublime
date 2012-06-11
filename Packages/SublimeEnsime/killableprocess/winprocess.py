@@ -192,6 +192,7 @@ CREATE_UNICODE_ENVIRONMENT = 0x00000400
 # see http://msdn.microsoft.com/en-us/library/ms684147%28VS.85%29.aspx
 JOB_OBJECT_LIMIT_BREAKAWAY_OK = 0x00000800
 JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK = 0x00001000
+JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x000002000
 
 # XXX these flags should be documented
 DEBUG_ONLY_THIS_PROCESS = 0x00000002
@@ -211,6 +212,8 @@ CreateJobObjectFlags = ((1, "lpJobAttributes", None),
 CreateJobObject = CreateJobObjectProto(("CreateJobObjectW", windll.kernel32),
                                        CreateJobObjectFlags)
 CreateJobObject.errcheck = ErrCheckHandle
+
+# OpenJobObjectFlags()
 
 OpenJobObjectProto = WINFUNCTYPE(HANDLE,
                                  DWORD,

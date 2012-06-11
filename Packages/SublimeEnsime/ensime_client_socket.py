@@ -3,6 +3,7 @@ import functools, socket, threading
 import sexp.sexp
 from ensime_common import *
 from string import strip
+from sexp import sexp
 from sexp.sexp import key, sym
 
 class EnsimeClientListener:
@@ -13,7 +14,8 @@ class EnsimeClientListener:
     pass
 
 class EnsimeClientSocket(EnsimeCommon):
-  def __init__(self, port, handlers):
+  def __init__(self, owner, port, handlers):
+    super(type(self).__mro__[0], self).__init__(owner)
     self.port = port
     self.connected = False
     self.disconnect_pending = False
@@ -24,11 +26,11 @@ class EnsimeClientSocket(EnsimeCommon):
 
   def notify_async_data(self, data):
     for handler in self.handlers:
-      handler.on_client_async_data(data)
+      sublime.set_timeout(lambda: handler.on_client_async_data(data), 0)
 
   def notify_disconnect(self, reason):
     for handler in self.handlers:
-      handler.on_disconnect(reason)
+      sublime.set_timeout(lambda: handler.on_disconnect(reason), 0)
 
   def receive_loop(self):
     while self.connected:
@@ -62,7 +64,7 @@ class EnsimeClientSocket(EnsimeCommon):
         self.connected = False
 
   def start_receiving(self):
-    t = threading.Thread(name = "ensime-client-" + str(self.window.id()) + "-" + str(self.port), target = self.receive_loop)
+    t = threading.Thread(name = "ensime-client-" + str(self.w.id()) + "-" + str(self.port), target = self.receive_loop)
     t.setDaemon(True)
     t.start()
     self._receiver = t

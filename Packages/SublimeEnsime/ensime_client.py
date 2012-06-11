@@ -1,28 +1,30 @@
 import sublime
+import threading
+import inspect
 from ensime_common import *
 from ensime_client_socket import EnsimeClientListener, EnsimeClientSocket
+from sexp import sexp
+from sexp.sexp import key, sym
 
 class EnsimeClient(EnsimeClientListener, EnsimeCommon):
-  def __init__(self, port):
-    self.port = port
+  def __init__(self, owner, port_file):
+    super(type(self).__mro__[0], self).__init__(owner)
+    with open(port_file) as f: self.port = int(f.read())
     self.init_counters()
     methods = filter(lambda m: m[0].startswith("inbound_"), inspect.getmembers(self, predicate=inspect.ismethod))
-    self._inbound_handlers = dict((":" + m[0]["inbound_".length:], m[1]) for m in methods)
+    self.log_client("reflectively found " + str(len(methods)) + " handlers for inbound messages: " + str(methods))
+    self._inbound_handlers = dict((":" + m[0][len("inbound_"):], m[1]) for m in methods)
     self._outbound_handlers = {}
 
   def startup(self):
     self.log_server("Launching ENSIME client socket at port " + str(self.port))
-    self.socket = EnsimeClientSocket(self.port, [self, self.controller])
+    self.socket = EnsimeClientSocket(self.owner, self.port, [self, self.env.controller])
     self.socket.connect()
 
   def shutdown(self):
-    try:
-      self.sync_req([sym("swank:shutdown-server")])
-      self.socket.close()
-      self.socket = None
-    except:
-      self.log_server("Error shutting down:")
-      self.log_server(sys.exc_info()[1])
+    self.sync_req([sym("swank:shutdown-server")])
+    self.socket.close()
+    self.socket = None
 
   ############### INBOUND MESSAGES ###############
 
@@ -67,7 +69,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
       self.log_client(traceback.format_exc())
 
   def inbound_compiler_ready(self, payload):
-    filename = self.plugin_root + "/Encouragements.txt"
+    filename = self.env.plugin_root + "/Encouragements.txt"
     lines = [line.strip() for line in open(filename)]
     msg = self.lines[random.randint(0, len(self.lines) - 1)]
     sublime.status_message(msg + " This could be the start of a beautiful program, " + getpass.getuser().capitalize()  + ".")
@@ -88,7 +90,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     msg_id = self.next_message_id()
     self._outbound_handlers[msg_id] = on_complete
     msg_str = sexp.to_string([key(":swank-rpc"), to_send, msg_id])
-    msg_str = "%06x" % len(data) + data
+    msg_str = "%06x" % len(msg_str) + msg_str
 
     self.feedback(msg_str)
     self.log_client("SEND ASYNC REQ: " + msg_str)
@@ -97,13 +99,13 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
   def sync_req(self, to_send):
     msg_id = self.next_message_id()
     msg_str = sexp.to_string([key(":swank-rpc"), to_send, msg_id])
-    msg_str = "%06x" % len(data) + data
+    msg_str = "%06x" % len(msg_str) + msg_str
 
     self.feedback(msg_str)
     self.log_client("SEND SYNC REQ: " + msg_str)
-    resp = self.socket.sync_send(msg_str, msg_id)
+    msg_resp = self.socket.sync_send(msg_str, msg_id)
     self.log_client("SEND SYNC RESP: " + msg_resp)
-    return resp
+    return msg_resp
 
   ############### UTILITIES ###############
 
@@ -121,4 +123,4 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
   def feedback(self, msg):
     msg = msg.replace("\r\n", "\n").replace("\r", "\n") + "\n"
-    self.view_insert(self.cv, msg)
+    self.view_insert(self.env.cv, msg)

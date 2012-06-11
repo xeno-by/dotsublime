@@ -4,11 +4,16 @@
 	"error_highlight": true,
 	"error_icon": "dot",
 	"error_underline": false,
+	"log":
+	[
+		"client",
+		"server",
+		"ui"
+	],
 	"processes":
 	{
-		"5048": "4432"
+		"4484": "1764"
 	},
 	"show_output_during_server_startup": false,
-	"use_auto_complete": false,
-  "log": ["client", "server", "highlevel"]
+	"use_auto_complete": false
 }
