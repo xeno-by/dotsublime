@@ -1,16 +1,17 @@
-# conversion from EnsimeBase to bool (equivalent of saying `self.env.connected`)
-# use method_missing functionality to redirect stuff from EnsimeCommon to EnsimeEnvironment
-
 class EnsimeBase(object):
   def __init__(window):
-    self.env = get_env(window)
+    self.env = get_ensime_env(window)
     self.w = window
     self.v = window.get_active_view() if window else None
 
-  def __init_(view):
-    self.env = get_env(view)
+  def __init__(view):
+    self.env = get_ensime_env(view)
     self.w = view.window() if view else None
     self.v = view
+    self.f = view.file_name() if view else None
+
+  def __getattr__(self, name):
+    self.env.__getattribute__(name)
 
   def log(self, data):
     if "highlevel" in self.settings.get("log", {}):
@@ -25,12 +26,10 @@ class EnsimeBase(object):
       print str(data)
 
   def in_project(filename):
-    if not self.connected:
-      return False
     if filename and filename.endswith("scala"):
       root = os.path.normcase(os.path.realpath(self.project_root))
       wannabe = os.path.normcase(os.path.realpath(filename))
       return wannabe.startswith(root)
 
-class EnsimeCommon(EnsimeBase, EnsimeReplBase):
+class EnsimeCommon(EnsimeReplBase, EnsimeBase):
   pass

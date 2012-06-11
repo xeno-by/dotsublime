@@ -32,7 +32,7 @@ class EnsimeClientSocket(EnsimeCommon):
   def receive_loop(self):
     while self.connected:
       try:
-        res = self.client.recv(4096)
+        res = self.socket.recv(4096)
         self.log_client("RECV: " + unicode(res, "utf-8"))
         if res:
           len_str = res[:6]
@@ -50,7 +50,7 @@ class EnsimeClientSocket(EnsimeCommon):
               msg = ""
               msglen = ""
         else:
-          self.set_connected(False)
+          self.connected = False
       except Exception as e:
         self.log_client("*****    ERROR     *****")
         self.log_client("expected disconnect" if self.disconnect_pending else "unexpected disconnect")
@@ -58,14 +58,7 @@ class EnsimeClientSocket(EnsimeCommon):
         reason = "server" if not self.disconnect_pending else "client"
         self.disconnect_pending = False
         self.notify_disconnect(reason)
-        self.set_connected(False)
-
-  def set_connected(self, val):
-    self._lock.acquire()
-    try:
-      self.connected = val
-    finally:
-      self._lock.release()
+        self.connected = False
 
   def start_receiving(self):
     t = threading.Thread(name = "ensime-client-" + str(self.window.id()) + "-" + str(self.port), target = self.receive_loop)
@@ -78,13 +71,13 @@ class EnsimeClientSocket(EnsimeCommon):
     try:
       s = socket.socket()
       s.connect(("127.0.0.1", self.port))
-      self.client = s
-      self.set_connected(True)
+      self.socket = s
+      self.connected = True
       self.start_receiving()
       return s
     except socket.error as e:
       # set sublime error status
-      self.set_connected(False)
+      self.connected = False
       sublime.error_message("Can't connect to ensime server:  " + e.args[1])
     finally:
       self._connect_lock.release()
@@ -93,7 +86,7 @@ class EnsimeClientSocket(EnsimeCommon):
     try:
       if not self.connected:
         self.connect()
-      self.client.send(request)
+      self.socket.send(request)
     except:
       self.notify_disconnect("server")
       self.set_connected(False)
@@ -144,8 +137,8 @@ class EnsimeClientSocket(EnsimeCommon):
   def close(self):
     self._connect_lock.acquire()
     try:
-      if self.client:
-        self.client.close()
+      if self.socket:
+        self.socket.close()
       self.connect = False
     finally:
       self._connect_lock.release()

@@ -1,16 +1,17 @@
 from ensime_client_socket import EnsimeClientListener, EnsimeClientSocket
 
 class EnsimeClient(EnsimeClientListener, EnsimeCommon):
-  def __init__():
+  def __init__(self, port):
+    self.port = port
     self.init_counters()
     methods = filter(lambda m: m[0].startswith("inbound_"), inspect.getmembers(self, predicate=inspect.ismethod))
     self._inbound_handlers = dict((":" + m[0]["inbound_".length:], m[1]) for m in methods)
     self._outbound_handlers = {}
 
   def startup(self):
-    with open(self.port_file) as f: port = int(f.read())
-    self.log_server("Launching ENSIME client socket at port " + str(port))
-    self.socket = EnsimeClientSocket(port, [self, self.controller])
+    self.log_server("Launching ENSIME client socket at port " + str(self.port))
+    self.socket = EnsimeClientSocket(self.port, [self, self.controller])
+    self.socket.connect()
 
   def shutdown(self):
     try:
@@ -73,7 +74,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     sublime.status_message(str(payload))
 
   def inbound_scala_notes(self, payload):
-    notes = self.codec.decode_notes(payload)
+    notes = codec.decode_notes(payload)
     self.add_notes(notes)
 
   def inbound_clear_notes(self, payload):
@@ -82,9 +83,6 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
   ############### OUTBOUND MESSAGES ###############
 
   def async_req(self, to_send, on_complete = None, msg_id = None):
-    if self.ready and not self.connected:
-      self.client.connect()
-
     msg_id = self.next_message_id()
     self._outbound_handlers[msg_id] = on_complete
     msg_str = sexp.to_string([key(":swank-rpc"), to_send, msg_id])
@@ -92,7 +90,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
     self.feedback(msg_str)
     self.log_client("SEND ASYNC REQ: " + msg_str)
-    self.client.send(msg_str)
+    self.socket.send(msg_str)
 
   def sync_req(self, to_send):
     msg_id = self.next_message_id()
@@ -101,7 +99,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
     self.feedback(msg_str)
     self.log_client("SEND SYNC REQ: " + msg_str)
-    resp = self.client.sync_send(msg_str, msg_id)
+    resp = self.socket.sync_send(msg_str, msg_id)
     self.log_client("SEND SYNC RESP: " + msg_resp)
     return resp
 

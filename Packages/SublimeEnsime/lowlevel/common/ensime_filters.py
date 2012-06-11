@@ -1,27 +1,22 @@
 class ScalaOnly(EnsimeCommon):
   def is_enabled(self):
-    file_name = self.window.active_view().file_name()
-    return bool(self.window and file_name != "" and self._is_scala(file_name))
-
-  def _is_scala(self, file_name):
-    _, fname = os.path.split(file_name)
-    return fname.lower().endswith(".scala")
+    return self.w and self.f and self.f.lower().endswith(".scala")
 
 class NotRunningOnly(EnsimeCommon):
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and not self.env.running
+    return not self.in_transition and self.valid and not (self.controller and self.controller.running)
 
 class RunningOnly(EnsimeCommon):
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.running
+    return not self.in_transition and self.valid and self.controller.running
 
 class EnsimeOnly(EnsimeCommon):
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.ready
+    return not self.in_transition and self.valid and self.controller.ready
 
 class ConnectedEnsimeOnly(EnsimeCommon):
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.connected
+    return not self.in_transition and self.valid and self.controller.connected
 
 class EnsimeContextProvider(sublime_plugin.EventListener):
   def on_query_context(view, key, operator, operand, match_all):

@@ -1,6 +1,6 @@
 import sublime, sublime_plugin
 
-class CloseOtherTabsCommand(sublime_plugin.WindowCommand):
+class MyCloseOtherTabsCommand(sublime_plugin.WindowCommand):
   def run(self):
     active_view = self.window.active_view()
     for view in self.window.views():

@@ -1,4 +1,4 @@
-class EnsimeCodec(EnsimeCommon):
+class EnsimeCodec:
   def encode_initialize_project(self, conf):
     return [sym("swank:init-project"), conf]
 
@@ -49,3 +49,5 @@ class EnsimeCodec(EnsimeCommon):
     completion.type_id = m[":type-id"]
     completion.to_insert = m[":to-insert"] if ":to-insert" in m else None
     return completion
+
+codec = EnsimeCodec()

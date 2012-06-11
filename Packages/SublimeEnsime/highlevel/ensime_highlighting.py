@@ -34,8 +34,7 @@ class EnsimeHighlightCommand(EnsimeWindowCommand):
   def is_enabled(self, enable = True):
     now = not not self.settings.get("error_highlight")
     wannabe = not not enable
-    running = ConnectedEnsimeOnly.is_enabled(self)
-    return running and now != wannabe
+    return ConnectedEnsimeOnly.is_enabled(self) and now != wannabe
 
   def run(self, enable = True):
     self.settings.set("error_highlight", not not enable)
@@ -45,28 +44,30 @@ class EnsimeHighlightCommand(EnsimeWindowCommand):
       self.type_check_file(self.f)
 
 class EnsimeHighlightDaemon(sublime_plugin.EventListener):
-  def on_load(self, view):
+  def with_api(self, view, what):
     api = EnsimeApi(view)
-    if api and api.in_project(view.file_name()):
-      api.type_check_file(view.file_name())
+    if api.controller.connected and api.in_project(view.file_name()):
+      what(api)
+
+  def on_load(self, view):
+    self.with_api(view, lambda api: api.type_check_file(view.file_name()))
 
   def on_post_save(self, view):
-    api = EnsimeApi(view)
-    if api and api.in_project(view.file_name()):
-      api.type_check_file(view.file_name())
+    self.with_api(view, lambda api: api.type_check_file(view.file_name()))
 
   def on_activate(self, view):
-    api = EnsimeApi(view)
-    if api and api.in_project(view.file_name()):
-      EnsimeHighlights(view).refresh()
+    self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
 
   def on_selection_modified(self, view):
-    api = EnsimeApi(view)
-    if api and api.in_project(view.file_name()):
-      bol = view.line(view.sel()[0].begin()).begin()
-      eol = view.line(view.sel()[0].begin()).end()
-      msgs = [note.message for note in self.notes if (bol <= note.start and note.start <= eol) or (bol <= note.end and note.end <= eol)]
-      if msgs:
-        self.view.set_status("ensime-typer", "; ".join(msgs))
-      else:
-        self.view.erase_status("ensime-typer")
+    self.with_api(view, self.display_errors_in_statusbar)
+
+  def display_errors_in_statusbar(self, api):
+    bol = api.v.line(api.v.sel()[0].begin()).begin()
+    eol = api.v.line(api.v.sel()[0].begin()).end()
+    # filter notes against self.f
+    # don't forget to use os.realpath to defeat symlinks
+    msgs = [note.message for note in api.notes if (bol <= note.start and note.start <= eol) or (bol <= note.end and note.end <= eol)]
+    if msgs:
+      api.v.set_status("ensime-typer", "; ".join(msgs))
+    else:
+      api.v.erase_status("ensime-typer")

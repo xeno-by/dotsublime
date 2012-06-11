@@ -1,7 +1,7 @@
 [
   { "keys": ["alt+left"], "command": "navigation_history_back"},
   { "keys": ["alt+right"], "command": "navigation_history_forward"},
-  { "keys": ["ctrl+shift+f4"], "command": "close_other_tabs"},
+  { "keys": ["ctrl+shift+f4"], "command": "my_close_other_tabs"},
   { "keys": ["enter"], "command": "jump_to_result_under_cursor", "context": [{ "key": "in_results_file" }, {"key": "setting.repl", "operator": "equal", "operand": false }]},
   { "keys": ["alt+shift+insert"], "command": "copy_path" },
   { "keys": ["ctrl+o"], "command": "myke", "args": {"cmd": "console"}},
