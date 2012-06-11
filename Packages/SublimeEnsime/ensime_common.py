@@ -21,7 +21,10 @@ class EnsimeBase(object):
       raise "unsupported owner of type: " + str(type(owner))
 
   def __getattr__(self, name):
-    self.env.__getattribute__(name)
+    if self.env:
+      self.env.__getattribute__(name)
+    else:
+      raise AttributeError(name + " is not a member of " + str(self))
 
   def log(self, data):
     if "highlevel" in self.settings.get("log", {}):
@@ -42,7 +45,11 @@ class EnsimeBase(object):
       return wannabe.startswith(root)
 
 class EnsimeCommon(EnsimeBase, EnsimeReplBase, EnsimeApi):
-  pass
+  def __init__(self, owner):
+    EnsimeBase.__init__(self, owner)
+
+def ensime_api(owner):
+  return EnsimeCommon(owner)
 
 class EnsimeWindowCommand(EnsimeCommon, WindowCommand):
   def __init__(self, window):

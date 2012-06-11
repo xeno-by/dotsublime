@@ -1,8 +1,9 @@
 import sublime_plugin, sublime
 import functools, socket, threading
-import sexp
+import sexp.sexp
+from ensime_common import *
 from string import strip
-from sexp import key, sym
+from sexp.sexp import key, sym
 
 class EnsimeClientListener:
   def on_client_async_data(self, data):

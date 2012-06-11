@@ -1,6 +1,6 @@
 import sublime
 from sublime_plugin import EventListener
-from ensime_api import ensime_api
+from ensime_common import *
 
 class EnsimeCompletionsListener(EventListener):
   def on_query_completions(self, view, prefix, locations):

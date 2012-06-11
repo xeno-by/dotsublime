@@ -7,9 +7,13 @@ ensime_envs = {}
 
 def get_ensime_env(window):
   if window:
+    if window.id() in ensime_envs:
+      return ensime_envs[window.id()]
     envLock.acquire()
     try:
-      return ensime_envs.get(window.id(), EnsimeEnvironment(window))
+      if not (window.id() in ensime_envs):
+        ensime_envs[window.id()] = EnsimeEnvironment(window)
+      return ensime_envs[window.id()]
     finally:
       envLock.release()
   return None

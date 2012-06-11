@@ -1,11 +1,11 @@
 import os
 import sublime
 import sublime_plugin
-from sublimerepl import repl_view
 
 class MyShellCompletionListener(sublime_plugin.EventListener):
   def on_query_completions(self, view, prefix, locations):
     v = view
+    from sublimerepl import repl_view
     rv = repl_view(v)
     if v.settings().has("repl"):
       delta = v.sel()[0].begin() - rv._output_end

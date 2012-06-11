@@ -1,4 +1,4 @@
-from lowlevel import ensime_codec
+from ensime_codec import ensime_codec
 
 class EnsimeApi:
 
@@ -26,6 +26,3 @@ class EnsimeApi:
     req = ensime_codec.encode_complete_member(file_path, position)
     resp = self.sync_req(req)
     return ensime_codec.decode_completions(resp)
-
-def ensime_api(owner):
-  return EnsimeCommon(owner)

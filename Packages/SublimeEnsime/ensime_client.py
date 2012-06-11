@@ -1,3 +1,5 @@
+import sublime
+from ensime_common import *
 from ensime_client_socket import EnsimeClientListener, EnsimeClientSocket
 
 class EnsimeClient(EnsimeClientListener, EnsimeCommon):

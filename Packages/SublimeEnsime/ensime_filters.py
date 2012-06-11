@@ -1,5 +1,5 @@
 from sublime_plugin import EventListener
-from lowlevel.common.ensime_common import *
+from ensime_common import *
 
 class ScalaOnly(EnsimeCommon):
   def is_enabled(self):

@@ -1,3 +1,5 @@
+import sexp
+
 class EnsimeCodec:
   def encode_initialize_project(self, conf):
     return [sym("swank:init-project"), conf]

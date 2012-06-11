@@ -1,4 +1,5 @@
 import os, re
+from ensime_common import *
 from ensime_server_process import EnsimeServerListener, EnsimeServerProcess
 
 class EnsimeServer(EnsimeServerListener, EnsimeCommon):

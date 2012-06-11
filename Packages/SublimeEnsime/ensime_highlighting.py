@@ -1,6 +1,6 @@
 import sublime
+from sublime_plugin import EventListener
 from ensime_common import *
-from ensime_api import ensime_api
 
 class EnsimeHighlights(EnsimeCommon):
   def hide(self):
@@ -47,10 +47,11 @@ class EnsimeHighlightCommand(EnsimeWindowCommand):
     if enable:
       self.type_check_file(self.f)
 
-class EnsimeHighlightDaemon(sublime_plugin.EventListener):
+class EnsimeHighlightDaemon(EventListener):
   def with_api(self, view, what):
     api = ensime_api(view)
-    if api.controller.connected and api.in_project(view.file_name()):
+    connected = hasattr(api, "controller") and api.controller and api.controller.connected
+    if connected and api.in_project(view.file_name()):
       what(api)
 
   def on_load(self, view):

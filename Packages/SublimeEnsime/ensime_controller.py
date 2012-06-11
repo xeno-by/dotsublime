@@ -1,3 +1,7 @@
+from ensime_common import *
+from ensime_server_process import EnsimeServerListener
+from ensime_client_socket import EnsimeClientListener
+
 class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener):
   def __init__(self):
     self.running = False
@@ -50,9 +54,18 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
     try:
       if self.running:
         self.in_transition = True
-        try: self.clear_notes() except: pass
-        try: self.client.shutdown() except: pass
-        try: self.server.shutdown() except: pass
+        try:
+          self.clear_notes()
+        except:
+          pass
+        try:
+          self.client.shutdown()
+        except:
+          pass
+        try:
+          self.server.shutdown()
+        except:
+          pass
     finally:
       self.running = False
       self.controller = None

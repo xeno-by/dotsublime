@@ -2,6 +2,7 @@ import os
 import thread
 import subprocess
 import killableprocess
+from ensime_common import *
 
 class EnsimeServerListener:
   def on_server_data(self, data):
