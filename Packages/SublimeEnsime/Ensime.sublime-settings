@@ -1,9 +1,9 @@
 {
   "ensime_server_path": "sublime-ensime/server",
   "ensime_work_dir": "sublime-ensime/work",
-  "use_auto_complete": false,
-  "show_output_during_server_startup": true,
+  "use_auto_complete": true,
   "error_highlight": true,
   "error_underline": true,
-  "error_icon": "cross"
+  "error_icon": "cross",
+  "log": ["highlevel", "client", "server"]
 }

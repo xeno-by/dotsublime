@@ -6,8 +6,9 @@
 	"error_underline": false,
 	"processes":
 	{
-		"4300": "4948"
+		"5048": "4432"
 	},
 	"show_output_during_server_startup": false,
-	"use_auto_complete": false
+	"use_auto_complete": false,
+  "log": ["client", "server", "highlevel"]
 }

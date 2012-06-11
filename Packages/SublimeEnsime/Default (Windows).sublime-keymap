@@ -1,1 +1,9 @@
-[]
+[
+  { "keys": ["ctrl+`"], "command": "ensime_show_client_server_repl", "args": { "toggle": true },
+    "context":
+    [
+      { "key": "ensime_ready", "operator": "equal", "operand": true },
+      { "key": "panel_visible", "operator": "equal", "operand": true }
+    ]
+  }
+]

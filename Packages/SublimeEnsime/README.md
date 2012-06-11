@@ -19,23 +19,23 @@ There is NO support yet for the subprojects in an .ensime file.
 1. Install the package itself:
 
     a. If you use [Package Control](http://wbond.net/sublime_packages/package_control),
-    add repository https://github.com/michaelpnash/sublime-ensime and install package sublime-ensime.
+    add repository https://github.com/sublimescala/sublime-ensime and install package sublime-ensime.
 
     b. Otherwise, in your Sublime Text `Packages` dir (you can find it by `Preferences -> Browse Packages`),
 
     ```
-    git clone git://github.com/casualjim/sublime-ensime.git sublime-ensime
+    git clone git://github.com/sublimescala/sublime-ensime.git sublime-ensime
     ```
 
 2. Install Ensime.
 
     a. In Unix (including Mac OS X), `cd` into the just created `sublime-ensime` directory and run
     ```
-    ./install-ensime-server
+    ./install-ensime-server.sh
     ```
 
     b. In Windows, just download the version of Ensime listed in the `./install-ensime-server` file
-    from https://github.com/aemoncannon/ensime/downloads. It will contain a directory with the same
+    from https://github.com/sublimescala/ensime/downloads. It will contain a directory with the same
     name as Ensime version. Extract it into the just created `sublime-ensime` directory and rename
     to `server`.
 
@@ -44,7 +44,7 @@ There is NO support yet for the subprojects in an .ensime file.
 Once you're in a project that has a .ensime file in the root folder, you can start a server from the file context menu. Or run:
 
 ```python
-window.run_command("ensime_server", { "start": True})
+window.run_command("ensime_server", { "start": True })
 ```
 
 ## What's planned?

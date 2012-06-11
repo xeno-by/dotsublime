@@ -5,29 +5,21 @@
         "children":
         [
           {
-            "caption": "Server",
+            "caption": "Maintenance",
             "children":
             [
-              { "caption": "Start", "command": "ensime_server", "args": { "start": true } },
-              { "caption": "Stop", "command": "ensime_server", "args": { "kill": true } },
-              { "caption": "Show output", "command": "ensime_server", "args": { "show_output": true, "quiet": true } }
-            //{ "caption": "Initialize Server...", "command": "initialize_ensime_server" }
+              { "caption": "Startup", "command": "ensime_startup" },
+              { "caption": "Shutdown", "command": "ensime_shutdown" },
+              { "caption": "Show client output", "command": "ensime_show_client_messages" },
+              { "caption": "Show server output", "command": "ensime_show_server_messages" },
+              { "caption": "Show client/server REPL", "command": "ensime_show_client_server_repl" }
             ]
           },
           {
-            "caption": "Source",
+            "caption": "Commands",
             "children":
             [
-              { "caption": "Reformat source", "command": "ensime_reformat_source" },
-              { "caption": "Show message output", "command": "ensime_show_message_view" },
-              { "caption": "Show type info", "command": "ensime_inspect_type_at_point" }
-            ]
-          },
-          {
-            "caption": "Refactor",
-            "children" :
-            [
-              { "caption": "Organize imports", "command": "ensime_organize_imports" }
+              { "caption": "Show type info", "command": "ensime_inspect_type_at_point"}
             ]
           }
         ]
