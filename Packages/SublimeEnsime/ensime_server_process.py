@@ -1,5 +1,6 @@
 import os
 import thread
+import functools
 import subprocess
 import killableprocess
 from ensime_common import *
@@ -125,11 +126,13 @@ class EnsimeServerProcess(EnsimeCommon):
       data = os.read(self.proc.stdout.fileno(), 2**15)
       if data != "":
         for listener in self.listeners:
-          sublime.set_timeout(lambda: listener.on_server_data(data), 0)
+          if listener:
+            sublime.set_timeout(functools.partial(listener.on_server_data, data), 0)
       else:
         self.proc.stdout.close()
         for listener in self.listeners:
-          sublime.set_timeout(lambda: listener.on_finished(self), 0)
+          if listener:
+            sublime.set_timeout(listener.on_finished, 0)
         break
 
   def read_stderr(self):
@@ -137,7 +140,8 @@ class EnsimeServerProcess(EnsimeCommon):
       data = os.read(self.proc.stderr.fileno(), 2**15)
       if data != "":
         for listener in self.listeners:
-          sublime.set_timeout(lambda: listener.on_server_data(data), 0)
+          if listener:
+            sublime.set_timeout(functools.partial(listener.on_server_data, data), 0)
       else:
         self.proc.stderr.close()
         break

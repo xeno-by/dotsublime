@@ -10,4 +10,3 @@ class EnsimeCompletionsListener(EventListener):
     if completions is None:
       return []
     return ([(c.name + "\t" + c.signature, c.name) for c in completions], sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
-

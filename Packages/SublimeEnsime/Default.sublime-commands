@@ -4,30 +4,8 @@
     "command": "ensime_startup"
   },
   {
-    "caption": "Ensime: Shutdown",
-    "command": "ensime_shutdown"
-  },
-  {
-    "caption": "Ensime: Show Server Messages",
-    "command": "ensime_show_server_messages"
-  },
-  {
-    "caption": "Ensime: Show Client Messages",
-    "command": "ensime_show_client_messages"
-  },
-  {
-    "caption": "Ensime: Enable Error Highlighting",
-    "command": "ensime_highlight",
-    "args": { "enable": true }
-  },
-  {
-    "caption": "Ensime: Disable Error Highlighting",
-    "command": "ensime_highlight",
-    "args": { "enable": false }
-  },
-  {
-    "caption": "Ensime: Show Client/Server REPL",
-    "command": "ensime_show_client_server_repl"
+    "caption": "Ensime: Restart",
+    "command": "ensime_restart"
   },
   {
     "caption": "Ensime: Check Type",

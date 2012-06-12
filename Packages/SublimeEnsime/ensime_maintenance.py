@@ -9,6 +9,11 @@ class EnsimeShutdownCommand(RunningOnly, EnsimeWindowCommand):
   def run(self):
     self.env.controller.shutdown()
 
+class EnsimeRestartCommand(RunningOnly, EnsimeWindowCommand):
+  def run(self):
+    self.w.run_command("ensime_shutdown")
+    self.w.run_command("ensime_startup")
+
 class EnsimeShowClientMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def run(self):
     self.view_show(self.env.cv, False)

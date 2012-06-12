@@ -1,4 +1,5 @@
-import sexp
+from sexp import sexp
+from sexp.sexp import key, sym
 
 class EnsimeCodec:
   def encode_initialize_project(self, conf):

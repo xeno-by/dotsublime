@@ -61,4 +61,14 @@ class ConnectedEnsimeOnly:
 
 class EnsimeContextProvider(EventListener):
   def on_query_context(self, view, key, operator, operand, match_all):
+    if key == "ensime_ready":
+      try:
+        return ensime_api(view).env.controller.ready
+      except:
+        return False
+    if key == "ensime_connected":
+      try:
+        return ensime_api(view).env.controller.connected
+      except:
+        return False
     return None

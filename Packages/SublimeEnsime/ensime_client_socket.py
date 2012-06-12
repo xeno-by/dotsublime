@@ -26,11 +26,13 @@ class EnsimeClientSocket(EnsimeCommon):
 
   def notify_async_data(self, data):
     for handler in self.handlers:
-      sublime.set_timeout(lambda: handler.on_client_async_data(data), 0)
+      if handler:
+        sublime.set_timeout(functools.partial(handler.on_client_async_data, data), 0)
 
   def notify_disconnect(self, reason):
     for handler in self.handlers:
-      sublime.set_timeout(lambda: handler.on_disconnect(reason), 0)
+      if handler:
+        sublime.set_timeout(functools.partial(handler.on_disconnect, reason), 0)
 
   def receive_loop(self):
     while self.connected:
@@ -44,7 +46,7 @@ class EnsimeClientSocket(EnsimeCommon):
           nxt = strip(res[msglen:])
           while len(nxt) > 0 or len(msg) > 0:
             form = sexp.read(msg)
-            sublime.set_timeout(functools.partial(self.notify_async_data, form), 0)
+            self.notify_async_data(form)
             if len(nxt) > 0:
               msglen = int(nxt[:6], 16) + 6
               msg = nxt[6:msglen]
@@ -112,7 +114,7 @@ class EnsimeClientSocket(EnsimeCommon):
             nxt = strip(res[msglen:])
             while len(nxt) > 0 or len(msg) > 0:
               if len(nxt) > 0:
-                sublime.set_timeout(functools.partial(self.notify_async_data, sexp.read(msg)), 0)
+                self.notify_async_data(sexp.read(msg))
                 msglen = int(nxt[:6], 16) + 6
                 msg = nxt[6:msglen]
                 nxt = strip(nxt[msglen:])
@@ -122,7 +124,7 @@ class EnsimeClientSocket(EnsimeCommon):
             result = sexp.read(msg)
             keep_going = result == None or msg_id != result[-1]
             if keep_going:
-              sublime.set_timeout(functools.partial(self.notify_async_data, result), 0)
+              self.notify_async_data(result)
           else:
             nxt = res
 

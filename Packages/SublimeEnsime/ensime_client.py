@@ -1,6 +1,7 @@
 import sublime
 import threading
 import inspect
+import traceback
 from ensime_common import *
 from ensime_client_socket import EnsimeClientListener, EnsimeClientSocket
 from sexp import sexp
@@ -103,9 +104,9 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
     self.feedback(msg_str)
     self.log_client("SEND SYNC REQ: " + msg_str)
-    msg_resp = self.socket.sync_send(msg_str, msg_id)
-    self.log_client("SEND SYNC RESP: " + msg_resp)
-    return msg_resp
+    resp = self.socket.sync_send(msg_str, msg_id)
+    self.log_client("SEND SYNC RESP: " + str(resp))
+    return resp
 
   ############### UTILITIES ###############
 
