@@ -20,6 +20,7 @@ class EnsimeServer(EnsimeServerListener, EnsimeCommon):
 
   def on_server_data(self, data):
     str_data = str(data).replace("\r\n", "\n").replace("\r", "\n")
+    self.log_server(str_data.strip(), to_disk_only = True)
     self.view_insert(self.env.sv, str_data)
 
   def shutdown(self):

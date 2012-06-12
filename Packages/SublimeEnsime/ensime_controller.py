@@ -52,7 +52,7 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
   def handle_handshake(self, server_info):
     sublime.status_message("Initializing... ")
     req = ensime_codec.encode_initialize_project(self.env.project_config)
-    self.client.async_req(req, lambda: sublime.status_message("Ensime ready!"))
+    self.client.async_req(req, lambda _: sublime.status_message("Ensime ready!"))
 
   def shutdown(self):
     self.env.lifecycleLock.acquire()

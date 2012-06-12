@@ -4,15 +4,21 @@
 	"error_highlight": true,
 	"error_icon": "dot",
 	"error_underline": false,
-	"log":
+	"log_to_console":
 	[
+		"ui",
 		"client",
-		"server",
-		"ui"
+		"server"
+	],
+	"log_to_file":
+	[
+		"ui",
+		"client",
+		"server"
 	],
 	"processes":
 	{
-		"440": "4236"
+		"4772": "4416"
 	},
 	"show_output_during_server_startup": false,
 	"use_auto_complete": false

@@ -26,9 +26,10 @@ class EnsimeEnvironment(object):
     # plugin-wide stuff (immutable)
     self.settings = sublime.load_settings("Ensime.sublime-settings")
     server_dir = self.settings.get("ensime_server_path", "sublime_ensime\\server" if os.name == 'nt' else "sublime_ensime/server")
-    server_path = server_dir if server_dir.startswith("/") or (":/" in server_dir) or (":\\" in server_dir) else os.path.join(sublime.packages_path(), server_dir)
-    self.ensime_executable = server_path + '/' + ("bin\\server.bat" if os.name == 'nt' else "bin/server")
-    self.plugin_root = server_path + "/.." # we can do better
+    self.server_path = server_dir if server_dir.startswith("/") or (":/" in server_dir) or (":\\" in server_dir) else os.path.join(sublime.packages_path(), server_dir)
+    self.ensime_executable = self.server_path + '/' + ("bin\\server.bat" if os.name == 'nt' else "bin/server")
+    self.plugin_root = self.server_path + "/.." # we can do better
+    self.log_root = self.plugin_root + "/logs"
 
     # instance-specific stuff (immutable)
     self.project_root = None

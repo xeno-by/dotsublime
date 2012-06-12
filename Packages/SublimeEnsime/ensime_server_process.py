@@ -88,7 +88,7 @@ class EnsimeServerProcess(EnsimeCommon):
       startupinfo = killableprocess.STARTUPINFO()
       startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
       startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
-    creationflags = None
+    creationflags = 0x0
     if os.name =="nt":
       creationflags = 0x8000000 # CREATE_NO_WINDOW
     self.proc = killableprocess.Popen(
@@ -97,7 +97,8 @@ class EnsimeServerProcess(EnsimeCommon):
       stderr = subprocess.PIPE,
       startupinfo = startupinfo,
       creationflags = creationflags,
-      env = os.environ.copy())
+      env = os.environ.copy(),
+      cwd = self.env.server_path)
     self.log_server("started ensime server with pid " + str(self.proc.pid))
     processes[str(os.getpid())] = str(self.proc.pid)
     self.env.settings.set("processes", processes)

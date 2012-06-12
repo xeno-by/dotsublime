@@ -26,7 +26,7 @@ def sexp_to_key_map(sexp):
               result[str(k)] = val
       return result
     except:
-      raise Exception("not a sexp")
+      raise Exception("not a sexp: %s" % sexp)
 
 def key(s):
   return Keyword(s)

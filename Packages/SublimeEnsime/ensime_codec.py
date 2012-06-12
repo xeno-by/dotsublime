@@ -36,7 +36,7 @@ class EnsimeCodec:
       return None
 
   def encode_complete_member(self, file_path, position):
-    return [sym("swank:completions"), str(file_path), int(position), 0]
+    return [sym("swank:completions"), str(file_path), int(position), 0, False]
 
   def decode_completions(self, data):
     friend = sexp.sexp_to_key_map(data[1][1])

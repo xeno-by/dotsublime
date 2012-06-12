@@ -25,7 +25,6 @@ class EnsimeShowServerMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
 # support `cls`
 # rebind Enter, Escape, Backspace, Left, ShiftLeft, Home, ShiftHome
 # persistent command history and Ctrl+Up/Ctrl+Down like in SublimeREPL
-# completions for command names
 
 class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def __init__(self, window):

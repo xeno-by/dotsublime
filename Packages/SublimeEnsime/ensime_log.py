@@ -1,3 +1,4 @@
+import os
 import sublime
 import functools
 
@@ -6,15 +7,24 @@ class EnsimeLog(object):
   def log(self, data):
     sublime.set_timeout(functools.partial(self.log_on_ui_thread, "ui", data), 0)
 
-  def log_client(self, data):
-    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "client", data), 0)
+  def log_client(self, data, to_disk_only = False):
+    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "client", data, to_disk_only), 0)
 
-  def log_server(self, data):
-    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "server", data), 0)
+  def log_server(self, data, to_disk_only = False):
+    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "server", data, to_disk_only), 0)
 
-  def log_on_ui_thread(self, flavor, data):
-    if flavor in self.env.settings.get("log", {}):
-      print str(data)
+  def log_on_ui_thread(self, flavor, data, to_disk_only):
+    if flavor in self.env.settings.get("log_to_console", {}):
+      if not to_disk_only:
+        print str(data)
+    if flavor in self.env.settings.get("log_to_file", {}):
+      try:
+        if not os.path.exists(self.env.log_root):
+          os.mkdir(self.env.log_root)
+        file_name = os.path.join(self.env.log_root, flavor + ".log")
+        with open(file_name, "a") as f: f.write(data + "\n")
+      except:
+        pass
 
   def view_insert(self, v, what):
     sublime.set_timeout(functools.partial(self.view_insert_on_ui_thread, v, what), 0)

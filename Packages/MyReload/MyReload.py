@@ -13,4 +13,4 @@ class MyReload(EventListener):
       for dirname, dirnames, filenames in os.walk(t):
         for filename in filenames:
           os.utime(os.path.join(dirname, filename), None)
-      if w: w.run_command("ensime_startup")
+      # if w: w.run_command("ensime_startup")

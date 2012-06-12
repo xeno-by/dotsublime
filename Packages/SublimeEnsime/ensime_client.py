@@ -2,6 +2,8 @@ import sublime
 import threading
 import inspect
 import traceback
+import random
+import getpass
 from ensime_common import *
 from ensime_client_socket import EnsimeClientListener, EnsimeClientSocket
 from sexp import sexp
@@ -14,7 +16,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     self.init_counters()
     methods = filter(lambda m: m[0].startswith("inbound_"), inspect.getmembers(self, predicate=inspect.ismethod))
     self.log_client("reflectively found " + str(len(methods)) + " handlers for inbound messages: " + str(methods))
-    self._inbound_handlers = dict((":" + m[0][len("inbound_"):], m[1]) for m in methods)
+    self._inbound_handlers = dict((":" + m[0][len("inbound_"):].replace("_", "-"), m[1]) for m in methods)
     self._outbound_handlers = {}
 
   def startup(self):
@@ -49,7 +51,12 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
           # (:return (:abort 210 "Error occurred in Analyzer. Check the server log.") 3)
           elif reply_type == ":abort":
             detail = data[1][2]
-            sublime.status_message(detail)
+            if msg_id <= 2: # handshake and initialize project
+              sublime.error_message(detail)
+              sublime.status_message("ENSIME startup has failed")
+              self.env.controller.shutdown()
+            else:
+              sublime.status_message(detail)
           # (:return (:error NNN "SSS") 4)
           elif reply_type == ":error":
             detail = data[1][2]
@@ -61,7 +68,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
         message_type = str(data[0])
         handler = self._inbound_handlers.get(message_type)
         if handler:
-          payload = data[1] if len(data) > 0 else None
+          payload = data[1] if len(data) > 1 else None
           handler(payload)
         else:
           self.log_client("unexpected message type: " + message_type)
@@ -72,8 +79,14 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
   def inbound_compiler_ready(self, payload):
     filename = self.env.plugin_root + "/Encouragements.txt"
     lines = [line.strip() for line in open(filename)]
-    msg = self.lines[random.randint(0, len(self.lines) - 1)]
+    msg = lines[random.randint(0, len(lines) - 1)]
     sublime.status_message(msg + " This could be the start of a beautiful program, " + getpass.getuser().capitalize()  + ".")
+
+  def inbound_indexer_ready(self, payload):
+    pass
+
+  def inbound_full_typecheck_finished(self, payload):
+    pass
 
   def inbound_background_message(self, payload):
     sublime.status_message(str(payload))
@@ -124,4 +137,5 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
   def feedback(self, msg):
     msg = msg.replace("\r\n", "\n").replace("\r", "\n") + "\n"
+    self.log_client(msg.strip(), to_disk_only = True)
     self.view_insert(self.env.cv, msg)
