@@ -44,7 +44,7 @@ class LayoutDaemon(sublime_plugin.EventListener):
     self.cv = view
     self.window = view.window()
     if self.needs_relayout():
-      print "needs relayout: " + (view.name() or view.file_name() or "")
+      # print "needs relayout: " + (view.name() or view.file_name() or "")
       self.relayout()
 
   def is_special(self, view):
@@ -63,7 +63,6 @@ class LayoutDaemon(sublime_plugin.EventListener):
           # if we navigate normally, there's no need in relayouting
           delta_t = time.time() - self.last_selection_modified
           delta_n = len(self.window.views()) - self.last_view_count
-          print delta_n
           return delta_t < 0.2 and delta_n != 0
 
   def on_selection_modified(self, view):

@@ -1,6 +1,8 @@
 import sublime, sublime_plugin
 import subprocess
 import os
+import time
+import re
 from _winreg import *
 
 class MykeCommand(sublime_plugin.WindowCommand):
@@ -118,11 +120,20 @@ class MykeCommand(sublime_plugin.WindowCommand):
         view_name = "myke " + caption
         self.args[0] = hotkey
       wannabes = filter(lambda v: v.name() == view_name, self.window.views())
-      wannabe = wannabes[0] if len(wannabes) else self.window.new_file()
+      prev_active_group = self.window.active_group()
+      if wannabes:
+        wannabe = wannabes[0]
+      else:
+        # this should be done by the layout daemon, but this way we prevent flickering
+        if self.window.num_groups() == 2:
+          self.window.focus_group(1)
+        wannabe = self.window.new_file()
       wannabe.set_name(view_name)
       wannabe.settings().set("myke_project_root", self.project_root)
       wannabe.settings().set("myke_current_file", self.current_file)
       wannabe.settings().set("myke_args", self.args)
+      wannabe.settings().set("prev_time", time.time())
+      wannabe.settings().set("prev_active_group", prev_active_group)
       self.settings.last_command = self.cmd
       self.settings.last_project_root = self.project_root
       self.settings.last_current_file = self.current_file
@@ -229,8 +240,17 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
 
     success = True if env["Status"] == "0" else False
     meaningful = env["Meaningful"] == "1" if "Meaningful" in env else None
-    if success and not meaningful:
+    auto_close = success and not meaningful
+    if not success:
+      line = self.view.substr(self.view.line(0))
+      if re.match("error: .* does not know how to do compile", line):
+        auto_close = True
+    if auto_close:
+      prev_active_group = self.view.settings().get("prev_active_group")
+      delta = time.time() - self.view.settings().get("prev_time")
       window.run_command("close_file")
+      if delta < 2:
+        window.focus_group(prev_active_group)
 
     result_file_regex = env["ResultFileRegex"] if "ResultFileRegex" in env else ""
     result_line_regex = env["ResultLineRegex"] if "ResultLineRegex" in env else ""
