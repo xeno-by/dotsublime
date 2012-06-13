@@ -16,6 +16,7 @@
 	],
 	"repositories":
 	[
-		"http://wuub.net/sublimepty-alpha.json"
+		"http://wuub.net/sublimepty-alpha.json",
+		"http://sublime.wbond.net/testing/packages.json"
 	]
 }
