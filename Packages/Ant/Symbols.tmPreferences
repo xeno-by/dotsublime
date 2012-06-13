@@ -5,7 +5,7 @@
   <key>name</key>
   <string>Symbol List</string>
   <key>scope</key>
-  <string>meta.tag.target.xml.ant, meta.tag.macrodef.xml.ant</string>
+  <string>meta.tag.target.xml.ant, meta.tag.property.xml.ant, meta.tag.path.xml.ant, meta.tag.macrodef.xml.ant</string>
   <key>settings</key>
   <dict>
     <key>showInSymbolList</key>
