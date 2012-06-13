@@ -20,6 +20,27 @@ class LayoutDaemon(sublime_plugin.EventListener):
 
   def on_activated(self, view):
     # print "on_activated: " + (view.name() or view.file_name() or "")
+
+    # works around Sublime's bug that makes it always activate the last view group on startup
+    # regardless of what group was actually active on shutdown
+    if view.window():
+      if view.name() or view.file_name():
+        if not hasattr(self, "active_group"):
+          group_to_activate = sublime.load_settings("MyLayout.sublime-settings").get("active_group", 0)
+          self.active_group = group_to_activate
+          self.init_time = time.time()
+          view.window().focus_group(group_to_activate)
+      if hasattr(self, "active_group"):
+        if self.active_group != view.window().active_group():
+          delta = time.time() - self.init_time
+          if delta > 0.2:
+            self.active_group = view.window().active_group()
+            settings = sublime.load_settings("MyLayout.sublime-settings")
+            settings.set("active_group", self.active_group)
+            sublime.save_settings("MyLayout.sublime-settings")
+          else:
+            view.window().focus_group(self.active_group)
+
     self.cv = view
     self.window = view.window()
     if self.needs_relayout():
