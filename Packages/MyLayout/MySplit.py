@@ -8,8 +8,10 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     window.run_command("clone_file")
     window.run_command("set_layout", {"cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]})
     new = window.active_view()
+    new.settings().set("myclone", True)
     new.show(view.visible_region())
     new.set_viewport_position(view.viewport_position())
+    new.sel().clear()
     for sel in view.sel():
       new.sel().add(sel)
     group, index = window.get_view_index(new)
@@ -17,6 +19,13 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
       window.set_view_index(new, 1, len(window.views_in_group(1)))
     window.focus_view(view)
     window.focus_view(new)
+
+class UndoCloneFileAndSplit(sublime_plugin.WindowCommand):
+  def run(self):
+    self.window.active_view().settings().set("myclone", False)
+    self.window.run_command("close_file")
+    if len(self.window.views_in_group(1)) == 0:
+      self.window.run_command("set_layout", {"cols": [0.0, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1]]})
 
 class MoveFileToSplit(sublime_plugin.WindowCommand):
   def run(self):
