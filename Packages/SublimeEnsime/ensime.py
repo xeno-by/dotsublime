@@ -1,7 +1,7 @@
 import sublime
 from sublime import *
 from sublime_plugin import *
-import os, threading, thread, socket, getpass, subprocess, killableprocess, tempfile
+import os, threading, thread, socket, getpass, subprocess, killableprocess, tempfile, datetime, time
 import functools, inspect, traceback, random, re
 from sexp import sexp
 from sexp.sexp import key, sym
@@ -11,7 +11,7 @@ class EnsimeApi:
 
   def type_check_file(self, file_path, on_complete = None):
     req = ensime_codec.encode_type_check_file(file_path)
-    self.env.controller.client.async_req(req, on_complete)
+    self.env.controller.client.async_req(req, on_complete, call_back_into_ui_thread = True)
 
   def add_notes(self, notes):
     self.env.notes += notes
@@ -27,13 +27,11 @@ class EnsimeApi:
 
   def inspect_type_at_point(self, file_path, position, on_complete):
     req = ensime_codec.encode_inspect_type_at_point(file_path, position)
-    self.env.controller.client.async_req(req, on_complete)
+    self.env.controller.client.async_req(req, on_complete, call_back_into_ui_thread = True)
 
   def complete_member(self, file_path, position):
-    print "hello"
     req = ensime_codec.encode_complete_member(file_path, position)
     resp = self.env.controller.client.sync_req(req)
-    print "complete_member: " + str(resp)
     return ensime_codec.decode_completions(resp)
 
 envLock = threading.RLock()
@@ -59,8 +57,8 @@ class EnsimeEnvironment(object):
     server_dir = self.settings.get("ensime_server_path", "sublime_ensime\\server" if os.name == 'nt' else "sublime_ensime/server")
     self.server_path = server_dir if server_dir.startswith("/") or (":/" in server_dir) or (":\\" in server_dir) else os.path.join(sublime.packages_path(), server_dir)
     self.ensime_executable = self.server_path + '/' + ("bin\\server.bat" if os.name == 'nt' else "bin/server")
-    self.plugin_root = self.server_path + "/.." # we can do better
-    self.log_root = self.plugin_root + "/logs"
+    self.plugin_root = os.path.normpath(os.path.join(self.server_path, ".."))
+    self.log_root = os.path.normpath(os.path.join(self.plugin_root, "logs"))
 
     # instance-specific stuff (immutable)
     self.project_root = None
@@ -77,7 +75,7 @@ class EnsimeEnvironment(object):
         self.project_root = m[":root-dir"]
       else:
         self.project_config = self.project_config + [key(":root-dir"), self.project_root]
-    self.valid = True
+    self.valid = self.project_config
 
     # lifecycle (mutable)
     self.lifecycleLock = threading.RLock()
@@ -88,6 +86,7 @@ class EnsimeEnvironment(object):
     self.notes = []
     self.repl_last_insert = 0
     self.repl_last_fixup = 0
+    self.repl_last_history = -1
     self.repl_lock = threading.RLock()
     self.sv = window.get_output_panel("ensime_server")
     self.sv.set_name("ensime_server")
@@ -101,8 +100,14 @@ class EnsimeEnvironment(object):
 
 class EnsimeLog(object):
 
-  def log(self, data):
-    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "ui", data), 0)
+  def status_message(self, msg):
+    sublime.set_timeout(functools.partial(sublime.status_message, msg), 0)
+
+  def error_message(self, msg):
+    sublime.set_timeout(functools.partial(sublime.error_message, msg), 0)
+
+  def log(self, data, to_disk_only = False):
+    sublime.set_timeout(functools.partial(self.log_on_ui_thread, "ui", data, to_disk_only), 0)
 
   def log_client(self, data, to_disk_only = False):
     sublime.set_timeout(functools.partial(self.log_on_ui_thread, "client", data, to_disk_only), 0)
@@ -130,7 +135,7 @@ class EnsimeLog(object):
     selection_was_at_end = (len(v.sel()) == 1 and v.sel()[0] == sublime.Region(v.size()))
     v.set_read_only(False)
     edit = v.begin_edit()
-    v.insert(edit, v.size(), what)
+    v.insert(edit, v.size(), what or "")
     if selection_was_at_end:
       v.show(v.size())
     v.end_edit(edit)
@@ -140,8 +145,8 @@ class EnsimeLog(object):
   def view_show(self, v, focus = False):
     self.w.run_command("show_panel", {"panel": "output." + v.name()})
     if focus:
-      self.w.focus_view(v)
-    sublime.set_timeout(functools.partial(v.show, v.size()), 100)
+      sublime.set_timeout(functools.partial(self.w.focus_view, v), 100)
+    sublime.set_timeout(functools.partial(v.show, v.size()), 200)
 
   def repl_prompt(self):
     return "ensime>"
@@ -176,7 +181,7 @@ class EnsimeLog(object):
         user_input = ""
         if current - last >= len(self.repl_prompt()):
           user_input = self.env.rv.substr(sublime.Region(last + len(self.repl_prompt()), current))
-      self.env.rv.insert(edit, current, what)
+      self.env.rv.insert(edit, current, what or "")
       if rewind:
         self.env.repl_last_insert = self.env.rv.size()
         if current - last >= len(self.repl_prompt()):
@@ -223,6 +228,32 @@ class EnsimeLog(object):
     finally:
       self.env.repl_lock.release()
 
+  def repl_previous_history(self):
+    try:
+      with open(os.path.join(self.env.log_root, "repl.history")) as f:
+        lines = f.readlines() or [""]
+        index = self.env.repl_last_history
+        if index < 0: index += len(lines)
+        index -= 1
+        if index < 0: index = 0
+        self.env.repl_last_history = index
+        return lines[index]
+    except:
+      self.log(sys.exc_info()[1])
+
+  def repl_next_history(self):
+    try:
+      with open(os.path.join(self.env.log_root, "repl.history")) as f:
+        lines = f.readlines() or [""]
+        index = self.env.repl_last_history
+        if index < 0: index += len(lines)
+        index += 1
+        if index >= len(lines): index = len(lines) - 1
+        self.env.repl_last_history = index
+        return lines[index]
+    except:
+      self.log(sys.exc_info()[1])
+
 class EnsimeBase(object):
   def __init__(self, owner):
     self.owner = owner
@@ -248,14 +279,25 @@ class EnsimeBase(object):
 class EnsimeCommon(EnsimeBase, EnsimeLog, EnsimeApi):
   pass
 
+class EnsimeApiImpl(EnsimeCommon):
+  def __nonzero__(self):
+    controller = self.env and self.env.controller
+    socket = controller and controller.client and controller.client.socket
+    connected = socket and socket.connected
+    return not not connected
+
 def ensime_api(owner):
-  return EnsimeCommon(owner)
+  return EnsimeApiImpl(owner)
 
 class EnsimeWindowCommand(EnsimeCommon, WindowCommand):
-  pass
+  def __init__(self, window):
+    super(EnsimeWindowCommand, self).__init__(window)
+    self.window = window
 
 class EnsimeTextCommand(EnsimeCommon, TextCommand):
-  pass
+  def __init__(self, view):
+    super(EnsimeTextCommand, self).__init__(view)
+    self.view = view
 
 class ScalaOnly:
   def is_enabled(self):
@@ -289,21 +331,24 @@ class EnsimeContextProvider(EventListener):
         return ensime_api(view).env.controller.connected
       except:
         return False
+    if key == "ensime_repl_enabled":
+      try:
+        return not not ensime_api(view).env.settings.get("log_to_console")
+      except:
+        return False
+    if key == "ensime_repl_opened":
+      return view.name() == "ensime_repl"
     return None
 
 class EnsimeClientListener:
   def on_client_async_data(self, data):
     pass
 
-  def on_disconnect(self, reason):
-    pass
-
 class EnsimeClientSocket(EnsimeCommon):
   def __init__(self, owner, port, handlers):
-    super(type(self).__mro__[0], self).__init__(owner)
+    super(EnsimeClientSocket, self).__init__(owner)
     self.port = port
     self.connected = False
-    self.disconnect_pending = False
     self.handlers = handlers
     self._lock = threading.RLock()
     self._connect_lock = threading.RLock()
@@ -312,43 +357,40 @@ class EnsimeClientSocket(EnsimeCommon):
   def notify_async_data(self, data):
     for handler in self.handlers:
       if handler:
-        sublime.set_timeout(functools.partial(handler.on_client_async_data, data), 0)
-
-  def notify_disconnect(self, reason):
-    for handler in self.handlers:
-      if handler:
-        sublime.set_timeout(functools.partial(handler.on_disconnect, reason), 0)
+        handler.on_client_async_data(data)
 
   def receive_loop(self):
     while self.connected:
       try:
-        res = self.socket.recv(4096)
-        self.log_client("RECV: " + unicode(res, "utf-8"))
-        if res:
-          len_str = res[:6]
-          msglen = int(len_str, 16) + 6
-          msg = res[6:msglen]
-          nxt = strip(res[msglen:])
-          while len(nxt) > 0 or len(msg) > 0:
-            form = sexp.read(msg)
-            self.notify_async_data(form)
-            if len(nxt) > 0:
-              msglen = int(nxt[:6], 16) + 6
-              msg = nxt[6:msglen]
-              nxt = strip(nxt[msglen:])
+        msglen = self.socket.recv(6)
+        if msglen:
+          msglen = int(msglen, 16)
+          # self.log_client("RECV: incoming message of " + str(msglen) + " characters")
+
+          buf = ""
+          while len(buf) < msglen:
+            chunk = self.socket.recv(msglen - len(buf))
+            if chunk:
+              # self.log_client("RECV: received a chunk of " + str(len(chunk)) + " characters")
+              buf += chunk
             else:
-              msg = ""
-              msglen = ""
+              raise "fatal error: recv returned None"
+          self.log_client("RECV: " + buf)
+
+          try:
+            form = sexp.read(buf)
+            self.notify_async_data(form)
+          except:
+            self.log_client("failed to parse incoming message")
+            raise
         else:
-          self.connected = False
-      except Exception as e:
+          raise "fatal error: recv returned None"
+      except Exception:
         self.log_client("*****    ERROR     *****")
-        self.log_client("expected disconnect" if self.disconnect_pending else "unexpected disconnect")
-        self.log_client(e)
-        reason = "server" if not self.disconnect_pending else "client"
-        self.disconnect_pending = False
-        self.notify_disconnect(reason)
+        self.log_client(traceback.format_exc())
         self.connected = False
+        self.status_message("ENSIME server has disconnected")
+        self.env.controller.shutdown()
 
   def start_receiving(self):
     t = threading.Thread(name = "ensime-client-" + str(self.w.id()) + "-" + str(self.port), target = self.receive_loop)
@@ -368,7 +410,8 @@ class EnsimeClientSocket(EnsimeCommon):
     except socket.error as e:
       # set sublime error status
       self.connected = False
-      sublime.error_message("Can't connect to ensime server:  " + e.args[1])
+      self.log_client("Can't connect to ENSIME server:  " + e.args[1])
+      self.env.controller.shutdown()
     finally:
       self._connect_lock.release()
 
@@ -378,51 +421,7 @@ class EnsimeClientSocket(EnsimeCommon):
         self.connect()
       self.socket.send(request)
     except:
-      self.notify_disconnect("server")
-      self.set_connected(False)
-
-  def sync_send(self, request, msg_id):
-    self._connect_lock.acquire()
-    try:
-      s = socket.socket()
-      s.connect(("127.0.0.1", self.port))
-      try:
-        s.send(request)
-        result = ""
-        keep_going = True
-        nxt = ""
-        while keep_going:
-          res = nxt + s.recv(4096)
-          msglen = int(res[:6], 16) + 6
-          msg = res[6:msglen]
-          if (len(msg) + 6) == msglen:
-            nxt = strip(res[msglen:])
-            while len(nxt) > 0 or len(msg) > 0:
-              if len(nxt) > 0:
-                self.notify_async_data(sexp.read(msg))
-                msglen = int(nxt[:6], 16) + 6
-                msg = nxt[6:msglen]
-                nxt = strip(nxt[msglen:])
-              else:
-                nxt = ""
-                break
-            result = sexp.read(msg)
-            keep_going = result == None or msg_id != result[-1]
-            if keep_going:
-              self.notify_async_data(result)
-          else:
-            nxt = res
-
-        return result
-      except Exception as error:
-        self.log_client(error)
-      finally:
-        if s:
-          s.close()
-    except Exception as error:
-      self.log_client(error)
-    finally:
-      self._connect_lock.release()
+      self.connected = False
 
   def close(self):
     self._connect_lock.acquire()
@@ -471,9 +470,10 @@ class EnsimeCodec:
     return [sym("swank:completions"), str(file_path), int(position), 0, False]
 
   def decode_completions(self, data):
-    friend = sexp.sexp_to_key_map(data[1][1])
+    if not data: return []
+    friend = sexp.sexp_to_key_map(data)
     comps = friend[":completions"] if ":completions" in friend else []
-    comp_list = [self.decode_completion(p) for p in friend[":completions"]]
+    return [self.decode_completion(p) for p in friend[":completions"]]
 
   def decode_completion(self, data):
     m = sexp.sexp_to_key_map(data)
@@ -490,16 +490,16 @@ ensime_codec = EnsimeCodec()
 
 class EnsimeClient(EnsimeClientListener, EnsimeCommon):
   def __init__(self, owner, port_file):
-    super(type(self).__mro__[0], self).__init__(owner)
+    super(EnsimeClient, self).__init__(owner)
     with open(port_file) as f: self.port = int(f.read())
     self.init_counters()
-    methods = filter(lambda m: m[0].startswith("inbound_"), inspect.getmembers(self, predicate=inspect.ismethod))
-    self.log_client("reflectively found " + str(len(methods)) + " handlers for inbound messages: " + str(methods))
-    self._inbound_handlers = dict((":" + m[0][len("inbound_"):].replace("_", "-"), m[1]) for m in methods)
-    self._outbound_handlers = {}
+    methods = filter(lambda m: m[0].startswith("message_"), inspect.getmembers(self, predicate=inspect.ismethod))
+    self.log_client("reflectively found " + str(len(methods)) + " message handlers: " + str(methods))
+    self.handlers = dict((":" + m[0][len("message_"):].replace("_", "-"), (m[1], None, None)) for m in methods)
 
   def startup(self):
-    self.log_server("Launching ENSIME client socket at port " + str(self.port))
+    self.log_client("[" + str(datetime.datetime.now()) + "] Starting ENSIME client")
+    self.log_client("Launching ENSIME client socket at port " + str(self.port))
     self.socket = EnsimeClientSocket(self.owner, self.port, [self, self.env.controller])
     self.socket.connect()
 
@@ -508,80 +508,12 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     self.socket.close()
     self.socket = None
 
-  ############### INBOUND MESSAGES ###############
+  def async_req(self, to_send, on_complete = None, call_back_into_ui_thread = None):
+    if on_complete is not None and call_back_into_ui_thread is None:
+      raise "must specify a threading policy when providing a non-empty callback"
 
-  def on_client_async_data(self, data):
-    self.log_client("SEND ASYNC RESP: " + str(data))
-    self.feedback(str(data))
-
-    try:
-      msg_type = str(data[0])
-      msg_id = data[-1]
-      if msg_type == ":return":
-        handler = self._outbound_handlers.get(msg_id)
-        if handler:
-          del self._outbound_handlers[msg_id]
-
-          reply_type = str(data[1][0])
-          # (:return (:ok (:project-name nil :source-roots ("D:\\Dropbox\\Scratchpad\\Scala"))) 2)
-          if reply_type == ":ok":
-            payload = data[1][1]
-            handler(payload)
-          # (:return (:abort 210 "Error occurred in Analyzer. Check the server log.") 3)
-          elif reply_type == ":abort":
-            detail = data[1][2]
-            if msg_id <= 2: # handshake and initialize project
-              sublime.error_message(detail)
-              sublime.status_message("ENSIME startup has failed")
-              self.env.controller.shutdown()
-            else:
-              sublime.status_message(detail)
-          # (:return (:error NNN "SSS") 4)
-          elif reply_type == ":error":
-            detail = data[1][2]
-            sublime.error_message(detail)
-          else:
-            self.log_client("unexpected reply type: " + reply_type)
-      else:
-        # (:compiler-ready)
-        message_type = str(data[0])
-        handler = self._inbound_handlers.get(message_type)
-        if handler:
-          payload = data[1] if len(data) > 1 else None
-          handler(payload)
-        else:
-          self.log_client("unexpected message type: " + message_type)
-    except Exception as e:
-      self.log_client("error when handling message: " + str(data))
-      self.log_client(traceback.format_exc())
-
-  def inbound_compiler_ready(self, payload):
-    filename = self.env.plugin_root + "/Encouragements.txt"
-    lines = [line.strip() for line in open(filename)]
-    msg = lines[random.randint(0, len(lines) - 1)]
-    sublime.status_message(msg + " This could be the start of a beautiful program, " + getpass.getuser().capitalize()  + ".")
-
-  def inbound_indexer_ready(self, payload):
-    pass
-
-  def inbound_full_typecheck_finished(self, payload):
-    pass
-
-  def inbound_background_message(self, payload):
-    sublime.status_message(str(payload))
-
-  def inbound_scala_notes(self, payload):
-    notes = ensime_codec.decode_notes(payload)
-    self.add_notes(notes)
-
-  def inbound_clear_notes(self, payload):
-    self.clear_notes()
-
-  ############### OUTBOUND MESSAGES ###############
-
-  def async_req(self, to_send, on_complete = None, msg_id = None):
     msg_id = self.next_message_id()
-    self._outbound_handlers[msg_id] = on_complete
+    self.handlers[msg_id] = (on_complete, call_back_into_ui_thread, time.time())
     msg_str = sexp.to_string([key(":swank-rpc"), to_send, msg_id])
     msg_str = "%06x" % len(msg_str) + msg_str
 
@@ -591,16 +523,118 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
   def sync_req(self, to_send):
     msg_id = self.next_message_id()
+    event = threading.Event()
+    self.handlers[msg_id] = (event, None, time.time())
     msg_str = sexp.to_string([key(":swank-rpc"), to_send, msg_id])
     msg_str = "%06x" % len(msg_str) + msg_str
 
     self.feedback(msg_str)
     self.log_client("SEND SYNC REQ: " + msg_str)
-    resp = self.socket.sync_send(msg_str, msg_id)
-    self.log_client("SEND SYNC RESP: " + str(resp))
-    return resp
+    self.socket.send(msg_str)
 
-  ############### UTILITIES ###############
+    event.wait(3)
+    if hasattr(event, "payload"):
+      return event.payload
+    else:
+      self.log_client("sync_req has timed out")
+      return None
+
+  def on_client_async_data(self, data):
+    self.log_client("SEND ASYNC RESP: " + str(data))
+    self.feedback(str(data))
+    self.handle_message(data)
+
+  # examples of responses can be seen here:
+  # http://aemon.com/file_dump/ensime_manual.html#tth_sEcC.2
+  def handle_message(self, data):
+    # (:return (:ok (:pid nil :server-implementation (:name "ENSIMEserver") :machine nil :features nil :version "0.0.1")) 1)
+    # (:background-message "Initializing Analyzer. Please wait...")
+    # (:compiler-ready t)
+    # (:typecheck-result (:lang :scala :is-full t :notes nil))
+    msg_type = str(data[0])
+    handler, _, _ = self.handlers.get(msg_type)
+
+    if handler:
+      msg_id = data[-1] if msg_type == ":return" else None
+      data = data[1:-1] if msg_type == ":return" else data[1:]
+      payload = None
+      if len(data) == 1: payload = data[0]
+      if len(data) > 1: payload = data
+      return handler(msg_id, payload)
+    else:
+      self.log_client("unexpected message type: " + msg_type)
+
+  def message_return(self, msg_id, payload):
+    handler, call_back_into_ui_thread, req_time = self.handlers.get(msg_id)
+    if handler: del self.handlers[msg_id]
+
+    resp_time = time.time()
+    self.log_client("request #" + str(msg_id) + " took " + str(resp_time - req_time) + " seconds")
+
+    reply_type = str(payload[0])
+    # (:return (:ok (:project-name nil :source-roots ("D:\\Dropbox\\Scratchpad\\Scala"))) 2)
+    if reply_type == ":ok":
+      payload = payload[1]
+      if handler:
+        if callable(handler):
+          if call_back_into_ui_thread:
+            sublime.set_timeout(functools.partial(handler, payload), 0)
+          else:
+            handler(payload)
+        else:
+          handler.payload = payload
+          handler.set()
+      else:
+        self.log_client("warning: no handler registered for message #" + str(msg_id) + " with payload " + str(payload))
+    # (:return (:abort 210 "Error occurred in Analyzer. Check the server log.") 3)
+    elif reply_type == ":abort":
+      detail = payload[2]
+      if msg_id <= 2: # handshake and initialize project
+        self.error_message(self.prettify_error_detail(detail))
+        self.status_message("ENSIME startup has failed")
+        self.env.controller.shutdown()
+      else:
+        self.status_message(detail)
+    # (:return (:error NNN "SSS") 4)
+    elif reply_type == ":error":
+      detail = payload[2]
+      self.error_message(self.prettify_error_detail(detail))
+    else:
+      self.log_client("unexpected reply type: " + reply_type)
+
+  def call_back_into_ui_thread(vanilla):
+    def wrapped(self, msg_id, payload):
+      sublime.set_timeout(functools.partial(vanilla, self, msg_id, payload), 0)
+    return wrapped
+
+  @call_back_into_ui_thread
+  def message_compiler_ready(self, msg_id, payload):
+    filename = self.env.plugin_root + "/Encouragements.txt"
+    lines = [line.strip() for line in open(filename)]
+    msg = lines[random.randint(0, len(lines) - 1)]
+    self.status_message(msg + " This could be the start of a beautiful program, " + getpass.getuser().capitalize()  + ".")
+
+  @call_back_into_ui_thread
+  def message_indexer_ready(self, msg_id, payload):
+    pass
+
+  @call_back_into_ui_thread
+  def message_full_typecheck_finished(self, msg_id, payload):
+    pass
+
+  @call_back_into_ui_thread
+  def message_background_message(self, msg_id, payload):
+    # (:background-message 105 "Initializing Analyzer. Please wait...")
+    self.status_message(payload[1])
+
+  @call_back_into_ui_thread
+  def message_scala_notes(self, msg_id, payload):
+    notes = ensime_codec.decode_notes(payload)
+    self.add_notes(notes)
+
+  @call_back_into_ui_thread
+  def message_clear_all_scala_notes(self, msg_id, payload):
+    self.clear_notes()
 
   def init_counters(self):
     self._counter = 0
@@ -614,6 +648,14 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     finally:
       self._counterLock.release()
 
+  def prettify_error_detail(self, detail):
+    detail = "ENSIME server has encountered a fatal error: " + detail
+    if detail.endswith(". Check the server log."):
+      detail = detail[0:-len(". Check the server log.")]
+    if not detail.endswith("."): detail += "."
+    detail += "\n\nCheck the server log at " + os.path.join(self.env.log_root, "server.log") + "."
+    return detail
+
   def feedback(self, msg):
     msg = msg.replace("\r\n", "\n").replace("\r", "\n") + "\n"
     self.log_client(msg.strip(), to_disk_only = True)
@@ -623,12 +665,9 @@ class EnsimeServerListener:
   def on_server_data(self, data):
     pass
 
-  def on_finished(self):
-    pass
-
 class EnsimeServerProcess(EnsimeCommon):
   def __init__(self, owner, command, listeners):
-    super(type(self).__mro__[0], self).__init__(owner)
+    super(EnsimeServerProcess, self).__init__(owner)
     self.killed = False
     self.listeners = listeners or []
 
@@ -697,22 +736,26 @@ class EnsimeServerProcess(EnsimeCommon):
       # todo. Vlad, please, implement similar logic for Linux
       pass
 
-    startupinfo = None
-    if os.name == "nt":
+    if os.name =="nt":
       startupinfo = killableprocess.STARTUPINFO()
       startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
       startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
-    creationflags = 0x0
-    if os.name =="nt":
       creationflags = 0x8000000 # CREATE_NO_WINDOW
-    self.proc = killableprocess.Popen(
-      command,
-      stdout = subprocess.PIPE,
-      stderr = subprocess.PIPE,
-      startupinfo = startupinfo,
-      creationflags = creationflags,
-      env = os.environ.copy(),
-      cwd = self.env.server_path)
+      self.proc = killableprocess.Popen(
+        command,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        startupinfo = startupinfo,
+        creationflags = creationflags,
+        env = os.environ.copy(),
+        cwd = self.env.server_path)
+    else:
+      self.proc = killableprocess.Popen(
+        command,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        env = os.environ.copy(),
+        cwd = self.env.server_path)
     self.log_server("started ensime server with pid " + str(self.proc.pid))
     processes[str(os.getpid())] = str(self.proc.pid)
     self.env.settings.set("processes", processes)
@@ -742,12 +785,9 @@ class EnsimeServerProcess(EnsimeCommon):
       if data != "":
         for listener in self.listeners:
           if listener:
-            sublime.set_timeout(functools.partial(listener.on_server_data, data), 0)
+            listener.on_server_data(data)
       else:
         self.proc.stdout.close()
-        for listener in self.listeners:
-          if listener:
-            sublime.set_timeout(listener.on_finished, 0)
         break
 
   def read_stderr(self):
@@ -756,24 +796,33 @@ class EnsimeServerProcess(EnsimeCommon):
       if data != "":
         for listener in self.listeners:
           if listener:
-            sublime.set_timeout(functools.partial(listener.on_server_data, data), 0)
+            listener.on_server_data(data)
       else:
         self.proc.stderr.close()
         break
 
 class EnsimeServer(EnsimeServerListener, EnsimeCommon):
   def __init__(self, owner, port_file):
-    super(type(self).__mro__[0], self).__init__(owner)
+    super(EnsimeServer, self).__init__(owner)
     self.port_file = port_file
 
   def startup(self):
     ensime_command = self.get_ensime_command()
+    self.log_server("[" + str(datetime.datetime.now()) + "] Starting ENSIME server")
     self.log_server("Launching ENSIME server process with: " + str(ensime_command))
     self.proc = EnsimeServerProcess(self.owner, ensime_command, [self, self.env.controller])
 
   def get_ensime_command(self):
     if not os.path.exists(self.env.ensime_executable):
-      sublime.error_message("Ensime executable \"" + self.env.ensime_executable + "\" does not exist. Check your Ensime.sublime-settings.")
+      message = "ENSIME executable \"" + self.env.ensime_executable + "\" does not exist."
+      message += "\n\n"
+      message += "If you haven't yet installed ENSIME, download it from https://github.com/sublimescala/ensime/downloads, "
+      message += "and unpack it into the folder of the SublimeEnsime plugin."
+      message += "\n\n"
+      message += "If you have already installed ENSIME, check your Ensime.sublime-settings and make sure that "
+      message += "the \"ensime_server_path\" entry points to a valid location relative to " + sublime.packages_path() + " "
+      message += "(currently it points to the path shown above)."
+      self.error_message(message)
       return
     return [self.env.ensime_executable, self.port_file]
 
@@ -789,7 +838,7 @@ class EnsimeServer(EnsimeServerListener, EnsimeCommon):
 
 class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener):
   def __init__(self, owner):
-    super(type(self).__mro__[0], self).__init__(owner)
+    super(EnsimeController, self).__init__(owner)
     self.running = False
     self.ready = False
     self.client = None
@@ -823,14 +872,17 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
   def on_server_data(self, data):
     if not self.ready and re.search("Wrote port", data):
       self.ready = True
-      self.client = EnsimeClient(self.owner, self.port_file)
-      self.client.startup()
-      self.client.async_req([sym("swank:connection-info")], self.handle_handshake)
+      sublime.set_timeout(functools.partial(self.request_handshake), 0)
 
-  def handle_handshake(self, server_info):
-    sublime.status_message("Initializing... ")
+  def request_handshake(self):
+    self.client = EnsimeClient(self.owner, self.port_file)
+    self.client.startup()
+    self.client.async_req([sym("swank:connection-info")], self.response_handshake, call_back_into_ui_thread = True)
+
+  def response_handshake(self, server_info):
+    self.status_message("Initializing... ")
     req = ensime_codec.encode_initialize_project(self.env.project_config)
-    self.client.async_req(req, lambda _: sublime.status_message("Ensime ready!"))
+    self.client.async_req(req, lambda _: self.status_message("Ensime ready!"), call_back_into_ui_thread = True)
 
   def shutdown(self):
     self.env.lifecycleLock.acquire()
@@ -838,7 +890,7 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
       if self.running:
         self.env.in_transition = True
         try:
-          self.clear_notes()
+          sublime.set_timeout(self.clear_notes, 0)
         except:
           self.log("Error shutting down ensime UI:")
           self.log(traceback.format_exc())
@@ -861,7 +913,20 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
       self.env.lifecycleLock.release()
 
 class EnsimeStartupCommand(NotRunningOnly, EnsimeWindowCommand):
+  def is_enabled(self, enable = True):
+    if not self.env.project_config: return True
+    return super(EnsimeStartupCommand, self).is_enabled()
+
   def run(self):
+    if not self.env.project_config:
+      message = "ENSIME server has been unable to start, because a valid .ensime configuration file wasn't found."
+      message += "\n\n"
+      message += "Create a file named .ensime in the root of one of your project's folders and retry. "
+      example = "(:root-dir \"d:/Dropbox/Scratchpad/Scala\" :sources (\"d:/Dropbox/Scratchpad/Scala\") :target \"d:/Dropbox/Scratchpad/Scala\")"
+      message += "Here is a simple example of an .ensime file: \n\n" + example + "\n\n"
+      message += "For more information refer to the \"Config File Format\" section of the docs: http://aemon.com/file_dump/ensime_manual.html"
+      self.error_message(message)
+      return
     EnsimeController(self.w).startup()
 
 class EnsimeShutdownCommand(RunningOnly, EnsimeWindowCommand):
@@ -873,21 +938,34 @@ class EnsimeRestartCommand(RunningOnly, EnsimeWindowCommand):
     self.w.run_command("ensime_shutdown")
     self.w.run_command("ensime_startup")
 
-class EnsimeShowClientMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
+class EnsimeShowClientMessagesCommand(EnsimeWindowCommand):
   def run(self):
-    self.view_show(self.env.cv, False)
+    # self.view_show(self.env.cv, False)
+    client_log = os.path.join(self.env.log_root, "client.log")
+    line = 1
+    try:
+     with open(client_log) as f: line = len(f.readlines())
+    except:
+      pass
+    self.w.open_file("%s:%d:%d" % (client_log, line, 1), sublime.ENCODED_POSITION)
 
-class EnsimeShowServerMessagesCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
+class EnsimeShowServerMessagesCommand(EnsimeWindowCommand):
   def run(self):
-    self.view_show(self.env.sv, False)
+    # self.view_show(self.env.sv, False)
+    server_log = os.path.join(self.env.log_root, "server.log")
+    line = 1
+    try:
+     with open(server_log) as f: line = len(f.readlines())
+    except:
+      pass
+    self.w.open_file("%s:%d:%d" % (server_log, line, 1), sublime.ENCODED_POSITION)
 
-# support `cls`
 # rebind Enter, Escape, Backspace, Left, ShiftLeft, Home, ShiftHome
 # persistent command history and Ctrl+Up/Ctrl+Down like in SublimeREPL
 
 class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
   def __init__(self, window):
-    super(type(self).__mro__[0], self).__init__(window)
+    super(EnsimeShowClientServerReplCommand, self).__init__(window)
     self.visible = False
     self.window = window
 
@@ -897,6 +975,133 @@ class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
       self.repl_show()
     else:
       self.window.run_command("hide_panel", { "cancel": True })
+
+class EnsimeReplEnterCommand(EnsimeTextCommand):
+  def run(self, edit):
+    user_input = self.repl_get_input().strip()
+    if user_input:
+      self.env.repl_lock.acquire()
+      try:
+        if user_input == "cls":
+          self.env.rv.replace(edit, Region(0, self.env.rv.size()), "")
+          self.env.repl_last_insert = 0
+          self.env.repl_last_fixup = 0
+          self.repl_insert(self.repl_prompt(), False)
+        else:
+          user_input = user_input.replace("$file", "\"" + self.w.active_view().file_name() + "\"")
+          user_input = user_input.replace("$pos", str(self.w.active_view().sel()[0].begin()))
+          try:
+            _ = sexp.read_list(user_input)
+            parsed_user_input = sexp.read(user_input)
+            with open(os.path.join(self.env.log_root, "repl.history"), 'a') as f:
+              f.write(user_input + "\n")
+          except:
+            self.status_message(str(sys.exc_info()[1]))
+            return
+          self.env.repl_last_insert = self.env.rv.size()
+          self.env.repl_last_fixup = self.env.repl_last_insert
+          self.repl_insert("\n", True)
+          # self.repl_insert(self.repl_prompt(), False)
+          self.repl_schedule_fixup("", self.env.repl_last_fixup + 1)
+          self.env.controller.client.async_req(parsed_user_input)
+      finally:
+        self.env.repl_lock.release()
+
+class EnsimeReplEscapeCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      user_input = self.repl_get_input()
+      if len(user_input) == 0:
+        self.w.run_command("hide_panel", {"cancel": True})
+      else:
+        self.w.run_command("move_to", {"to": "eof", "extend": False})
+        self.w.run_command("ensime_repl_shift_home")
+        self.w.run_command("right_delete")
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplBackspaceCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      delta = self.env.rv.sel()[0].begin() - self.env.repl_last_insert - len(self.repl_prompt())
+      if delta < 0:
+        self.w.run_command("left_delete")
+      elif delta == 0:
+        return
+      else:
+        self.w.run_command("left_delete")
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplLeftCommand( EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      delta = self.env.rv.sel()[0].begin() - self.env.repl_last_insert - len(self.repl_prompt())
+      if delta < 0:
+        self.w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+      elif delta == 0:
+        return
+      else:
+        self.w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplShiftLeftCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      delta = self.env.rv.sel()[0].begin() - self.env.repl_last_insert - len(self.repl_prompt())
+      if delta < 0:
+        self.w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+      elif delta == 0:
+        return
+      else:
+        self.w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplHomeCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      delta = self.env.rv.sel()[0].begin() - self.env.repl_last_insert - len(self.repl_prompt())
+      if delta < 0:
+        self.w.run_command("move_to", {"to": "bol", "extend": False})
+      else:
+        for i in range(1, delta + 1):
+          self.w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplShiftHomeCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.repl_lock.acquire()
+    try:
+      delta = self.env.rv.sel()[0].begin() - self.env.repl_last_insert - len(self.repl_prompt())
+      if delta < 0:
+        self.w.run_command("move_to", {"to": "bol", "extend": True})
+      else:
+        for i in range(1, delta + 1):
+          self.w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+    finally:
+      self.env.repl_lock.release()
+
+class EnsimeReplPreviousCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.rv.show(self.env.rv.line(self.env.rv.size()).begin())
+    self.w.run_command("ensime_repl_escape")
+    self.repl_insert(self.repl_previous_history(), False)
+    self.repl_show()
+
+class EnsimeReplNextCommand(EnsimeTextCommand):
+  def run(self, edit):
+    self.env.rv.show(self.env.rv.line(self.env.rv.size()).begin())
+    self.w.run_command("ensime_repl_escape")
+    self.repl_insert(self.repl_next_history(), False)
+    self.repl_show()
 
 class EnsimeHighlights(EnsimeCommon):
   def hide(self):
@@ -934,7 +1139,7 @@ class EnsimeHighlightCommand(ConnectedEnsimeOnly, EnsimeWindowCommand):
   def is_enabled(self, enable = True):
     now = not not self.env.settings.get("error_highlight")
     wannabe = not not enable
-    return super(type(self).__mro__[0], self).is_enabled() and now != wannabe
+    return super(EnsimeHighlightCommand, self).is_enabled() and now != wannabe
 
   def run(self, enable = True):
     self.env.settings.set("error_highlight", not not enable)
@@ -946,10 +1151,7 @@ class EnsimeHighlightCommand(ConnectedEnsimeOnly, EnsimeWindowCommand):
 class EnsimeHighlightDaemon(EventListener):
   def with_api(self, view, what):
     api = ensime_api(view)
-    controller = api.env and api.env.controller
-    socket = controller and controller.client and controller.client.socket
-    connected = socket and socket.connected
-    if connected and api.in_project(view.file_name()):
+    if api and api.in_project(view.file_name()):
       what(api)
 
   def on_load(self, view):
@@ -977,11 +1179,10 @@ class EnsimeHighlightDaemon(EventListener):
 
 class EnsimeCompletionsListener(EventListener):
   def on_query_completions(self, view, prefix, locations):
-    if not view.match_selector(locations[0], "source.scala"):
-      return []
-    completions = ensime_api(view).complete_member(view.file_name(), locations[0])
-    if completions is None:
-      return []
+    if not view.match_selector(locations[0], "source.scala"): return []
+    api = ensime_api(view)
+    completions = api.complete_member(view.file_name(), locations[0]) if api else None
+    if completions is None: return []
     return ([(c.name + "\t" + c.signature, c.name) for c in completions], sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
 
 class EnsimeInspectTypeAtPoint(ConnectedEnsimeOnly, EnsimeTextCommand):

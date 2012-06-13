@@ -54,19 +54,19 @@ class History(object):
 
         if location:
             if self.has_changed(location):
-                print("nav_history: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+                # print("nav_history: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
                 if self._current:
                     time_delta = abs(location.time - self._current.time)
                     subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
                     if subsume:
-                        print("nav_history: subsumed current, time delta is " + str(time_delta))
+                        # print("nav_history: subsumed current, time delta is " + str(time_delta))
                         if self.has_changed(location):
                             self._current = location
                             self._last_movement = location.copy()
                             self._last_history = location.copy()
                         else:
-                            print("nav_history: discarded both")
+                            # print("nav_history: discarded both")
                             prev = self._back and self._back.pop()
                             if prev:
                                 self._last_movement = prev.copy()
@@ -232,7 +232,7 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
         location = history.back()
         if location:
             lock_buffer_scroll()
-            print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+            # print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
             if not isinstance(location.path, int):
@@ -250,7 +250,8 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
                 if not found:
                     window.run_command("navigation_history_backward")
         else:
-            print("back to: None")
+            # print("back to: None")
+            pass
 
 class NavigationHistoryForward(sublime_plugin.TextCommand):
     """Go forward in history
@@ -264,7 +265,7 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
         location = history.forward()
         if location:
             lock_buffer_scroll()
-            print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+            # print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
             if not isinstance(location.path, int):
@@ -282,7 +283,8 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
                 if not found:
                     window.run_command("navigation_history_forward")
         else:
-            print("forward to: None")
+            # print("forward to: None")
+            pass
 
 bufferscroll_lockfile = sublime.packages_path() + "/User/BufferScroll.lock"
 
