@@ -1,10 +1,16 @@
 {
+  // crucial settings
   "ensime_server_path": "sublime-ensime/server",
-  "ensime_work_dir": "sublime-ensime/work",
-  "use_auto_complete": true,
+
+  // stylistic settings
   "error_highlight": true,
   "error_underline": true,
   "error_icon": "cross",
+
+  // debug settings
   "log_to_console": ["ui", "client", "server"],
-  "log_to_file": ["ui", "client", "server"]
+  "log_to_file": ["ui", "client", "server"],
+  "connect_to_external_server": false,
+  "external_server_port_file": "",
+  "rpc_timeout": 3
 }

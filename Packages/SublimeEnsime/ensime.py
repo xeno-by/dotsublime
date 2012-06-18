@@ -345,14 +345,16 @@ class EnsimeClientListener:
     pass
 
 class EnsimeClientSocket(EnsimeCommon):
-  def __init__(self, owner, port, handlers):
+  def __init__(self, owner, port, timeout, handlers):
     super(EnsimeClientSocket, self).__init__(owner)
     self.port = port
+    self.timeout = timeout
     self.connected = False
     self.handlers = handlers
     self._lock = threading.RLock()
     self._connect_lock = threading.RLock()
     self._receiver = None
+    self.socket = None
 
   def notify_async_data(self, data):
     for handler in self.handlers:
@@ -365,20 +367,21 @@ class EnsimeClientSocket(EnsimeCommon):
         msglen = self.socket.recv(6)
         if msglen:
           msglen = int(msglen, 16)
-          # self.log_client("RECV: incoming message of " + str(msglen) + " characters")
+          # self.log_client("RECV: incoming message of " + str(msglen) + " bytes")
 
           buf = ""
           while len(buf) < msglen:
             chunk = self.socket.recv(msglen - len(buf))
             if chunk:
-              # self.log_client("RECV: received a chunk of " + str(len(chunk)) + " characters")
+              # self.log_client("RECV: received a chunk of " + str(len(chunk)) + " bytes")
               buf += chunk
             else:
               raise "fatal error: recv returned None"
           self.log_client("RECV: " + buf)
 
           try:
-            form = sexp.read(buf)
+            s = buf.decode('utf-8')
+            form = sexp.read(s)
             self.notify_async_data(form)
           except:
             self.log_client("failed to parse incoming message")
@@ -390,7 +393,8 @@ class EnsimeClientSocket(EnsimeCommon):
         self.log_client(traceback.format_exc())
         self.connected = False
         self.status_message("ENSIME server has disconnected")
-        self.env.controller.shutdown()
+        if self.env.controller:
+          self.env.controller.shutdown()
 
   def start_receiving(self):
     t = threading.Thread(name = "ensime-client-" + str(self.w.id()) + "-" + str(self.port), target = self.receive_loop)
@@ -402,15 +406,17 @@ class EnsimeClientSocket(EnsimeCommon):
     self._connect_lock.acquire()
     try:
       s = socket.socket()
+      s.settimeout(self.timeout)
       s.connect(("127.0.0.1", self.port))
+      s.settimeout(None)
       self.socket = s
       self.connected = True
       self.start_receiving()
       return s
     except socket.error as e:
-      # set sublime error status
       self.connected = False
-      self.log_client("Can't connect to ENSIME server:  " + e.args[1])
+      self.log_client("Cannot connect to ENSIME server:  " + str(e.args))
+      self.status_message("Cannot connect to ENSIME server")
       self.env.controller.shutdown()
     finally:
       self._connect_lock.release()
@@ -428,8 +434,8 @@ class EnsimeClientSocket(EnsimeCommon):
     try:
       if self.socket:
         self.socket.close()
-      self.connect = False
     finally:
+      self.connected = False
       self._connect_lock.release()
 
 class EnsimeCodec:
@@ -489,9 +495,10 @@ class EnsimeCodec:
 ensime_codec = EnsimeCodec()
 
 class EnsimeClient(EnsimeClientListener, EnsimeCommon):
-  def __init__(self, owner, port_file):
+  def __init__(self, owner, port_file, timeout):
     super(EnsimeClient, self).__init__(owner)
     with open(port_file) as f: self.port = int(f.read())
+    self.timeout = timeout
     self.init_counters()
     methods = filter(lambda m: m[0].startswith("message_"), inspect.getmembers(self, predicate=inspect.ismethod))
     self.log_client("reflectively found " + str(len(methods)) + " message handlers: " + str(methods))
@@ -500,17 +507,20 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
   def startup(self):
     self.log_client("[" + str(datetime.datetime.now()) + "] Starting ENSIME client")
     self.log_client("Launching ENSIME client socket at port " + str(self.port))
-    self.socket = EnsimeClientSocket(self.owner, self.port, [self, self.env.controller])
+    self.socket = EnsimeClientSocket(self.owner, self.port, self.timeout, [self, self.env.controller])
     self.socket.connect()
 
   def shutdown(self):
-    self.sync_req([sym("swank:shutdown-server")])
+    if self.socket.connected:
+      self.sync_req([sym("swank:shutdown-server")])
     self.socket.close()
     self.socket = None
 
   def async_req(self, to_send, on_complete = None, call_back_into_ui_thread = None):
     if on_complete is not None and call_back_into_ui_thread is None:
-      raise "must specify a threading policy when providing a non-empty callback"
+      raise Exception("must specify a threading policy when providing a non-empty callback")
+    if not self.socket:
+      raise Exception("socket is either not yet initialized or is already destroyed")
 
     msg_id = self.next_message_id()
     self.handlers[msg_id] = (on_complete, call_back_into_ui_thread, time.time())
@@ -519,7 +529,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
     self.feedback(msg_str)
     self.log_client("SEND ASYNC REQ: " + msg_str)
-    self.socket.send(msg_str)
+    self.socket.send(msg_str.encode('utf-8'))
 
   def sync_req(self, to_send):
     msg_id = self.next_message_id()
@@ -532,11 +542,11 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     self.log_client("SEND SYNC REQ: " + msg_str)
     self.socket.send(msg_str)
 
-    event.wait(3)
+    event.wait(self.timeout)
     if hasattr(event, "payload"):
       return event.payload
     else:
-      self.log_client("sync_req has timed out")
+      self.log_client("sync_req #" + str(msg_id) + " has timed out (didn't get a response after " + str(self.timeout) + " seconds)")
       return None
 
   def on_client_async_data(self, data):
@@ -613,6 +623,8 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     lines = [line.strip() for line in open(filename)]
     msg = lines[random.randint(0, len(lines) - 1)]
     self.status_message(msg + " This could be the start of a beautiful program, " + getpass.getuser().capitalize()  + ".")
+    if self.in_project(self.v.file_name()):
+      self.v.run_command("save")
 
   @call_back_into_ui_thread
   def message_indexer_ready(self, msg_id, payload):
@@ -857,10 +869,14 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
         self.env.in_transition = True
         self.env.controller = self
         self.running = True
-        _, port_file = tempfile.mkstemp("ensime_port")
-        self.port_file = port_file
-        self.server = EnsimeServer(self.owner, port_file)
-        self.server.startup()
+        if self.env.settings.get("connect_to_external_server"):
+          self.port_file = self.env.settings.get("external_server_port_file")
+          sublime.set_timeout(functools.partial(self.request_handshake), 0)
+        else:
+          _, port_file = tempfile.mkstemp("ensime_port")
+          self.port_file = port_file
+          self.server = EnsimeServer(self.owner, port_file)
+          self.server.startup()
     except:
       self.env.controller = None
       self.running = False
@@ -875,7 +891,8 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
       sublime.set_timeout(functools.partial(self.request_handshake), 0)
 
   def request_handshake(self):
-    self.client = EnsimeClient(self.owner, self.port_file)
+    timeout = self.env.settings.get("rpc_timeout", 3)
+    self.client = EnsimeClient(self.owner, self.port_file, timeout)
     self.client.startup()
     self.client.async_req([sym("swank:connection-info")], self.response_handshake, call_back_into_ui_thread = True)
 

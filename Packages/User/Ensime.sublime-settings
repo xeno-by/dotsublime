@@ -1,9 +1,11 @@
 {
+	"connect_to_external_server": false,
 	"ensime_server_path": "SublimeEnsime/server",
 	"ensime_work_dir": "SublimeEnsime/work",
 	"error_highlight": true,
 	"error_icon": "dot",
 	"error_underline": false,
+	"external_server_port_file": "C:\\Projects\\SublimeScala\\Ensime\\.port",
 	"log_to_console":
 	[
 		"ui",
@@ -18,7 +20,7 @@
 	],
 	"processes":
 	{
-		"2904": "4744"
+		"3120": "2584"
 	},
 	"show_output_during_server_startup": false,
 	"use_auto_complete": false

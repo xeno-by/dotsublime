@@ -2036,16 +2036,23 @@ class UpgradeAllPackagesThread(threading.Thread, PackageInstaller):
 
     def run(self):
         self.package_renamer.rename_packages(self)
+        package_list = self.make_package_list(['install', 'reinstall', 'none'])
 
-        for info in self.make_package_list(['install', 'reinstall', 'none']):
-            def on_complete():
-                self.reenable_package(info[0])
-            self.disable_package(info[0])
+        def do_upgrades():
+            for info in package_list:
+                def on_complete():
+                    self.reenable_package(info[0])
+                thread = PackageInstallerThread(self.manager, info[0], on_complete)
+                thread.start()
+                ThreadProgress(thread, 'Upgrading package %s' % info[0],
+                    'Package %s successfully %s' % (info[0], self.completion_type))
 
-            thread = PackageInstallerThread(self.manager, info[0], on_complete)
-            thread.start()
-            ThreadProgress(thread, 'Upgrading package %s' % info[0],
-                'Package %s successfully %s' % (info[0], self.completion_type))
+        def disable_packages():
+            for info in package_list:
+                self.disable_package(info[0])
+            threading.Thread(target=do_upgrades).start()
+
+        sublime.set_timeout(disable_packages, 1)
 
 
 class ExistingPackagesCommand():
