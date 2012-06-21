@@ -11,7 +11,11 @@ class EnsimeApi:
 
   def type_check_file(self, file_path, on_complete = None):
     req = ensime_codec.encode_type_check_file(file_path)
-    self.env.controller.client.async_req(req, on_complete, call_back_into_ui_thread = True)
+    wrapped_on_complete = functools.partial(self.type_check_file_on_complete_wrapper, on_complete) if on_complete else None
+    self.env.controller.client.async_req(req, wrapped_on_complete, call_back_into_ui_thread = True)
+
+  def type_check_file_on_complete_wrapper(self, on_complete, payload):
+    return on_complete(ensime_codec.decode_type_check_file(resp))
 
   def add_notes(self, notes):
     self.env.notes += notes
@@ -27,12 +31,24 @@ class EnsimeApi:
 
   def inspect_type_at_point(self, file_path, position, on_complete):
     req = ensime_codec.encode_inspect_type_at_point(file_path, position)
-    self.env.controller.client.async_req(req, on_complete, call_back_into_ui_thread = True)
+    wrapped_on_complete = functools.partial(self.inspect_type_at_point_on_complete_wrapper, on_complete) if on_complete else None
+    self.env.controller.client.async_req(req, wrapped_on_complete, call_back_into_ui_thread = True)
+
+  def inspect_type_at_point_on_complete_wrapper(self, on_complete, payload):
+    return on_complete(ensime_codec.decode_inspect_type_at_point(payload))
 
   def complete_member(self, file_path, position):
     req = ensime_codec.encode_complete_member(file_path, position)
     resp = self.env.controller.client.sync_req(req)
     return ensime_codec.decode_completions(resp)
+
+  def symbol_at_point(self, file_path, position, on_complete):
+    req = ensime_codec.encode_symbol_at_point(file_path, position)
+    wrapped_on_complete = functools.partial(self.symbol_at_point_on_complete_wrapper, on_complete) if on_complete else None
+    self.env.controller.client.async_req(req, wrapped_on_complete, call_back_into_ui_thread = True)
+
+  def symbol_at_point_on_complete_wrapper(self, on_complete, payload):
+    return on_complete(ensime_codec.decode_symbol_at_point(payload))
 
 envLock = threading.RLock()
 ensime_envs = {}
@@ -270,11 +286,25 @@ class EnsimeBase(object):
     else:
       raise "unsupported owner of type: " + str(type(owner))
 
+  def same_files(self, filename1, filename2):
+    if not filename1 or not filename2:
+      return False
+    filename1_normalized = os.path.normcase(os.path.realpath(filename1))
+    filename2_normalized = os.path.normcase(os.path.realpath(filename2))
+    return filename1 == filename2
+
   def in_project(self, filename):
     if filename and filename.endswith("scala"):
       root = os.path.normcase(os.path.realpath(self.env.project_root))
       wannabe = os.path.normcase(os.path.realpath(filename))
       return wannabe.startswith(root)
+
+  def project_relative_path(self, filename):
+    if not self.in_project(filename):
+      return None
+    root = os.path.realpath(self.env.project_root)
+    wannabe = os.path.realpath(filename)
+    return wannabe[len(root) + 1:]
 
 class EnsimeCommon(EnsimeBase, EnsimeLog, EnsimeApi):
   pass
@@ -318,6 +348,10 @@ class ReadyEnsimeOnly:
 class ConnectedEnsimeOnly:
   def is_enabled(self):
     return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected
+
+class ProjectFileOnly:
+  def is_enabled(self):
+    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.in_project(self.v.file_name())
 
 class EnsimeContextProvider(EventListener):
   def on_query_context(self, view, key, operator, operand, match_all):
@@ -445,6 +479,9 @@ class EnsimeCodec:
   def encode_type_check_file(self, file_path):
     return [sym("swank:typecheck-file"), file_path]
 
+  def decode_type_check_file(self, data):
+    return True
+
   def decode_notes(self, data):
     m = sexp.sexp_to_key_map(data)
     return [self.decode_note(n) for n in m[":notes"]]
@@ -466,11 +503,7 @@ class EnsimeCodec:
     return [sym("swank:type-at-point"), str(file_path), int(position)]
 
   def decode_inspect_type_at_point(self, data):
-    d = data[1][1]
-    if d[1] != "<notype>":
-      return "(" + str(d[7]) + ") " + d[5]
-    else:
-      return None
+    return self.decode_type(data)
 
   def encode_complete_member(self, file_path, position):
     return [sym("swank:completions"), str(file_path), int(position), 0, False]
@@ -491,6 +524,46 @@ class EnsimeCodec:
     completion.type_id = m[":type-id"]
     completion.to_insert = m[":to-insert"] if ":to-insert" in m else None
     return completion
+
+  def encode_symbol_at_point(self, file_path, position):
+    return [sym("swank:symbol-at-point"), str(file_path), int(position)]
+
+  def decode_symbol_at_point(self, data):
+    return self.decode_symbol(data)
+
+  def decode_position(self, data):
+    m = sexp.sexp_to_key_map(data)
+    class EnsimePosition(object): pass
+    position = EnsimePosition()
+    position.file_name = m[":file"]
+    position.offset = m[":offset"]
+    return position
+
+  def decode_types(self, data):
+    if not data: return []
+    return [self.decode_type(t) for t in data]
+
+  def decode_type(self, data):
+    m = sexp.sexp_to_key_map(data)
+    class TypeInfo(object): pass
+    info = TypeInfo()
+    info.name = m[":name"]
+    info.type_id = m[":type-id"]
+    info.full_name = m[":full-name"]
+    info.decl_as = m[":decl-as"]
+    info.decl_pos = self.decode_position(m[":pos"]) if ":pos" in m else None
+    info.type_args = self.decode_types(m[":type-args"]) if ":type-args" in m else []
+    info.outer_type_id = m[":outer-type-id"] if ":outer-type-id" in m else None
+    return info
+
+  def decode_symbol(self, data):
+    m = sexp.sexp_to_key_map(data)
+    class SymbolInfo(object): pass
+    info = SymbolInfo()
+    info.name = m[":name"]
+    info.type = self.decode_type(m[":type"])
+    info.decl_pos = self.decode_position(m[":decl-pos"]) if ":decl-pos" in m else None
+    return info
 
 ensime_codec = EnsimeCodec()
 
@@ -869,8 +942,14 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
         self.env.in_transition = True
         self.env.controller = self
         self.running = True
-        if self.env.settings.get("connect_to_external_server"):
+        if self.env.settings.get("connect_to_external_server", False):
           self.port_file = self.env.settings.get("external_server_port_file")
+          if not self.port_file:
+            message = "\"connect_to_external_server\" in your Ensime.sublime-settings is set to true, "
+            message += "however \"external_server_port_file\" is not specified. "
+            message += "Please, set it to a meaningful value and restart ENSIME."
+            sublime.set_timeout(functools.partial(sublime.error_message, message), 0)
+            raise Exception("external_server_port_file not specified")
           sublime.set_timeout(functools.partial(self.request_handshake), 0)
         else:
           _, port_file = tempfile.mkstemp("ensime_port")
@@ -1126,9 +1205,8 @@ class EnsimeHighlights(EnsimeCommon):
     self.v.erase_regions("ensime-error-underline")
 
   def show(self):
-    # filter notes against self.f
-    # don't forget to use os.realpath to defeat symlinks
-    errors = [self.v.full_line(note.start) for note in self.env.notes]
+    relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
+    errors = [self.v.full_line(note.start) for note in relevant_notes]
     underlines = []
     for note in self.env.notes:
       underlines += [sublime.Region(int(pos)) for pos in range(note.start, note.end)]
@@ -1143,8 +1221,21 @@ class EnsimeHighlights(EnsimeCommon):
         "ensime-error",
         errors,
         "invalid.illegal",
-        self.env.settings.get("error_icon"),
+        self.env.settings.get("error_icon", "dot"),
         sublime.DRAW_OUTLINED)
+    if self.env.settings.get("error_status"):
+      bol = self.v.line(self.v.sel()[0].begin()).begin()
+      eol = self.v.line(self.v.sel()[0].begin()).end()
+      msgs = [note.message for note in relevant_notes if (bol <= note.start and note.start <= eol) or (bol <= note.end and note.end <= eol)]
+      statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
+      if msgs:
+        maxlength = self.env.settings.get("error_status_maxlength", 150)
+        status = "; ".join(msgs)
+        if len(status) > maxlength:
+          status = status[0:maxlength] + "..."
+        self.v.set_status(statusgroup, status)
+      else:
+        self.v.erase_status(statusgroup)
 
   def refresh(self):
     if self.env.settings.get("error_highlight"):
@@ -1152,18 +1243,36 @@ class EnsimeHighlights(EnsimeCommon):
     else:
       self.hide()
 
-class EnsimeHighlightCommand(ConnectedEnsimeOnly, EnsimeWindowCommand):
-  def is_enabled(self, enable = True):
-    now = not not self.env.settings.get("error_highlight")
-    wannabe = not not enable
-    return super(EnsimeHighlightCommand, self).is_enabled() and now != wannabe
-
+class EnsimeHighlightCommand(ProjectFileOnly, EnsimeWindowCommand):
   def run(self, enable = True):
     self.env.settings.set("error_highlight", not not enable)
     sublime.save_settings("Ensime.sublime-settings")
     EnsimeHighlights(self.v).hide()
     if enable:
       self.type_check_file(self.f)
+
+class EnsimeShowNotesCommand(ConnectedEnsimeOnly, EnsimeTextCommand):
+  def run(self, edit, current_file_only):
+    v = self.v.window().new_file()
+    v.set_scratch(True)
+    designator = " for " + os.path.basename(self.v.file_name()) if current_file_only else ""
+    v.set_name("Ensime notes" + designator)
+    relevant_notes = self.env.notes
+    if current_file_only:
+      relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
+    errors = [self.v.full_line(note.start) for note in relevant_notes]
+    edit = v.begin_edit()
+    relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
+    for note in relevant_notes:
+      loc = self.project_relative_path(note.file_name) + ":" + str(note.line)
+      severity = note.severity
+      message = note.message
+      diagnostics = ": ".join(str(x) for x in [loc, severity, message])
+      v.insert(edit, v.size(), diagnostics + "\n")
+      v.insert(edit, v.size(), self.v.substr(self.v.full_line(note.start)))
+      v.insert(edit, v.size(), " " * (note.col - 1) + "^" + "\n")
+    v.sel().clear()
+    v.sel().add(Region(0, 0))
 
 class EnsimeHighlightDaemon(EventListener):
   def with_api(self, view, what):
@@ -1181,18 +1290,7 @@ class EnsimeHighlightDaemon(EventListener):
     self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
 
   def on_selection_modified(self, view):
-    self.with_api(view, self.display_errors_in_statusbar)
-
-  def display_errors_in_statusbar(self, api):
-    bol = api.v.line(api.v.sel()[0].begin()).begin()
-    eol = api.v.line(api.v.sel()[0].begin()).end()
-    # filter notes against self.f
-    # don't forget to use os.realpath to defeat symlinks
-    msgs = [note.message for note in api.env.notes if (bol <= note.start and note.start <= eol) or (bol <= note.end and note.end <= eol)]
-    if msgs:
-      api.v.set_status("ensime-typer", "; ".join(msgs))
-    else:
-      api.v.erase_status("ensime-typer")
+    self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
 
 class EnsimeCompletionsListener(EventListener):
   def on_query_completions(self, view, prefix, locations):
@@ -1202,12 +1300,30 @@ class EnsimeCompletionsListener(EventListener):
     if completions is None: return []
     return ([(c.name + "\t" + c.signature, c.name) for c in completions], sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
 
-class EnsimeInspectTypeAtPoint(ConnectedEnsimeOnly, EnsimeTextCommand):
+class EnsimeInspectTypeAtPoint(ProjectFileOnly, EnsimeTextCommand):
   def run(self, edit):
     self.inspect_type_at_point(self.f, self.v.sel()[0].begin(), self.handle_reply)
 
   def handle_reply(self, tpe):
-    if tpe:
-      self.v.set_status("ensime-typer", tpe)
+    statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
+    if tpe.name != "<notype>":
+      # summary = "(" + str(tpe.decl_as) + ") " + tpe.full_name
+      summary = tpe.full_name
+      if tpe.type_args:
+        summary += ("[" + ", ".join(map(lambda t: t.name, tpe.type_args)) + "]")
+      self.v.set_status(statusgroup, summary)
     else:
-      self.v.erase_status("ensime-typer")
+      self.v.set_status(statusgroup, "type is unknown")
+
+class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
+  def run(self, edit):
+    self.symbol_at_point(self.f, self.v.sel()[0].begin(), self.handle_reply)
+
+  def handle_reply(self, info):
+    statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
+    if info.decl_pos:
+      v = self.w.open_file(info.decl_pos.file_name)
+      v.sel().clear()
+      v.sel().add(Region(info.decl_pos.offset, info.decl_pos.offset))
+    else:
+      self.v.set_status(statusgroup, "destination is unknown")

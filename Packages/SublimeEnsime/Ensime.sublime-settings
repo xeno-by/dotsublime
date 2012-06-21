@@ -3,9 +3,12 @@
   "ensime_server_path": "sublime-ensime/server",
 
   // stylistic settings
+  "ensime_statusbar_group": "ensime",
   "error_highlight": true,
   "error_underline": true,
-  "error_icon": "cross",
+  "error_icon": "dot",
+  "error_status": true,
+  "error_status_maxlength": 150,
 
   // debug settings
   "log_to_console": ["ui", "client", "server"],

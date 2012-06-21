@@ -12,7 +12,21 @@
     "command": "ensime_restart"
   },
   {
-    "caption": "Ensime: Check Type",
+    "caption": "Ensime: Show File Notes",
+    "command": "ensime_show_notes",
+    "args": { "current_file_only": true }
+  },
+  {
+    "caption": "Ensime: Show All Notes",
+    "command": "ensime_show_notes",
+    "args": { "current_file_only": false }
+  },
+  {
+    "caption": "Ensime: Inspect Type at Point",
     "command": "ensime_inspect_type_at_point"
+  },
+  {
+    "caption": "Ensime: Go to Definition",
+    "command": "ensime_go_to_definition"
   }
 ]
