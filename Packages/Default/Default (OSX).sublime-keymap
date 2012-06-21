@@ -152,6 +152,7 @@ and don't need to be repeated here. Anything listed here will take precedence, h
 
 	{ "keys": ["super+l"], "command": "expand_selection", "args": {"to": "line"} },
 	{ "keys": ["super+d"], "command": "find_under_expand" },
+	{ "keys": ["super+k", "super+d"], "command": "find_under_expand_skip" },
 	{ "keys": ["super+shift+space"], "command": "expand_selection", "args": {"to": "scope"} },
 	{ "keys": ["ctrl+shift+m"], "command": "expand_selection", "args": {"to": "brackets"} },
 	{ "keys": ["ctrl+m"], "command": "move_to", "args": {"to": "brackets"} },

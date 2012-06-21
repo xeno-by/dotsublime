@@ -182,6 +182,7 @@
 
 	{ "keys": ["ctrl+l"], "command": "expand_selection", "args": {"to": "line"} },
 	{ "keys": ["ctrl+d"], "command": "find_under_expand" },
+	{ "keys": ["ctrl+k", "ctrl+d"], "command": "find_under_expand_skip" },
 	{ "keys": ["ctrl+shift+space"], "command": "expand_selection", "args": {"to": "scope"} },
 	{ "keys": ["ctrl+shift+m"], "command": "expand_selection", "args": {"to": "brackets"} },
 	{ "keys": ["ctrl+m"], "command": "move_to", "args": {"to": "brackets"} },
