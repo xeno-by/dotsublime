@@ -1,5 +1,5 @@
 [
-  { "keys": ["ctrl+`"], "command": "ensime_show_client_server_repl", "args": { "toggle": true }, "context": [{ "key": "ensime_ready", "operator": "equal", "operand": true }, { "key": "panel_visible", "operator": "equal", "operand": true }]},
+  { "keys": ["ctrl+`"], "command": "ensime_ctrl_tilde", "context": [{ "key": "ensime_ready", "operator": "equal", "operand": true }, {"key": "ensime_repl_enabled", "operator": "equal", "operand": true }, { "key": "panel_visible", "operator": "equal", "operand": true }]},
   { "keys": ["alt+p"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl", "operator": "equal", "operand": true }]},
   { "keys": ["alt+n"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl", "operator": "equal", "operand": true }]},
   { "keys": ["ctrl+up"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl", "operator": "equal", "operand": true }]},

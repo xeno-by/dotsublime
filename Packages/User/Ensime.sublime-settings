@@ -1,5 +1,7 @@
 {
 	"connect_to_external_server": false,
+	"ctrl_click_goes_to_definition": true,
+	"ctrl_tilde_shows_repl": true,
 	"ensime_server_path": "SublimeEnsime/server",
 	"ensime_statusbar_group": "ensime",
 	"ensime_work_dir": "SublimeEnsime/work",
@@ -23,7 +25,7 @@
 	],
 	"processes":
 	{
-		"2644": "5148"
+		"5084": "3556"
 	},
 	"show_output_during_server_startup": false,
 	"use_auto_complete": false

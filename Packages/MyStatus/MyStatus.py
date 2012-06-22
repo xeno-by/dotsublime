@@ -9,4 +9,5 @@ class CharacterPosition(sublime_plugin.EventListener):
 
   def update_status(self, view):
     row, col = view.rowcol(view.size())
-    view.set_status("zzMyStatus", "Lines %d, Character %d" % (row + 1, view.sel()[0].a + 1))
+    curr_char = str(view.sel()[0].a + 1) if len(view.sel()) == 1 else "n/a"
+    view.set_status("zzMyStatus", "Lines %d, Character %s" % (row + 1, curr_char))

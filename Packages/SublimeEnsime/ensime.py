@@ -113,6 +113,8 @@ class EnsimeEnvironment(object):
     self.rv = window.get_output_panel("ensime_repl")
     self.rv.set_name("ensime_repl")
     self.rv.settings().set("word_wrap", True)
+    self.curr_sel = None
+    self.prev_sel = None
 
 class EnsimeLog(object):
 
@@ -549,8 +551,8 @@ class EnsimeCodec:
     info = TypeInfo()
     info.name = m[":name"]
     info.type_id = m[":type-id"]
-    info.full_name = m[":full-name"]
-    info.decl_as = m[":decl-as"]
+    info.full_name = m[":full-name"] if ":full-name" in m else None
+    info.decl_as = m[":decl-as"] if ":decl-as" in m else None
     info.decl_pos = self.decode_position(m[":pos"]) if ":pos" in m else None
     info.type_args = self.decode_types(m[":type-args"]) if ":type-args" in m else []
     info.outer_type_id = m[":outer-type-id"] if ":outer-type-id" in m else None
@@ -1032,7 +1034,7 @@ class EnsimeShutdownCommand(RunningOnly, EnsimeWindowCommand):
 class EnsimeRestartCommand(RunningOnly, EnsimeWindowCommand):
   def run(self):
     self.w.run_command("ensime_shutdown")
-    self.w.run_command("ensime_startup")
+    sublime.set_timeout(functools.partial(self.w.run_command, "ensime_startup"), 100)
 
 class EnsimeShowClientMessagesCommand(EnsimeWindowCommand):
   def run(self):
@@ -1233,7 +1235,7 @@ class EnsimeHighlights(EnsimeCommon):
         status = "; ".join(msgs)
         if len(status) > maxlength:
           status = status[0:maxlength] + "..."
-        self.v.set_status(statusgroup, status)
+        sublime.set_timeout(functools.partial(self.v.set_status, statusgroup, status), 100)
       else:
         self.v.erase_status(statusgroup)
 
@@ -1290,7 +1292,79 @@ class EnsimeHighlightDaemon(EventListener):
     self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
 
   def on_selection_modified(self, view):
-    self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
+    if view.sel():
+      self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
+
+class EnsimeCtrlClickDaemon(EventListener):
+  def on_activated(self, view):
+    self.save_selection(view)
+
+  def on_selection_modified(self, view):
+    if view.sel():
+      self.save_selection(view)
+
+  def save_selection(self, view):
+    curr_sel = str(view.sel())
+    prev_sel = view.settings().get("curr_sel")
+    if curr_sel != prev_sel:
+      view.settings().set("prev_sel", prev_sel)
+      view.settings().set("curr_sel", curr_sel)
+
+class EnsimeCtrlClick(EnsimeTextCommand):
+  def run(self, edit):
+    is_applicable = not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.in_project(self.v.file_name())
+    if is_applicable and self.env.settings.get("ctrl_click_goes_to_definition"):
+      #xeno.by: todo. even with all this magic we're not good yet
+      #clicking on one of the current cursor position will confuse this command
+      s_prev = self.view.settings().get("prev_sel")
+      s_curr = self.view.settings().get("curr_sel")
+      prev = self.parse(s_prev)
+      curr = self.parse(s_curr)
+      target = self.diff(prev, curr)
+      diagnostics = "prev_sel = " + str(prev) + ", curr_sel = " + str(curr) + ", diff = " + str(target)
+      if len(target) > 1:
+        raise Exception("something is borked: " + diagnostics)
+      target = target[0][0] if target else prev[0] # won't work with multiselect when prev == curr
+      self.v.sel().clear()
+      for rs in prev:
+        self.v.sel().add(Region(rs[0], rs[1]))
+      self.v.settings().set("prev_sel", s_prev)
+      self.v.settings().set("curr_sel", str(self.v.sel()))
+      self.v.run_command("ensime_go_to_definition", {"target": target})
+      sublime.set_timeout(self.trigger_selection_update, 100)
+    else:
+      # additive drag_select has been applied before this command was called
+      # hence we have nothing to do here
+      pass
+
+  def trigger_selection_update(self):
+    #xeno.by: ugly, yes, but we need to trigger a selection update
+    self.v.run_command("move", {"by": "characters", "forward": False})
+    self.v.run_command("move", {"by": "characters", "forward": True})
+
+  # [(51708, 51708), (51946, 51946)]
+  def parse(self, s_sel):
+    return [(int(m[0]), int(m[1])) for m in re.findall("\((\d+), (\d+)\)", s_sel)]
+
+  def diff(self, sel1, sel2):
+    return list((set(sel1) - set(sel2)) | (set(sel2) - set(sel1)))
+
+class EnsimeAltClick(EnsimeTextCommand):
+  def run(self, edit):
+    is_applicable = not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.in_project(self.v.file_name())
+    if is_applicable and self.env.settings.get("alt_click_inspects_type_at_point"):
+      self.v.run_command("ensime_inspect_type_at_point", {"target": self.v.sel()[0]})
+    else:
+      # subtractive drag_select has been applied before this command was called
+      # hence we have nothing to do here
+      pass
+
+class EnsimeCtrlTilde(EnsimeWindowCommand):
+  def run(self):
+    if self.env.settings.get("ctrl_tilde_shows_repl"):
+      self.w.run_command("ensime_show_client_server_repl", {"toggle": True})
+    else:
+      self.w.run_command("hide_panel", {"panel": "console"})
 
 class EnsimeCompletionsListener(EventListener):
   def on_query_completions(self, view, prefix, locations):
@@ -1301,29 +1375,34 @@ class EnsimeCompletionsListener(EventListener):
     return ([(c.name + "\t" + c.signature, c.name) for c in completions], sublime.INHIBIT_EXPLICIT_COMPLETIONS | sublime.INHIBIT_WORD_COMPLETIONS)
 
 class EnsimeInspectTypeAtPoint(ProjectFileOnly, EnsimeTextCommand):
-  def run(self, edit):
-    self.inspect_type_at_point(self.f, self.v.sel()[0].begin(), self.handle_reply)
+  def run(self, edit, target= None):
+    pos = int(target or self.v.sel()[0].begin())
+    self.inspect_type_at_point(self.f, pos, self.handle_reply)
 
   def handle_reply(self, tpe):
     statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
     if tpe.name != "<notype>":
-      # summary = "(" + str(tpe.decl_as) + ") " + tpe.full_name
       summary = tpe.full_name
       if tpe.type_args:
         summary += ("[" + ", ".join(map(lambda t: t.name, tpe.type_args)) + "]")
-      self.v.set_status(statusgroup, summary)
+      sublime.set_timeout(functools.partial(self.v.set_status, statusgroup, summary), 100)
     else:
-      self.v.set_status(statusgroup, "type is unknown")
+      statusmessage = "Type of the expression at cursor is unknown"
+      sublime.set_timeout(functools.partial(self.v.set_status, statusgroup, statusmessage), 100)
 
 class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
-  def run(self, edit):
-    self.symbol_at_point(self.f, self.v.sel()[0].begin(), self.handle_reply)
+  def run(self, edit, target= None):
+    pos = int(target or self.v.sel()[0].begin())
+    self.symbol_at_point(self.f, pos, self.handle_reply)
 
   def handle_reply(self, info):
     statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
     if info.decl_pos:
-      v = self.w.open_file(info.decl_pos.file_name)
+      #xeno.by: fails from time to time, because sometimes self.w is None
+      # v = self.w.open_file(info.decl_pos.file_name)
+      v = sublime.active_window().open_file(info.decl_pos.file_name)
       v.sel().clear()
       v.sel().add(Region(info.decl_pos.offset, info.decl_pos.offset))
     else:
-      self.v.set_status(statusgroup, "destination is unknown")
+      statusmessage = "Definition of " + str(info.name) + " cannot be found"
+      sublime.set_timeout(functools.partial(self.v.set_status, statusgroup, statusmessage), 100)

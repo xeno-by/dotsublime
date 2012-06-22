@@ -10,6 +10,11 @@
   "error_status": true,
   "error_status_maxlength": 150,
 
+  // keybindings
+  "ctrl_tilde_shows_repl": true,
+  "ctrl_click_goes_to_definition": true,
+  "alt_click_inspects_type_at_point": true,
+
   // debug settings
   "log_to_console": ["ui", "client", "server"],
   "log_to_file": ["ui", "client", "server"],

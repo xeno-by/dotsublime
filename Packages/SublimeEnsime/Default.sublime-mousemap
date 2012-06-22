@@ -1,0 +1,14 @@
+[
+  {
+    "button": "button1", "count": 1, "modifiers": ["ctrl"],
+    "press_command": "drag_select",
+    "press_args": {"additive": true},
+    "command": "ensime_ctrl_click"
+  },
+  {
+    "button": "button1", "count": 1, "modifiers": ["alt"],
+    "press_command": "drag_select",
+    "press_args": {"subtractive": true},
+    "command": "ensime_alt_click"
+  }
+]

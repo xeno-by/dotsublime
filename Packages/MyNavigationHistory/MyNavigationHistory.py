@@ -169,6 +169,9 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
     """
 
     def on_selection_modified(self, view):
+        if not view.sel():
+            pass
+
         # filters out temporary navs from ctrl+f and ctrl+g
         active_view_id = view.window() and view.window().active_view() and view.window().active_view().id()
         if hasattr(self, "_last_activated") and self._last_activated and self._last_activated != active_view_id:
