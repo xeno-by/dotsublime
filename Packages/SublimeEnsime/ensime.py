@@ -715,9 +715,17 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     self.status_message(payload[1])
 
   @call_back_into_ui_thread
+  def message_java_notes(self, msg_id, payload):
+    pass
+
+  @call_back_into_ui_thread
   def message_scala_notes(self, msg_id, payload):
     notes = ensime_codec.decode_notes(payload)
     self.add_notes(notes)
+
+  @call_back_into_ui_thread
+  def message_clear_all_java_notes(self, msg_id, payload):
+    pass
 
   @call_back_into_ui_thread
   def message_clear_all_scala_notes(self, msg_id, payload):
@@ -1295,6 +1303,7 @@ class EnsimeHighlightDaemon(EventListener):
     if view.sel():
       self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
 
+# things might be simplified as per http://www.sublimetext.com/forum/viewtopic.php?f=6&t=7658
 class EnsimeCtrlClickDaemon(EventListener):
   def on_activated(self, view):
     self.save_selection(view)
