@@ -69,15 +69,29 @@ class MyLayout8(sublime_plugin.WindowCommand):
 
 class MySplitUnsplit(sublime_plugin.WindowCommand):
   def run(self):
-    print "MySplitUnsplit"
+    curr = self.window.active_group()
+    self.window.run_command("split_pane", {"create_pane_in_direction": "right"})
+    if self.window.active_group() != curr:
+      self.window.run_command("split_pane", {"destroy_pane_in_direction": "left"})
+    self.window.run_command("split_pane", {"create_pane_in_direction": "left"})
+    if self.window.active_group() != curr:
+      self.window.run_command("split_pane", {"destroy_pane_in_direction": "right"})
+    self.window.run_command("split_pane", {"create_pane_in_direction": "up"})
+    if self.window.active_group() != curr:
+      self.window.run_command("split_pane", {"destroy_pane_in_direction": "down"})
+    self.window.run_command("split_pane", {"create_pane_in_direction": "down"})
+    if self.window.active_group() != curr:
+      self.window.run_command("split_pane", {"destroy_pane_in_direction": "up"})
 
 class MySplitHorizontal(sublime_plugin.WindowCommand):
   def run(self):
-    print "MySplitHorizontal"
+    self.window.run_command("split_pane", {"create_pane_in_direction": "right"})
+    self.window.run_command("split_pane", {"travel_to_pane_in_direction": "right"})
 
 class MySplitVertical(sublime_plugin.WindowCommand):
   def run(self):
-    print "MySplitVertical"
+    self.window.run_command("split_pane", {"create_pane_in_direction": "down"})
+    self.window.run_command("split_pane", {"travel_to_pane_in_direction": "down"})
 
 class MySplitNext(sublime_plugin.WindowCommand):
   def run(self):
