@@ -1,23 +1,22 @@
 {
-	"auto_upgrade_last_run": null,
-	"installed_packages":
-	[
-		"BracketHighlighter",
-		"FileDiffs",
-		"Git",
-		"GotoRecent",
-		"HexViewer",
-		"Origami",
-		"Package Control",
-		"Quick File Creator",
-		"SideBarEnhancements",
-		"SideBarGit",
-		"Theme - Soda",
-		"Theme - Soda Refined"
-	],
-	"repositories":
-	[
-		"http://wuub.net/sublimepty-alpha.json",
-		"http://sublime.wbond.net/testing/packages.json"
-	]
+  "auto_upgrade_last_run": null,
+  "installed_packages":
+  [
+    "BracketHighlighter",
+    "FileDiffs",
+    "Git",
+    "GotoRecent",
+    "HexViewer",
+    "Origami",
+    "Package Control",
+    "Quick File Creator",
+    "SideBarEnhancements",
+    "SideBarGit",
+    "Theme - Aqua"
+  ],
+  "repositories":
+  [
+    "http://wuub.net/sublimepty-alpha.json",
+    "http://sublime.wbond.net/testing/packages.json"
+  ]
 }
