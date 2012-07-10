@@ -16,6 +16,17 @@ import time
 import shutil
 import tempfile
 
+if os.name == 'nt':
+    from ctypes import windll, create_unicode_buffer
+
+    lib_path = os.path.join(sublime.packages_path(), 'Package Control', 'lib', 'windows')
+    buf = create_unicode_buffer(512)
+    if windll.kernel32.GetShortPathNameW(lib_path, buf, len(buf)):
+        lib_path = buf.value
+    if lib_path not in sys.path:
+        sys.path.append(lib_path)
+    from ntlm import HTTPNtlmAuthHandler
+
 try:
     import ssl
     import httplib
@@ -559,7 +570,27 @@ class UrlLib2Downloader(Downloader):
             proxy_handler = urllib2.ProxyHandler(proxies)
         else:
             proxy_handler = urllib2.ProxyHandler()
+
+        password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        proxy_username = self.settings.get('proxy_username')
+        proxy_password = self.settings.get('proxy_password')
+        if proxy_username and proxy_password:
+            if http_proxy:
+                password_manager.add_password(None, http_proxy, proxy_username,
+                    proxy_password)
+            if https_proxy:
+                password_manager.add_password(None, https_proxy, proxy_username,
+                    proxy_password)
+
         handlers = [proxy_handler]
+        if os.name == 'nt':
+            ntlm_auth_handler = HTTPNtlmAuthHandler.ProxyNtlmAuthHandler(
+                password_manager)
+            handlers.append(ntlm_auth_handler)
+
+        basic_auth_handler = urllib2.ProxyBasicAuthHandler(password_manager)
+        digest_auth_handler = urllib2.ProxyDigestAuthHandler(password_manager)
+        handlers.extend([digest_auth_handler, basic_auth_handler])
 
         secure_url_match = re.match('^https://([^/]+)', url)
         if secure_url_match != None:
@@ -942,7 +973,7 @@ class PackageManager():
                 'auto_upgrade_ignore', 'auto_upgrade_frequency',
                 'submit_usage', 'submit_url', 'renamed_packages',
                 'files_to_include', 'files_to_include_binary', 'certs',
-                'ignore_vcs_packages']:
+                'ignore_vcs_packages', 'proxy_username', 'proxy_password']:
             if settings.get(setting) == None:
                 continue
             self.settings[setting] = settings.get(setting)
@@ -1889,7 +1920,7 @@ class PackageInstaller():
     def disable_package(self, package):
         # Don't disable Package Control so it does not get stuck disabled
         if package == 'Package Control':
-            return
+            return False
         settings = sublime.load_settings(preferences_filename())
         ignored = settings.get('ignored_packages')
         if not ignored:
@@ -1898,6 +1929,8 @@ class PackageInstaller():
             ignored.append(package)
             settings.set('ignored_packages', ignored)
             sublime.save_settings(preferences_filename())
+            return True
+        return False
 
     def reenable_package(self, package):
         settings = sublime.load_settings(preferences_filename())
@@ -1914,9 +1947,10 @@ class PackageInstaller():
             return
         name = self.package_list[picked][0]
 
-        def on_complete():
-            self.reenable_package(name)
-        self.disable_package(name)
+        if self.disable_package(name):
+            on_complete = lambda: self.reenable_package(name)
+        else:
+            on_complete = None
 
         thread = PackageInstallerThread(self.manager, name, on_complete)
         thread.start()
@@ -1933,7 +1967,8 @@ class PackageInstallerThread(threading.Thread):
 
     def run(self):
         self.result = self.manager.install_package(self.package)
-        sublime.set_timeout(self.on_complete, 1)
+        if self.on_complete:
+            sublime.set_timeout(self.on_complete, 1)
 
 
 class InstallPackageCommand(sublime_plugin.WindowCommand):
@@ -2006,9 +2041,10 @@ class UpgradePackageThread(threading.Thread, PackageInstaller):
             return
         name = self.package_list[picked][0]
 
-        def on_complete():
-            self.reenable_package(name)
-        self.disable_package(name)
+        if self.disable_package(name):
+            on_complete = lambda: self.reenable_package(name)
+        else:
+            on_complete = None
 
         thread = PackageInstallerThread(self.manager, name, on_complete)
         thread.start()
@@ -2038,10 +2074,16 @@ class UpgradeAllPackagesThread(threading.Thread, PackageInstaller):
         self.package_renamer.rename_packages(self)
         package_list = self.make_package_list(['install', 'reinstall', 'none'])
 
+        disabled_packages = {}
+
         def do_upgrades():
+            # Pause so packages can be disabled
+            time.sleep(0.5)
             for info in package_list:
-                def on_complete():
-                    self.reenable_package(info[0])
+                if disabled_packages.get(info[0]):
+                    on_complete = lambda: self.reenable_package(info[0])
+                else:
+                    on_complete = None
                 thread = PackageInstallerThread(self.manager, info[0], on_complete)
                 thread.start()
                 ThreadProgress(thread, 'Upgrading package %s' % info[0],
@@ -2049,7 +2091,7 @@ class UpgradeAllPackagesThread(threading.Thread, PackageInstaller):
 
         def disable_packages():
             for info in package_list:
-                self.disable_package(info[0])
+                disabled_packages[info[0]] = self.disable_package(info[0])
             threading.Thread(target=do_upgrades).start()
 
         sublime.set_timeout(disable_packages, 1)
@@ -2237,7 +2279,7 @@ class DisablePackageCommand(sublime_plugin.WindowCommand):
     def run(self):
         manager = PackageManager()
         packages = manager.list_all_packages()
-        self.settings = sublime.load_settings(preferences_filename)
+        self.settings = sublime.load_settings(preferences_filename())
         ignored = self.settings.get('ignored_packages')
         if not ignored:
             ignored = []
