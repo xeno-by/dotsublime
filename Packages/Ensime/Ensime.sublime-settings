@@ -2,14 +2,19 @@
   // crucial settings
   "ensime_server_path": "Ensime/server",
 
-  // stylistic settings
+  // status settings
   "ensime_statusbar_group": "ensime",
+  "ensime_statusbar_heartbeat_enabled": true,
+  "ensime_statusbar_heartbeat_message": "ENSIME",
+  "ensime_statusbar_heartbeat_joint": ": ",
+  "ensime_statusbar_maxlength": 150,
+
+  // stylistic settings
   "error_highlight": true,
   "error_scope": "invalid.illegal",
   "error_underline": true,
   "error_icon": "ensime-error",
   "error_status": true,
-  "error_status_maxlength": 150,
   "breakpoint_highlight": false,
   "breakpoint_scope": "",
   "breakpoint_icon": "ensime-breakpoint",

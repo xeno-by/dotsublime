@@ -29,7 +29,7 @@ class EnsimeApi:
   def add_notes(self, notes):
     self.env.notes += notes
     for v in self.w.views():
-      EnsimeHighlights(v).add(notes)
+      EnsimeHighlights(v).add_notes(notes)
 
   def clear_notes(self):
     self.env.notes = []
@@ -63,20 +63,21 @@ class EnsimeApi:
     return on_complete(ensime_codec.decode_symbol_at_point(payload))
 
   def handle_debug_event(self, event):
-    self.env.debug.event = event
-    if event.type == "start" or event.type == "death" or event.type == "disconnect":
-      self.env.debug.focus = None
-      for v in self.w.views():
-        EnsimeDebug(v).clear_focus()
-    elif event.type == "breakpoint" or event.type == "step":
-      class EnsimeDebugFocus(object): pass
-      self.env.debug.focus = EnsimeDebugFocus()
-      self.env.debug.focus.file_name = event.file_name
-      self.env.debug.focus.line = event.line
-      for v in self.w.views():
-        EnsimeDebug(v).update_focus(self.env.debug.focus)
-      # todo. if the view is not open yet, launch it in sublime and position its the viewport
-    pass
+    if event:
+      self.env.debug.event = event
+      if event.type == "start" or event.type == "death" or event.type == "disconnect":
+        self.env.debug.focus = None
+        for v in self.w.views():
+          EnsimeDebug(v).clear_focus()
+      elif event.type == "breakpoint" or event.type == "step":
+        class EnsimeDebugFocus(object): pass
+        self.env.debug.focus = EnsimeDebugFocus()
+        self.env.debug.focus.file_name = event.file_name
+        self.env.debug.focus.line = event.line
+        for v in self.w.views():
+          EnsimeDebug(v).update_focus(self.env.debug.focus)
+        # todo. if the view is not open yet, launch it in sublime and position its the viewport
+      pass
 
 
 class EnsimeEnvironment(object):
@@ -343,6 +344,12 @@ class EnsimeBase(object):
     wannabe = os.path.realpath(filename)
     return wannabe[len(root) + 1:]
 
+  def update_status(self, status):
+    sublime.set_timeout(bind(self.update_status_cont, status), 0)
+
+  def update_status_cont(self, status):
+    EnsimeHighlights(self.v).update_status(status)
+
 class EnsimeCommon(EnsimeBase, EnsimeLog, EnsimeApi):
   pass
 
@@ -570,10 +577,12 @@ class EnsimeCodec:
     return True
 
   def decode_notes(self, data):
+    if not data: return []
     m = sexp.sexp_to_key_map(data)
     return [self.decode_note(n) for n in m[":notes"]]
 
   def decode_note(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeNote(object): pass
     note = EnsimeNote()
@@ -590,6 +599,7 @@ class EnsimeCodec:
     return [sym("swank:type-at-point"), str(file_path), int(position)]
 
   def decode_inspect_type_at_point(self, data):
+    if not data: return None
     return self.decode_type(data)
 
   def encode_completions(self, file_path, position, max_results):
@@ -602,6 +612,7 @@ class EnsimeCodec:
     return [self.decode_completion(p) for p in m.get(":completions", [])]
 
   def decode_completion(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeCompletion(object): pass
     completion = EnsimeCompletion()
@@ -619,9 +630,11 @@ class EnsimeCodec:
     return [sym("swank:patch-source"), file_path, edits]
 
   def decode_symbol_at_point(self, data):
+    if not data: return None
     return self.decode_symbol(data)
 
   def decode_position(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimePosition(object): pass
     position = EnsimePosition()
@@ -636,6 +649,7 @@ class EnsimeCodec:
     return [self.decode_type(t) for t in data]
 
   def decode_type(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class TypeInfo(object): pass
     info = TypeInfo()
@@ -656,6 +670,7 @@ class EnsimeCodec:
     return info
 
   def decode_symbol(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class SymbolInfo(object): pass
     info = SymbolInfo()
@@ -671,6 +686,7 @@ class EnsimeCodec:
     return [self.decode_member(m) for m in data]
 
   def decode_member(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class MemberInfo(object): pass
     info = MemberInfo()
@@ -682,6 +698,7 @@ class EnsimeCodec:
     return [self.decode_param_section(ps) for ps in data]
 
   def decode_param_section(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class ParamSectionInfo(object): pass
     info = ParamSectionInfo()
@@ -698,6 +715,7 @@ class EnsimeCodec:
     return None
 
   def decode_debug_event(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugEvent(object): pass
     event = EnsimeDebugEvent()
@@ -733,6 +751,7 @@ class EnsimeCodec:
     return event
 
   def decode_debug_backtrace(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugBacktrace(object): pass
     backtrace = EnsimeDebugBacktrace()
@@ -746,6 +765,7 @@ class EnsimeCodec:
     return [self.decode_debug_frame(f) for f in data]
 
   def decode_debug_stack_frame(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugStackFrame(object): pass
     stackframe = EnsimeDebugStackFrame()
@@ -759,6 +779,7 @@ class EnsimeCodec:
     return stackframe
 
   def decode_debug_source_position(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugSourcePosition(object): pass
     position = EnsimeDebugSourcePosition()
@@ -771,6 +792,7 @@ class EnsimeCodec:
     return [self.decode_debug_stack_local(loc) for loc in data]
 
   def decode_debug_stack_local(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugStackLocal(object): pass
     loc = EnsimeDebugStackLocal()
@@ -781,6 +803,7 @@ class EnsimeCodec:
     return loc
 
   def decode_debug_value(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugValue(object): pass
     value = EnsimeDebugValue()
@@ -802,6 +825,7 @@ class EnsimeCodec:
     return [self.decode_debug_object_field(f) for f in data]
 
   def decode_debug_object_field(self, data):
+    if not data: return None
     m = sexp.sexp_to_key_map(data)
     class EnsimeDebugObjectField(object): pass
     field = EnsimeDebugObjectField()
@@ -908,20 +932,17 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     # (:return (:ok (:project-name nil :source-roots ("D:\\Dropbox\\Scratchpad\\Scala"))) 2)
     if reply_type == ":ok":
       payload = payload[1]
-      if payload:
-        if handler:
-          if callable(handler):
-            if call_back_into_ui_thread:
-              sublime.set_timeout(bind(handler, payload), 0)
-            else:
-              handler(payload)
+      if handler:
+        if callable(handler):
+          if call_back_into_ui_thread:
+            sublime.set_timeout(bind(handler, payload), 0)
           else:
-            handler.payload = payload
-            handler.set()
+            handler(payload)
         else:
-          self.log_client("warning: no handler registered for message #" + str(msg_id) + " with payload " + str(payload))
+          handler.payload = payload
+          handler.set()
       else:
-        self.log_client("warning: empty payload received for message #" + str(msg_id))
+        self.log_client("warning: no handler registered for message #" + str(msg_id) + " with payload " + str(payload))
     # (:return (:abort 210 "Error occurred in Analyzer. Check the server log.") 3)
     elif reply_type == ":abort":
       detail = payload[2]
@@ -1502,17 +1523,23 @@ class EnsimeReplNextCommand(EnsimeTextCommand):
     self.repl_insert(self.repl_next_history(), False)
     self.repl_show()
 
+ENSIME_ERROR_OUTLINE_REGION = "ensime-error"
+ENSIME_ERROR_UNDERLINE_REGION = "ensime-error-underline"
+
 class EnsimeHighlights(EnsimeCommon):
 
   def refresh(self):
     self.clear_all()
-    self.add(self.env.notes)
+    if self.env:
+      self.add_notes(self.env.notes)
+    self.update_status()
 
   def clear_all(self):
-    self.v.erase_regions("ensime-error")
-    self.v.erase_regions("ensime-error-underline")
+    self.v.erase_regions(ENSIME_ERROR_OUTLINE_REGION)
+    self.v.erase_regions(ENSIME_ERROR_UNDERLINE_REGION)
+    self.update_status()
 
-  def add(self, notes):
+  def add_notes(self, notes):
     relevant_notes = filter(
       lambda note: self.same_files(note.file_name, self.v.file_name()), notes)
 
@@ -1520,8 +1547,8 @@ class EnsimeHighlights(EnsimeCommon):
     underlines = [sublime.Region(note.start, note.end) for note in relevant_notes]
     if self.env.settings.get("error_highlight") and self.env.settings.get("error_underline"):
       self.v.add_regions(
-        "ensime-error-underline",
-        underlines + self.v.get_regions("ensime-error-underline"),
+        ENSIME_ERROR_UNDERLINE_REGION,
+        underlines + self.v.get_regions(ENSIME_ERROR_UNDERLINE_REGION),
         self.env.settings.get("error_scope", "invalid.illegal"),
         sublime.DRAW_EMPTY_AS_OVERWRITE)
 
@@ -1529,42 +1556,59 @@ class EnsimeHighlights(EnsimeCommon):
     errors = [self.v.full_line(note.start) for note in relevant_notes]
     if self.env.settings.get("error_highlight"):
       self.v.add_regions(
-        "ensime-error",
-        errors + self.v.get_regions("ensime-error"),
+        ENSIME_ERROR_OUTLINE_REGION,
+        errors + self.v.get_regions(ENSIME_ERROR_OUTLINE_REGION),
         self.env.settings.get("error_scope", "invalid.illegal"),
         self.env.settings.get("error_icon", "ensime-error"),
         sublime.DRAW_OUTLINED)
 
+    # Now let's refresh ourselves
+    self.update_status()
 
-class EnsimeHighlightStatus(EnsimeCommon):
+  def update_status(self, custom_status = None):
+    if custom_status:
+      self._update_statusbar(custom_status)
+    elif self.env and self.env.settings.get("error_status"):
+      if self.v.sel():
+        relevant_notes = filter(
+          lambda note: self.same_files(
+            note.file_name, self.v.file_name()),
+          self.env.notes)
+        bol = self.v.line(self.v.sel()[0].begin()).begin()
+        eol = self.v.line(self.v.sel()[0].begin()).end()
+        msgs = [note.message for note in relevant_notes
+                if (bol <= note.start and note.start <= eol) or
+                (bol <= note.end and note.end <= eol)]
+        self._update_statusbar("; ".join(msgs))
+    else:
+      self._update_statusbar(None)
 
-  def refresh(self):
-    if self.env.settings.get("error_status"):
-      relevant_notes = filter(
-        lambda note: self.same_files(
-          note.file_name, self.v.file_name()),
-        self.env.notes)
-      bol = self.v.line(self.v.sel()[0].begin()).begin()
-      eol = self.v.line(self.v.sel()[0].begin()).end()
-      msgs = [note.message for note in relevant_notes
-              if (bol <= note.start and note.start <= eol) or
-              (bol <= note.end and note.end <= eol)]
-      statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
-      if msgs:
-        maxlength = self.env.settings.get("error_status_maxlength", 150)
-        status = "; ".join(msgs)
-        if len(status) > maxlength:
-          status = status[0:maxlength] + "..."
-        sublime.set_timeout(bind(self.v.set_status, statusgroup, status), 100)
-      else:
-        self.v.erase_status(statusgroup)
-
+  def _update_statusbar(self, status):
+    settings = self.env.settings if self.env else sublime.load_settings("Ensime.sublime-settings")
+    statusgroup = settings.get("ensime_statusbar_group", "ensime")
+    status = str(status)
+    if settings.get("ensime_statusbar_heartbeat_enabled", True):
+      heart_beats = self.env and self.env.valid and self.env.controller and self.env.controller.running
+      if heart_beats and self.v and self.in_project(self.v.file_name()):
+        heartbeat_message = settings.get("ensime_statusbar_heartbeat_message", "ENSIME")
+        if not status:
+          status = heartbeat_message
+        else:
+          heartbeat_joint = settings.get("ensime_statusbar_heartbeat_joint", ": ")
+          status = heartbeat_message + heartbeat_joint + status
+    if status:
+      maxlength = settings.get("ensime_statusbar_maxlength", 150)
+      if len(status) > maxlength:
+        status = status[0:maxlength] + "..."
+      sublime.set_timeout(bind(self.v.set_status, statusgroup, status), 100)
+    else:
+      sublime.set_timeout(bind(self.v.erase_status, statusgroup), 100)
 
 class EnsimeHighlightCommand(ProjectFileOnly, EnsimeWindowCommand):
   def run(self, enable = True):
     self.env.settings.set("error_highlight", not not enable)
     sublime.save_settings("Ensime.sublime-settings")
-    EnsimeHighlights(self.v).hide()
+    EnsimeHighlights(self.v).clear_all()
     if enable:
       self.type_check_file(self.f)
 
@@ -1599,12 +1643,21 @@ class EnsimeHighlightDaemon(EnsimeEventListener):
   def on_post_save(self, view):
     self.with_api(view, lambda api: api.type_check_file(view.file_name()))
 
-  def on_activate(self, view):
-    self.with_api(view, lambda api: EnsimeHighlights(view).refresh())
+  def on_activated(self, view):
+    # todo. EnsimeEnvironment itself creates views (output panels for console logging)
+    # once they are created, they trigger on_activated
+    # which happily instantiates EnsimeHighlights
+    # which calls a constructor of EnsimeEnvironment
+    # which triggers on_activated
+    # <ad infinitum>
+    # I don't know to how disable a highlighting daemon during construction of envs
+    # so I'm adding this good enough check to prevent stack overflows
+    # as a result, switching to empty views won't recalculate ensime status bar
+    if view.file_name() or view.size():
+      EnsimeHighlights(view).refresh()
 
   def on_selection_modified(self, view):
-    if view.sel():
-      self.with_api(view, lambda api: EnsimeHighlightStatus(view).refresh())
+    EnsimeHighlights(view).update_status()
 
 class EnsimeMouseCommand(EnsimeTextCommand):
   def run(self, target):
@@ -1613,17 +1666,18 @@ class EnsimeMouseCommand(EnsimeTextCommand):
   # note the underscore in "run_"
   def run_(self, args):
     self.old_sel = [(r.a, r.b) for r in self.view.sel()]
-    system_command = args["command"]
-    system_args = dict({"event": args["event"]}.items() + args["args"].items())
-    self.view.run_command(system_command, system_args)
+    system_command = args["command"] if "command" in args else None
+    if system_command:
+      system_args = dict({"event": args["event"]}.items() + args["args"].items())
+      self.view.run_command(system_command, system_args)
     self.new_sel = [(r.a, r.b) for r in self.v.sel()]
     self.diff = list((set(self.old_sel) - set(self.new_sel)) | (set(self.new_sel) - set(self.old_sel)))
 
     is_applicable = not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.in_project(self.v.file_name())
     if is_applicable:
       if len(self.diff) == 0:
-        if len(self.new_sel()) == 1:
-          self.run(self.new_sel()[0].a)
+        if len(self.new_sel) == 1:
+          self.run(self.new_sel[0][0])
         else:
           # this is a tough one
           # here's how we possibly could arrive here
@@ -1631,6 +1685,7 @@ class EnsimeMouseCommand(EnsimeTextCommand):
           # there's no way we can guess the exact point of click, so we bail
           pass
       elif len(self.diff) == 1:
+        self.revert_sel()
         self.run(self.diff[0][0])
       else:
         # this shouldn't happen
@@ -1645,7 +1700,6 @@ class EnsimeMouseCommand(EnsimeTextCommand):
 
 class EnsimeCtrlClick(EnsimeMouseCommand):
   def run(self, target):
-    self.revert_sel()
     self.v.run_command("ensime_go_to_definition", {"target": target})
 
 class EnsimeAltClick(EnsimeMouseCommand):
@@ -1728,15 +1782,13 @@ class EnsimeInspectTypeAtPoint(ProjectFileOnly, EnsimeTextCommand):
     self.inspect_type_at_point(self.f, pos, self.handle_reply)
 
   def handle_reply(self, tpe):
-    statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
-    if tpe.name != "<notype>":
+    if tpe and tpe.name != "<notype>":
       summary = tpe.full_name
       if tpe.type_args:
         summary += ("[" + ", ".join(map(lambda t: t.name, tpe.type_args)) + "]")
-      sublime.set_timeout(bind(self.v.set_status, statusgroup, summary), 100)
+      self.update_status(summary)
     else:
-      statusmessage = "Type of the expression at cursor is unknown"
-      sublime.set_timeout(bind(self.v.set_status, statusgroup, statusmessage), 100)
+      self.update_status("Cannot find out type")
 
 class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
   def run(self, edit, target= None):
@@ -1744,8 +1796,7 @@ class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
     self.symbol_at_point(self.f, pos, self.handle_reply)
 
   def handle_reply(self, info):
-    statusgroup = self.env.settings.get("ensime_statusbar_group", "ensime")
-    if info.decl_pos:
+    if info and info.decl_pos:
       # fails from time to time, because sometimes self.w is None
       # v = self.w.open_file(info.decl_pos.file_name)
 
@@ -1802,11 +1853,9 @@ class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
         else:
           open_file()
       else:
-        statusmessage = "Cannot open " + file_name
-        sublime.set_timeout(bind(self.v.set_status, statusgroup, statusmessage), 100)
+        self.update_status("Cannot open " + file_name)
     else:
-      statusmessage = "Cannot locate " + str(info.name)
-      sublime.set_timeout(bind(self.v.set_status, statusgroup, statusmessage), 100)
+      self.update_status("Cannot locate " + (str(info.name) if info else "symbol"))
 
 class EnsimeDebug(EnsimeCommon):
 

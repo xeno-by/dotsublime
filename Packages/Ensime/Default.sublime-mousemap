@@ -6,7 +6,7 @@
   // },
   // {
   //   "button": "button1", "count": 1, "modifiers": ["alt"],
-  //   "press_command": "ensime_alt_click",
-  //   "press_args": {"command": "drag_select", "args": {"subtractive": true}}
+  //   "press_command": "ensime_alt_click"
+  //   "press_args": {"command": "drag_select", "args": {"additive": true}}
   // }
 ]
