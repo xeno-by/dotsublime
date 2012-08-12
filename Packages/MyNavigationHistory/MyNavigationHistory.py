@@ -58,7 +58,8 @@ class History(object):
 
                 if self._current:
                     time_delta = abs(location.time - self._current.time)
-                    subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
+                    # subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
+                    subsume = time_delta <= TIME_THRESHOLD
                     if subsume:
                         # print("nav_history: subsumed current, time delta is " + str(time_delta))
                         if self.has_changed(location):
