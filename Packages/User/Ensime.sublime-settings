@@ -1,21 +1,25 @@
 {
+	"alt_click_inspects_type_at_point": true,
+	"breakpoint_highlight": false,
+	"breakpoint_icon": "ensime-breakpoint",
+	"breakpoint_scope": "",
 	"connect_to_external_server": false,
 	"ctrl_click_goes_to_definition": true,
-	"ctrl_tilde_shows_repl": true,
-	"ensime_server_path": "SublimeEnsime/server",
+	"ctrl_tilde_shows_repl": false,
+	"debugfocus_highlight": true,
+	"debugfocus_icon": "ensime-debugfocus",
+	"debugfocus_scope": "invalid.deprecated",
+	"ensime_server_path": "Ensime/server",
 	"ensime_statusbar_group": "ensime",
-	"ensime_work_dir": "SublimeEnsime/work",
 	"error_highlight": true,
-	"error_icon": "dot",
+	"error_icon": "ensime-error",
+	"error_scope": "invalid.illegal",
 	"error_status": true,
 	"error_status_maxlength": 150,
-	"error_underline": false,
-	"external_server_port_file": "C:\\Projects\\SublimeScala\\Ensime\\.port",
+	"error_underline": true,
+	"external_server_port_file": "",
 	"log_to_console":
 	[
-		"ui",
-		"client",
-		"server"
 	],
 	"log_to_file":
 	[
@@ -25,8 +29,7 @@
 	],
 	"processes":
 	{
-		"5176": "4668"
+		"2092": "6940"
 	},
-	"show_output_during_server_startup": false,
-	"use_auto_complete": false
+	"rpc_timeout": 3
 }
