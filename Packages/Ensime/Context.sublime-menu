@@ -1,0 +1,35 @@
+[
+    { "caption": "-" },
+    {
+        "caption": "Ensime",
+        "children":
+        [
+          {
+            "caption": "Maintenance",
+            "children":
+            [
+              { "caption": "Startup", "command": "ensime_startup" },
+              { "caption": "Restart", "command": "ensime_restart" },
+              { "caption": "Shutdown", "command": "ensime_shutdown" },
+              { "caption": "Create project", "command": "ensime_create_project" },
+              { "caption": "Modify project", "command": "ensime_modify_project" },
+              { "caption": "Show client log", "command": "ensime_show_client_messages" },
+              { "caption": "Show server log", "command": "ensime_show_server_messages" },
+              { "caption": "Show client/server REPL", "command": "ensime_show_client_server_repl" },
+              { "caption": "Enable error highlighting", "command": "ensime_highlight", "args": { "enable": true } },
+              { "caption": "Disable error highlighting", "command": "ensime_highlight", "args": { "enable": false } }
+            ]
+          },
+          {
+            "caption": "Commands",
+            "children":
+            [
+              { "caption": "Show file notes", "command": "ensime_show_notes", "args": { "current_file_only": true }},
+              { "caption": "Show all notes", "command": "ensime_show_notes", "args": { "current_file_only": false }},
+              { "caption": "Inspect type at point", "command": "ensime_inspect_type_at_point"},
+              { "caption": "Go to definition", "command": "ensime_go_to_definition"}
+            ]
+          }
+        ]
+    }
+]
