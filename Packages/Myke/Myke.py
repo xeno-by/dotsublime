@@ -246,11 +246,16 @@ class MykeContinuationCommand(sublime_plugin.TextCommand):
       if re.match("error: .* does not know how to do compile", line):
         auto_close = True
     if auto_close:
-      prev_active_group = self.view.settings().get("prev_active_group")
-      delta = time.time() - self.view.settings().get("prev_time")
-      window.run_command("close_file")
-      if delta < 2:
+      active = window.active_view()
+      if not active or active.id() == self.view.id():
+        prev_active_group = self.view.settings().get("prev_active_group")
+        delta = time.time() - self.view.settings().get("prev_time")
+        window.run_command("close_file")
         window.focus_group(prev_active_group)
+      else:
+        window.focus_view(view)
+        window.run_command("close_file")
+        window.focus_view(active)
 
     result_file_regex = env["ResultFileRegex"] if "ResultFileRegex" in env else ""
     result_line_regex = env["ResultLineRegex"] if "ResultLineRegex" in env else ""
