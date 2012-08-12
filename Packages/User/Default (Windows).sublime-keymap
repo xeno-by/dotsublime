@@ -69,7 +69,6 @@
   { "keys": ["ctrl+shift+."], "command": "my_filter"},
   { "keys": ["ctrl+shift+z"], "command": "reopen_last_file" },
   { "keys": ["super+shift+c"], "command": "side_bar_duplicate" },
-  { "keys": ["ctrl+e"], "command": "goto_recent" },
   { "keys": ["ctrl+up"], "command": "repl_view_previous", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
   { "keys": ["ctrl+down"], "command": "repl_view_next", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
   { "keys": ["tab"], "command": "insert_best_completion", "args": {"default": "", "exact": true}, "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
@@ -77,5 +76,18 @@
   { "keys": ["tab"], "command": "replace_completion_with_next_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "last_command", "operator": "equal", "operand": "insert_best_completion" }, { "key": "setting.tab_completion", "operator": "equal", "operand": true }]},
   { "keys": ["tab"], "command": "commit_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible" }]},
   { "keys": ["enter"], "command": "commit_completion", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible" }]},
-  { "keys": ["escape"], "command": "hide_auto_complete", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": true }]}
+  { "keys": ["escape"], "command": "hide_auto_complete", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": true }]},
+  { "keys": ["enter"], "command": "commit_completion", "context": [{ "key": "auto_complete_visible" }] },
+  { "keys": ["ctrl+`"], "command": "ensime_ctrl_tilde", "context": [{ "key": "ensime_ready", "operator": "equal", "operand": true }, {"key": "ensime_repl_enabled", "operator": "equal", "operand": true }, { "key": "panel_visible", "operator": "equal", "operand": true }]},
+  { "keys": ["alt+p"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["alt+n"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["ctrl+up"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["ctrl+down"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["enter"], "command": "ensime_repl_enter", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": false }]},
+  { "keys": ["escape"], "command": "ensime_repl_escape", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["backspace"], "command": "ensime_repl_backspace", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["left"], "command": "ensime_repl_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["home"], "command": "ensime_repl_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["shift+left"], "command": "ensime_repl_shift_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["shift+home"], "command": "ensime_repl_shift_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]}
 ]

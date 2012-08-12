@@ -1,14 +1,14 @@
 [
-  { "keys": ["ctrl+`"], "command": "ensime_ctrl_tilde", "context": [{ "key": "ensime_ready", "operator": "equal", "operand": true }, {"key": "ensime_repl_enabled", "operator": "equal", "operand": true }, { "key": "panel_visible", "operator": "equal", "operand": true }]},
-  { "keys": ["alt+p"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["alt+n"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["ctrl+up"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["ctrl+down"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["enter"], "command": "ensime_repl_enter", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": false }]},
-  { "keys": ["escape"], "command": "ensime_repl_escape", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["backspace"], "command": "ensime_repl_backspace", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["left"], "command": "ensime_repl_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["home"], "command": "ensime_repl_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["shift+left"], "command": "ensime_repl_shift_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["shift+home"], "command": "ensime_repl_shift_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]}
+  // { "keys": ["ctrl+`"], "command": "ensime_ctrl_tilde", "context": [{ "key": "ensime_ready", "operator": "equal", "operand": true }, {"key": "ensime_repl_enabled", "operator": "equal", "operand": true }, { "key": "panel_visible", "operator": "equal", "operand": true }]},
+  // { "keys": ["alt+p"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["alt+n"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["ctrl+up"], "command": "ensime_repl_previous", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["ctrl+down"], "command": "ensime_repl_next", "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["enter"], "command": "ensime_repl_enter", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }, { "key": "auto_complete_visible", "operator": "equal", "operand": false }]},
+  // { "keys": ["escape"], "command": "ensime_repl_escape", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["backspace"], "command": "ensime_repl_backspace", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["left"], "command": "ensime_repl_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["home"], "command": "ensime_repl_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["shift+left"], "command": "ensime_repl_shift_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  // { "keys": ["shift+home"], "command": "ensime_repl_shift_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]}
 ]

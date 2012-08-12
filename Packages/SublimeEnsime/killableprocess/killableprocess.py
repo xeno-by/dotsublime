@@ -159,14 +159,14 @@ class Popen(subprocess.Popen):
                 # the process tree will die automatically once Sublime is closed
                 job_name = "Global\\sublime-ensime-" + str(os.getpid())
                 self._job = winprocess.CreateJobObject(None, job_name)
-                print "created a job with name: " + job_name
+                # print "created a job with name: " + job_name
                 jeli = qijo.QueryInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation)
-                print "the flags are currently: " + str(jeli.BasicLimitInformation.LimitFlags)
+                # print "the flags are currently: " + str(jeli.BasicLimitInformation.LimitFlags)
                 setattr(jeli.BasicLimitInformation._struct, "LimitFlags", qijo.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE)
-                print "the flags are changed to: " + str(jeli.BasicLimitInformation.LimitFlags)
+                # print "the flags are changed to: " + str(jeli.BasicLimitInformation.LimitFlags)
                 status = qijo.SetInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation, addressof(jeli._struct), sizeof(jeli._struct))
                 jeli = qijo.QueryInformationJobObject(self._job, qijo.JobObjectExtendedLimitInformation)
-                print "the flags are now equal to: " + str(jeli.BasicLimitInformation.LimitFlags)
+                # print "the flags are now equal to: " + str(jeli.BasicLimitInformation.LimitFlags)
                 winprocess.AssignProcessToJobObject(self._job, int(hp))
             else:
                 print "cannot created a job"

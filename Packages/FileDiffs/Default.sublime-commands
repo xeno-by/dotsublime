@@ -1,26 +1,6 @@
 [
-//    {
-//        "caption": "FileDiffs: Menu",
-//        "command": "file_diff_menu"
-//    },
     {
-        "caption": "FileDiffs: Diff with Clipboard",
-        "command": "file_diff_clipboard"
-    },
-    {
-        "caption": "FileDiffs: Diff Selections",
-        "command": "file_diff_selections"
-    },
-    {
-        "caption": "FileDiffs: Diff with Saved",
-        "command": "file_diff_saved"
-    },
-    {
-        "caption": "FileDiffs: Diff with File in Project",
-        "command": "file_diff_file"
-    },
-    {
-        "caption": "FileDiffs: Diff with Open Tab",
-        "command": "file_diff_tab"
+        "caption": "FileDiffs: Menu",
+        "command": "file_diff_menu"
     }
 ]

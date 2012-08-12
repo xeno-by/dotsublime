@@ -11,6 +11,8 @@
               { "caption": "Startup", "command": "ensime_startup" },
               { "caption": "Restart", "command": "ensime_restart" },
               { "caption": "Shutdown", "command": "ensime_shutdown" },
+              { "caption": "Create config", "command": "ensime_create_config" },
+              { "caption": "Edit config", "command": "ensime_edit_config" },
               { "caption": "Show client log", "command": "ensime_show_client_messages" },
               { "caption": "Show server log", "command": "ensime_show_server_messages" },
               { "caption": "Show client/server REPL", "command": "ensime_show_client_server_repl" },

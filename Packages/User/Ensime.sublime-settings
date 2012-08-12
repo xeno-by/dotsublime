@@ -16,10 +16,13 @@
 	],
 	"log_to_file":
 	[
+		"ui",
+		"client",
+		"server"
 	],
 	"processes":
 	{
-		"4336": "4980"
+		"4528": "3096"
 	},
 	"show_output_during_server_startup": false,
 	"use_auto_complete": false
