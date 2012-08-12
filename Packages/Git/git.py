@@ -173,7 +173,8 @@ class GitCommand(object):
                 do_when(lambda: not self.active_view().is_loading(), lambda: self.active_view().set_viewport_position(position, False))
                 # self.active_view().show(position)
 
-        if self.active_view().settings().get('live_git_annotations'):
+        view = self.active_view()
+        if view and view.settings().get('live_git_annotations'):
             self.view.run_command('git_annotate')
 
         if not result.strip():
@@ -245,9 +246,12 @@ class GitWindowCommand(GitCommand, sublime_plugin.WindowCommand):
     def get_working_dir(self):
         file_name = self._active_file_name()
         if file_name:
-            return os.path.dirname(file_name)
+            return os.path.realpath(os.path.dirname(file_name))
         else:
-            return self.window.folders()[0]
+            try: # handle case with no open folder
+                return self.window.folders()[0]
+            except IndexError:
+                return ''
 
     def get_window(self):
         return self.window
@@ -267,7 +271,7 @@ class GitTextCommand(GitCommand, sublime_plugin.TextCommand):
         return os.path.basename(self.view.file_name())
 
     def get_working_dir(self):
-        return os.path.dirname(self.view.file_name())
+        return os.path.realpath(os.path.dirname(self.view.file_name()))
 
     def get_window(self):
         # Fun discovery: if you switch tabs while a command is working,
@@ -846,8 +850,13 @@ class GitBranchCommand(GitWindowCommand):
         if picked_branch.startswith("*"):
             return
         picked_branch = picked_branch.strip()
-        self.run_command(['git'] + self.command_to_run_after_branch + [picked_branch])
+        self.run_command(['git'] + self.command_to_run_after_branch + [picked_branch], self.update_status)
 
+    def update_status(self, result):
+        global branch
+        branch = ""
+        for view in self.window.views():
+            view.run_command("git_branch_status")
 
 class GitMergeCommand(GitBranchCommand):
     command_to_run_after_branch = ['merge']
@@ -866,6 +875,36 @@ class GitNewBranchCommand(GitWindowCommand):
             self.panel("No branch name provided")
             return
         self.run_command(['git', 'checkout', '-b', branchname])
+
+
+class GitNewTagCommand(GitWindowCommand):
+    def run(self):
+        self.get_window().show_input_panel("Tag name", "", self.on_input, None, None)
+
+    def on_input(self, tagname):
+        if not tagname.strip():
+            self.panel("No branch name provided")
+            return
+        self.run_command(['git', 'tag', tagname])
+
+class GitShowTagsCommand(GitWindowCommand):
+    def run(self):
+        self.run_command(['git', 'tag'], self.fetch_tag)
+
+    def fetch_tag(self, result):
+        self.results = result.rstrip().split('\n')
+        self.quick_panel(self.results, self.panel_done)
+
+    def panel_done(self, picked):
+        if 0 > picked < len(self.results):
+            return
+        picked_tag = self.results[picked]
+        picked_tag = picked_tag.strip()
+        self.run_command(['git', 'show', picked_tag])
+
+class GitPushTagsCommand(GitWindowCommand):
+    def run(self):
+        self.run_command(['git', 'push', '--tags'])
 
 
 class GitCheckoutCommand(GitTextCommand):
@@ -945,7 +984,7 @@ class GitFlowCommand(GitWindowCommand):
 class GitFlowFeatureStartCommand(GitFlowCommand):
     def run(self):
         self.get_window().show_input_panel('Enter Feature Name:', '', self.on_done, None, None)
-    
+
     def on_done(self, feature_name):
         self.run_command(['git-flow', 'feature', 'start', feature_name])
 
@@ -953,12 +992,12 @@ class GitFlowFeatureStartCommand(GitFlowCommand):
 class GitFlowFeatureFinishCommand(GitFlowCommand):
     def run(self):
         self.run_command(['git-flow', 'feature'], self.feature_done)
-    
+
     def feature_done(self, result):
         self.results = result.rstrip().split('\n')
         self.quick_panel(self.results, self.panel_done,
             sublime.MONOSPACE_FONT)
-    
+
     def panel_done(self, picked):
         if 0 > picked < len(self.results):
             return
@@ -972,7 +1011,7 @@ class GitFlowFeatureFinishCommand(GitFlowCommand):
 class GitFlowReleaseStartCommand(GitFlowCommand):
     def run(self):
         self.get_window().show_input_panel('Enter Version Number:', '', self.on_done, None, None)
-    
+
     def on_done(self, release_name):
         self.run_command(['git-flow', 'release', 'start', release_name])
 
@@ -980,12 +1019,12 @@ class GitFlowReleaseStartCommand(GitFlowCommand):
 class GitFlowReleaseFinishCommand(GitFlowCommand):
     def run(self):
         self.run_command(['git-flow', 'release'], self.release_done)
-    
+
     def release_done(self, result):
         self.results = result.rstrip().split('\n')
         self.quick_panel(self.results, self.panel_done,
             sublime.MONOSPACE_FONT)
-    
+
     def panel_done(self, picked):
         if 0 > picked < len(self.results):
             return
@@ -999,7 +1038,7 @@ class GitFlowReleaseFinishCommand(GitFlowCommand):
 class GitFlowHotfixStartCommand(GitFlowCommand):
     def run(self):
         self.get_window().show_input_panel('Enter hotfix name:', '', self.on_done, None, None)
-    
+
     def on_done(self, hotfix_name):
         self.run_command(['git-flow', 'hotfix', 'start', hotfix_name])
 
@@ -1007,12 +1046,12 @@ class GitFlowHotfixStartCommand(GitFlowCommand):
 class GitFlowHotfixFinishCommand(GitFlowCommand):
     def run(self):
         self.run_command(['git-flow', 'hotfix'], self.hotfix_done)
-    
+
     def hotfix_done(self, result):
         self.results = result.rstrip().split('\n')
         self.quick_panel(self.results, self.panel_done,
             sublime.MONOSPACE_FONT)
-    
+
     def panel_done(self, picked):
         if 0 > picked < len(self.results):
             return
@@ -1229,3 +1268,26 @@ class GitGitkCommand(GitTextCommand):
     def run(self, edit):
         command = ['gitk']
         self.run_command(command)
+
+class GitBranchStatusListener(sublime_plugin.EventListener):
+    def on_load(self, view):
+        view.run_command("git_branch_status")
+
+branch = ""
+class GitBranchStatusCommand(GitTextCommand):
+    def run(self, view):
+        global branch
+
+        if branch:
+            self.set_status(branch)
+        else:
+            self.run_command(['git','rev-parse','--abbrev-ref','HEAD'], self.branch_done, show_status=False)
+
+    def branch_done(self, result):
+        global branch
+        branch = result.strip()
+        self.set_status(branch)
+
+    def set_status(self, branch):
+        # self.view.set_status("git-branch", "git branch: " + branch)
+        pass
