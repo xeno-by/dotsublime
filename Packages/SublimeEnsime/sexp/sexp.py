@@ -44,8 +44,10 @@ def read_relaxed(s):
   and is more forgiving w.r.t whitespaces."""
   lines = s.splitlines()
   lines = map(lambda line: line.strip(), lines)
-  lines = filter(lambda line: line.startswith(";;"), lines)
-  return '\n'.join(lines)
+  lines = filter(lambda line: line, lines)
+  lines = filter(lambda line: not line.startswith(";;"), lines)
+  s = '\n'.join(lines)
+  return read_form(s)[0]
 
 def read_form(str):
   "Read a form."

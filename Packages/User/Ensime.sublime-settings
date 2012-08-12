@@ -13,6 +13,9 @@
 	"external_server_port_file": "C:\\Projects\\SublimeScala\\Ensime\\.port",
 	"log_to_console":
 	[
+		"ui",
+		"client",
+		"server"
 	],
 	"log_to_file":
 	[
@@ -22,7 +25,7 @@
 	],
 	"processes":
 	{
-		"4528": "3096"
+		"5176": "4668"
 	},
 	"show_output_during_server_startup": false,
 	"use_auto_complete": false

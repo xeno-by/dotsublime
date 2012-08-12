@@ -6,6 +6,7 @@ from sexp import sexp
 from sexp.sexp import key, sym
 import functools
 from functools import partial as bind
+import traceback
 
 def locations(window):
   """Intelligently guess the appropriate .ensime file locations for the
@@ -47,9 +48,13 @@ def error_no_config(window):
     create(window)
 
 def error_bad_config(window, f, ex):
+  exc_type, exc_value, exc_tb = ex
+  detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+  print detailed_info
   message = "ENSIME has failed to parse the .ensime configuration file at " + str(f) + " because of the following error: "
   message += "\n\n"
   message += str(ex[1])
+  message += ("\n" + "(for detailed info refer to Sublime console)")
   message += "\n\n"
   message += "Sublime will now open the offending configuration file for you to fix. Do you wish to proceed?"
   if sublime.ok_cancel_dialog(message):
@@ -66,27 +71,31 @@ def create(window):
         message += "or don't have any folders associated with your project."
         message += "\n\n"
         message += "To use ENSIME you need to have an active non-empty project. "
-        message += "If that's the problem here, there's a simple solution: "
-        message += "go to Project > Add Folder to Project, pick a folder and you're all set."
+        message += "Sublime will now try to initialize a project for you. "
         message += "\n\n"
-        message += ""
-        message += "Sublime will now try to initialize a project for you. Do you wish to proceed?"
+        message += "You will be shown a dialog that will let you select a root folder for the project. "
+        message += "After the root folder is selected, Sublime will create a configuration file in it. "
+        message += "Do you wish to proceed?"
         if sublime.ok_cancel_dialog(message):
           self.w.run_command("prompt_add_folder")
-          if len(self.w.folders()) != 0:
-            create(self.w)
+          # if you don't do set_timeout, self.w.folders() won't be updated
+          sublime.set_timeout(self.post_prompt_add_folder, 0)
           return
 
       if len(self.w.folders()) > 1:
         message = "ENSIME config (named .ensime) needs to be created in the root of one of your project's folders."
         message += "\n\n"
         message += "Since you have multiple folders in the project, pick an appropriate folder in the dialog that will follow."
-        sublime.message_dialog(string)
+        sublime.message_dialog(message)
 
       if (len(self.w.folders())) == 1:
         self.folder_selected(0)
       else:
         self.w.show_quick_panel(self.w.folders(), self.folder_selected)
+
+    def post_prompt_add_folder(self):
+      if len(self.w.folders()) != 0:
+        self.do_create()
 
     def folder_selected(self, selected_index):
       if selected_index != -1:
