@@ -1612,30 +1612,45 @@ class EnsimeHighlightCommand(ProjectFileOnly, EnsimeWindowCommand):
     if enable:
       self.type_check_file(self.f)
 
-class EnsimeShowNotesCommand(ConnectedEnsimeOnly, EnsimeTextCommand):
-  def run(self, edit, current_file_only):
-    v = self.v.window().new_file()
-    v.set_scratch(True)
-    designator = " for " + os.path.basename(self.v.file_name()) if current_file_only else ""
-    v.set_name("Ensime notes" + designator)
-    relevant_notes = self.env.notes
-    if current_file_only:
-      relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
-    errors = [self.v.full_line(note.start) for note in relevant_notes]
-    edit = v.begin_edit()
-    relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
-    for note in relevant_notes:
-      loc = self.project_relative_path(note.file_name) + ":" + str(note.line)
-      severity = note.severity
-      message = note.message
-      diagnostics = ": ".join(str(x) for x in [loc, severity, message])
-      v.insert(edit, v.size(), diagnostics + "\n")
-      v.insert(edit, v.size(), self.v.substr(self.v.full_line(note.start)))
-      v.insert(edit, v.size(), " " * (note.col - 1) + "^" + "\n")
-    v.sel().clear()
-    v.sel().add(Region(0, 0))
+class EnsimeShowNotesCommand(ProjectFileOnly, EnsimeTextCommand):
+  def run(self, edit, refresh_only = False):
+    file_name = self.v and self.v.file_name()
+    w = self.v.window()
+    if file_name:
+      ENSIME_NOTES = "Ensime notes"
+      wannabes = filter(lambda v: v.name() == ENSIME_NOTES, w.views())
+      if not wannabes and refresh_only: return
+      v = wannabes[0] if wannabes else w.new_file()
+      v.set_scratch(True)
+      v.set_name(ENSIME_NOTES)
+      edit = v.begin_edit()
+      v.replace(edit, Region(0, v.size()), "")
 
-class EnsimeHighlightDaemon(EnsimeEventListener):
+      v.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
+      v.settings().set("result_line_regex", "")
+      v.settings().set("result_base_dir", os.path.dirname(file_name))
+      other_view = w.new_file()
+      w.focus_view(other_view)
+      w.run_command("close_file")
+      w.focus_view(v)
+
+      relevant_notes = self.env.notes
+      relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
+      errors = [self.v.full_line(note.start) for note in relevant_notes]
+      relevant_notes = filter(lambda note: self.same_files(note.file_name, self.v.file_name()), self.env.notes)
+      for note in relevant_notes:
+        loc = self.project_relative_path(note.file_name) + ":" + str(note.line)
+        severity = note.severity
+        message = note.message
+        diagnostics = ": ".join(str(x) for x in [loc, severity, message])
+        v.insert(edit, v.size(), diagnostics + "\n")
+        v.insert(edit, v.size(), self.v.substr(self.v.full_line(note.start)))
+        v.insert(edit, v.size(), " " * (note.col - 1) + "^" + "\n")
+      v.end_edit(edit)
+      v.sel().clear()
+      v.sel().add(Region(0, 0))
+
+class EnsimeDaemon(EnsimeEventListener):
 
   def on_load(self, view):
     self.with_api(view, lambda api: api.type_check_file(view.file_name()))
@@ -1653,8 +1668,10 @@ class EnsimeHighlightDaemon(EnsimeEventListener):
     # I don't know to how disable a highlighting daemon during construction of envs
     # so I'm adding this good enough check to prevent stack overflows
     # as a result, switching to empty views won't recalculate ensime status bar
+    print view.file_name() or view.name()
     if view.file_name() or view.size():
       EnsimeHighlights(view).refresh()
+      self.with_api(view, lambda api: view.run_command("ensime_show_notes", {"refresh_only": True}))
 
   def on_selection_modified(self, view):
     EnsimeHighlights(view).update_status()

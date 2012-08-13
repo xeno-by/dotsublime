@@ -4,11 +4,11 @@
     "command": "ensime_startup"
   },
   {
-    "caption": "Ensime: Show Log",
+    "caption": "Ensime: Log",
     "command": "ensime_show_server_messages"
   },
   {
-    "caption": "Ensime: Show Project",
+    "caption": "Ensime: Project",
     "command": "ensime_modify_project"
   },
   {
@@ -16,14 +16,8 @@
     "command": "ensime_restart"
   },
   {
-    "caption": "Ensime: Show File Notes",
-    "command": "ensime_show_notes",
-    "args": { "current_file_only": true }
-  },
-  {
-    "caption": "Ensime: Show All Notes",
-    "command": "ensime_show_notes",
-    "args": { "current_file_only": false }
+    "caption": "Ensime: Notes",
+    "command": "ensime_show_notes"
   },
   {
     "caption": "Ensime: Inspect Type at Point",

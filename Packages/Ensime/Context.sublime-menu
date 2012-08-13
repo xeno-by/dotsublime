@@ -24,10 +24,9 @@
             "caption": "Commands",
             "children":
             [
-              { "caption": "Show file notes", "command": "ensime_show_notes", "args": { "current_file_only": true }},
-              { "caption": "Show all notes", "command": "ensime_show_notes", "args": { "current_file_only": false }},
-              { "caption": "Inspect type at point", "command": "ensime_inspect_type_at_point"},
-              { "caption": "Go to definition", "command": "ensime_go_to_definition"}
+              { "caption": "Show notes", "command": "ensime_show_notes" },
+              { "caption": "Inspect type at point", "command": "ensime_inspect_type_at_point" },
+              { "caption": "Go to definition", "command": "ensime_go_to_definition" }
             ]
           }
         ]
