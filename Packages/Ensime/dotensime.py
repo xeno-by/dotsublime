@@ -53,7 +53,7 @@ def error_bad_config(window, f, ex):
   print detailed_info
   message = "Ensime has failed to parse the .ensime configuration file at " + str(f) + " because of the following error: "
   message += "\n\n"
-  message += str(ex[1])
+  message += (str(exc_type) + ": "+ str(exc_value))
   message += ("\n" + "(for detailed info refer to Sublime console)")
   message += "\n\n"
   message += "Sublime will now open the offending configuration file for you to fix. Do you wish to proceed?"

@@ -28,7 +28,8 @@
 	"ignored_packages":
 	[
 		"Vintage",
-		"HexViewer"
+		"HexViewer",
+		"SublimeGDB"
 	],
 	"line_numbers": true,
 	"match_brackets": true,

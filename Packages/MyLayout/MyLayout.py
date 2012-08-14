@@ -53,7 +53,7 @@ class LayoutDaemon(sublime_plugin.EventListener):
 
   def is_special(self, view):
     name = view.name() or ""
-    if name.startswith("myke ") or name == "Find Results" or name == "Ensime notes":
+    if name.startswith("myke ") or name == "Find Results" or name == "Ensime notes" or name == "Ensime output" or name == "Ensime debug":
       return True
 
   def needs_relayout(self):

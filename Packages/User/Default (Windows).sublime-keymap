@@ -89,5 +89,13 @@
   { "keys": ["left"], "command": "ensime_repl_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
   { "keys": ["home"], "command": "ensime_repl_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
   { "keys": ["shift+left"], "command": "ensime_repl_shift_left", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
-  { "keys": ["shift+home"], "command": "ensime_repl_shift_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]}
+  { "keys": ["shift+home"], "command": "ensime_repl_shift_home", "args": {}, "context": [{ "key": "ensime_repl_opened", "operator": "equal", "operand": true }]},
+  { "keys": ["f9"], "command": "ensime_toggle_breakpoint" },
+  { "keys": ["ctrl+shift+f9"], "command": "ensime_clear_breakpoints" },
+  { "keys": ["ctrl+f5"], "command": "ensime_startup" },
+  { "keys": ["ctrl+shift+f5"], "command": "ensime_shutdown" },
+  { "keys": ["f5"], "command": "ensime_smart_run_debugger" },
+  { "keys": ["shift+f5"], "command": "ensime_stop_debugger" },
+  { "keys": ["f11"], "command": "ensime_step_into" },
+  { "keys": ["f10"], "command": "ensime_step_over" }
 ]
