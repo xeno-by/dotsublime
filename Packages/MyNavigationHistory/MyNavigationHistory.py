@@ -6,6 +6,7 @@ from collections import deque
 MAX_SIZE = 64
 LINE_THRESHOLD = 2
 TIME_THRESHOLD = 1000
+DEBUG = False
 
 class Location(object):
     """A location in the history
@@ -32,6 +33,9 @@ class Location(object):
     def copy(self):
         return Location(self.path, self.line, self.col)
 
+    def __str__(self):
+        return str(self.path) + ":" + str(self.line) + ":" + str(self.col)
+
 class History(object):
     """Keep track of the history for a single window
     """
@@ -54,26 +58,34 @@ class History(object):
 
         if location:
             if self.has_changed(location):
-                # print("nav_history: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+                if DEBUG:
+                    print("nav_history: " + str(location))
 
                 if self._current:
                     time_delta = abs(location.time - self._current.time)
-                    # subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
-                    subsume = time_delta <= TIME_THRESHOLD
+                    if DEBUG:
+                        print "nav_history: subsume? old = " + str(self._current)
+                        print "nav_history: subsume? new = " + str(location) + " (" + str(time_delta) + " ms)"
+                    subsume = self._current.path == location.path and time_delta <= TIME_THRESHOLD
+                    # subsume = time_delta <= TIME_THRESHOLD
                     if subsume:
-                        # print("nav_history: subsumed current, time delta is " + str(time_delta))
+                        if DEBUG:
+                            print("nav_history: subsumed")
                         if self.has_changed(location):
                             self._current = location
                             self._last_movement = location.copy()
                             self._last_history = location.copy()
                         else:
-                            # print("nav_history: discarded both")
+                            if DEBUG:
+                                print("nav_history: discarded both")
                             prev = self._back and self._back.pop()
                             if prev:
                                 self._last_movement = prev.copy()
                             self._current = prev
                             self._last_history = location.copy()
                     else:
+                        if DEBUG:
+                            print("nav_history: didn't subsume")
                         self.push(location)
                         self._last_movement = location.copy()
                         self._last_history = location.copy()
@@ -176,7 +188,8 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
         # filters out temporary navs from ctrl+f and ctrl+g
         active_view_id = view.window() and view.window().active_view() and view.window().active_view().id()
         if hasattr(self, "_last_activated") and self._last_activated and self._last_activated != active_view_id:
-            # print("nav_history: on_selection_modified when an overlay is active, skipped")
+            if DEBUG:
+                print("nav_history: on_selection_modified when an overlay is active, skipped")
             return
 
         self.possiblyRecordMovement(view)
@@ -206,8 +219,15 @@ class NavigationHistoryRecorder(sublime_plugin.EventListener):
             path = view.file_name()
             if not path and view.name(): path = view.id()
             if path:
-                row, col = view.rowcol(view.sel()[0].a)
-                history.record_movement(Location(path, row + 1, col + 1))
+                if len(view.sel()) == 0:
+                    if DEBUG:
+                        print("nav_history: empty view.sel(), skipped")
+                else:
+                    if len(view.sel()) > 1:
+                        if DEBUG:
+                            print("nav_history: multiple selections, using view.sel()[0]")
+                    row, col = view.rowcol(view.sel()[0].a)
+                    history.record_movement(Location(path, row + 1, col + 1))
 
 
     # def on_close(self, view):
@@ -236,7 +256,8 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
         location = history.back()
         if location:
             lock_buffer_scroll()
-            # print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+            if DEBUG:
+                print("back to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
             if not isinstance(location.path, int):
@@ -254,7 +275,8 @@ class NavigationHistoryBack(sublime_plugin.TextCommand):
                 if not found:
                     window.run_command("navigation_history_backward")
         else:
-            # print("back to: None")
+            if DEBUG:
+                print("back to: None")
             pass
 
 class NavigationHistoryForward(sublime_plugin.TextCommand):
@@ -269,7 +291,8 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
         location = history.forward()
         if location:
             lock_buffer_scroll()
-            # print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
+            if DEBUG:
+                print("forward to: " + str(location.path) + ":" + str(location.line) + ":" + str(location.col))
 
             window = sublime.active_window()
             if not isinstance(location.path, int):
@@ -287,7 +310,8 @@ class NavigationHistoryForward(sublime_plugin.TextCommand):
                 if not found:
                     window.run_command("navigation_history_forward")
         else:
-            # print("forward to: None")
+            if DEBUG:
+                print("forward to: None")
             pass
 
 bufferscroll_lockfile = sublime.packages_path() + "/User/BufferScroll.lock"

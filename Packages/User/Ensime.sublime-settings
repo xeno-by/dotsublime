@@ -1,9 +1,35 @@
 {
+	"alt_click_inspects_type_at_point": true,
+	"breakpoint_highlight": false,
+	"breakpoint_icon": "ensime-breakpoint",
+	"breakpoint_scope": "",
+	"connect_to_external_server": false,
+	"ctrl_click_goes_to_definition": true,
+	"ctrl_tilde_shows_repl": false,
+	"debugfocus_highlight": true,
+	"debugfocus_icon": "ensime-debugfocus",
+	"debugfocus_scope": "invalid.deprecated",
+	"ensime_server_path": "Ensime/server",
+	"ensime_statusbar_group": "ensime",
+	"error_highlight": true,
+	"error_icon": "ensime-error",
+	"error_scope": "invalid.illegal",
+	"error_status": true,
+	"error_status_maxlength": 150,
+	"error_underline": true,
+	"external_server_port_file": "",
 	"log_to_console":
 	[
 	],
+	"log_to_file":
+	[
+		"ui",
+		"client",
+		"server"
+	],
 	"processes":
 	{
-		"4904": "2924"
-	}
+		"6552": "4336"
+	},
+	"rpc_timeout": 3
 }
