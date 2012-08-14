@@ -101,8 +101,6 @@ After the server is ready, a message will appear in the left-hand corner of the 
 It will read either `ENSIME` if the currently opened file belongs to the active Ensime project
 or `ensime` if it doesn't. Keep an eye on this message - it's an indicator of things going well.
 
-Happy hacking!
-
 ## Contacts
 
 In case if something goes wrong, let us know at dev@sublimescala.org or

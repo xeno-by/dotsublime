@@ -19,6 +19,8 @@ def for_window(window):
     envLock.acquire()
     try:
       if not (window.id() in ensime_envs):
+        # protection against reentrant environment_constructor calls
+        ensime_envs[window.id()] = None
         ensime_envs[window.id()] = environment_constructor(window)
       return ensime_envs[window.id()]
     finally:

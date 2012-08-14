@@ -13,6 +13,7 @@ import env
 import dotensime
 import diff
 import json
+import datetime
 
 def environment_constructor(window):
   return EnsimeEnvironment(window)
@@ -467,7 +468,7 @@ class EnsimeLog(object):
         if not os.path.exists(self.env.log_root):
           os.mkdir(self.env.log_root)
         file_name = os.path.join(self.env.log_root, flavor + ".log")
-        with open(file_name, "a") as f: f.write(data.strip() + "\n")
+        with open(file_name, "a") as f: f.write("[" + str(datetime.datetime.now()) + "]: " + data.strip() + "\n")
       except:
         pass
 
@@ -614,12 +615,10 @@ class EnsimeBase(object):
       self.env = env.for_window(owner)
       self.w = owner
       self.v = owner.active_view()
-      self.f = None
     elif type(owner) == View:
       self.env = env.for_window(owner.window() or sublime.active_window())
       self.w = owner.window()
       self.v = owner
-      self.f = owner.file_name()
     else:
       raise Exception("unsupported owner of type: " + str(type(owner)))
 
@@ -677,43 +676,43 @@ class EnsimeEventListener(EventListener):
 
 class ScalaOnly:
   def is_enabled(self):
-    return self.w and self.f and self.f.lower().endswith(".scala")
+    return self.w and self.v and self.v.file_name() and self.v.file_name().lower().endswith(".scala")
 
 class NotRunningOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and not (self.env.controller and self.env.controller.running)
+    return self.env and not self.env.in_transition and self.env.valid and not (self.env.controller and self.env.controller.running)
 
 class RunningOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running
 
 class NotDebuggingOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running and not self.debugger.online
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running and not self.debugger.online
 
 class DebuggingOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running and self.debugger.online
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running and self.debugger.online
 
 class FocusedOnly:
   def is_enabled(self):
-    return self.debugger.focus
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.running and self.debugger.focus
 
 class ReadyEnsimeOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.ready
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.ready
 
 class ConnectedEnsimeOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected
 
 class ProjectFileOnly:
   def is_enabled(self):
-    return not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.v and self.in_project(self.v.file_name())
+    return self.env and not self.env.in_transition and self.env.valid and self.env.controller and self.env.controller.connected and self.v and self.in_project(self.v.file_name())
 
 class ProjectFileOnlyMaybeDisconnected:
   def is_enabled(self):
-    return not self.env.in_transition and self.v and self.in_project(self.v.file_name())
+    return self.env and not self.env.in_transition and self.v and self.in_project(self.v.file_name())
 
 class EnsimeContextProvider(EventListener):
   def on_query_context(self, view, key, operator, operand, match_all):
@@ -2005,36 +2004,38 @@ class EnsimeHighlights(EnsimeCommon):
     if self.v.is_loading():
       sublime.set_timeout(self.update_breakpoints, 100)
     else:
-      relevant_breakpoints = filter(
-        lambda breakpoint: self.same_files(
-          breakpoint.file_name, self.v.file_name()),
-        self.debugger.breakpoints)
-      regions = [self.v.full_line(self.v.text_point(breakpoint.line - 1, 0))
-                 for breakpoint in relevant_breakpoints]
-      self.v.add_regions(
-        ENSIME_BREAKPOINT_REGION,
-        regions,
-        self.env.settings.get("breakpoint_scope"),
-        self.env.settings.get("breakpoint_icon"),
-        sublime.HIDDEN)
+      if self.env:
+        relevant_breakpoints = filter(
+          lambda breakpoint: self.same_files(
+            breakpoint.file_name, self.v.file_name()),
+          self.debugger.breakpoints)
+        regions = [self.v.full_line(self.v.text_point(breakpoint.line - 1, 0))
+                   for breakpoint in relevant_breakpoints]
+        self.v.add_regions(
+          ENSIME_BREAKPOINT_REGION,
+          regions,
+          self.env.settings.get("breakpoint_scope"),
+          self.env.settings.get("breakpoint_icon"),
+          sublime.HIDDEN)
 
   def update_debug_focus(self):
     self.v.erase_regions(ENSIME_DEBUGFOCUS_REGION)
     if self.v.is_loading():
       sublime.set_timeout(self.update_debug_focus, 100)
     else:
-      focus = self.debugger.focus
-      if focus and self.same_files(focus.file_name, self.v.file_name()):
-        focused_region = self.v.full_line(self.v.text_point(focus.line - 1, 0))
-        self.v.add_regions(
-          ENSIME_DEBUGFOCUS_REGION,
-          [focused_region],
-          self.env.settings.get("debugfocus_scope"),
-          self.env.settings.get("debugfocus_icon"))
-        w = self.v.window() or sublime.active_window()
-        w.focus_view(self.v)
-        self.update_breakpoints()
-        sublime.set_timeout(bind(self._scroll_viewport, self.v, focused_region), 0)
+      if self.env:
+        focus = self.debugger.focus
+        if focus and self.same_files(focus.file_name, self.v.file_name()):
+          focused_region = self.v.full_line(self.v.text_point(focus.line - 1, 0))
+          self.v.add_regions(
+            ENSIME_DEBUGFOCUS_REGION,
+            [focused_region],
+            self.env.settings.get("debugfocus_scope"),
+            self.env.settings.get("debugfocus_icon"))
+          w = self.v.window() or sublime.active_window()
+          w.focus_view(self.v)
+          self.update_breakpoints()
+          sublime.set_timeout(bind(self._scroll_viewport, self.v, focused_region), 0)
 
   def _scroll_viewport(self, v, region):
     # thanks to Fredrik Ehnbom
@@ -2056,7 +2057,7 @@ class EnsimeHighlightCommand(ProjectFileOnly, EnsimeWindowCommand):
     sublime.save_settings("Ensime.sublime-settings")
     EnsimeHighlights(self.v).clear_all()
     if enable:
-      self.type_check_file(self.f)
+      self.type_check_file(self.v.file_name())
 
 class EnsimeShowNotesCommand(ProjectFileOnly, EnsimeTextCommand):
   def run(self, edit, refresh_only = False):
@@ -2111,18 +2112,8 @@ class EnsimeDaemon(EnsimeEventListener):
         EnsimeHighlights(v).update_breakpoints()
 
   def on_activated(self, view):
-    # todo. EnsimeEnvironment itself creates views (output panels for console logging)
-    # once they are created, they trigger on_activated
-    # which happily instantiates EnsimeHighlights
-    # which calls a constructor of EnsimeEnvironment
-    # which triggers on_activated
-    # <ad infinitum>
-    # I don't know to how disable a highlighting daemon during construction of envs
-    # so I'm adding this good enough check to prevent stack overflows
-    # as a result, switching to empty views won't recalculate ensime status bar
-    if view.file_name() or view.size():
-      EnsimeHighlights(view).refresh()
-      self.with_api(view, lambda api: view.run_command("ensime_show_notes", {"refresh_only": True}))
+    EnsimeHighlights(view).refresh()
+    self.with_api(view, lambda api: view.run_command("ensime_show_notes", {"refresh_only": True}))
 
   def on_selection_modified(self, view):
     EnsimeHighlights(view).update_status()
@@ -2245,7 +2236,7 @@ class EnsimeCompletionsListener(EnsimeEventListener):
 class EnsimeInspectTypeAtPoint(ProjectFileOnly, EnsimeTextCommand):
   def run(self, edit, target= None):
     pos = int(target or self.v.sel()[0].begin())
-    self.inspect_type_at_point(self.f, pos, self.handle_reply)
+    self.inspect_type_at_point(self.v.file_name(), pos, self.handle_reply)
 
   def handle_reply(self, tpe):
     if tpe and tpe.name != "<notype>":
@@ -2259,7 +2250,7 @@ class EnsimeInspectTypeAtPoint(ProjectFileOnly, EnsimeTextCommand):
 class EnsimeGoToDefinition(ProjectFileOnly, EnsimeTextCommand):
   def run(self, edit, target= None):
     pos = int(target or self.v.sel()[0].begin())
-    self.symbol_at_point(self.f, pos, self.handle_reply)
+    self.symbol_at_point(self.v.file_name(), pos, self.handle_reply)
 
   def handle_reply(self, info):
     if info and info.decl_pos:
