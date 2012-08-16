@@ -33,10 +33,17 @@ class EnsimeApi:
     for v in self.w.views():
       EnsimeHighlights(v).add_notes(notes)
 
-  def clear_notes(self):
-    self.env.notes = []
+  def clear_notes(self, flavor = "all"):
+    if flavor == "all":
+      self.env.notes = []
+    elif flavor == "java":
+      self.env.notes = filter(lambda n: not n.file_name.endswith(".java"), self.env.notes)
+    elif flavor == "scala":
+      self.env.notes = filter(lambda n: not n.file_name.endswith(".scala"), self.env.notes)
+    else:
+      print "unknown flavor of notes: " + str(flavor)
     for v in self.w.views():
-      EnsimeHighlights(v).clear_all()
+      EnsimeHighlights(v).refresh()
 
   def inspect_type_at_point(self, file_path, position, on_complete):
     req = ensime_codec.encode_inspect_type_at_point(file_path, position)
@@ -167,7 +174,7 @@ class EnsimeDebugger(object):
     self.steps = 0
     self.breakpoints = []
     self.launch_configs = {}
-    self.current_launch_config = None
+    self.current_launch_config = ""
     self.output = EnsimeDebugOutput(self)
     self.focus = None
     self.dashboard = EnsimeDebugDashboard(self)
@@ -176,19 +183,26 @@ class EnsimeDebugger(object):
 
   def _load_session(self):
     if self.session_file:
-      session = None
-      if os.path.exists(self.session_file):
-        with open(self.session_file, "r") as f:
-          contents = f.read()
-          session = json.loads(contents)
-      session = session or {}
-      self.breakpoints = map(lambda b: EnsimeBreakpoint(b.get("file_name"), b.get("line")), session.get("breakpoints", []))
-      self.breakpoints = filter(lambda b: b.is_meaningful(), self.breakpoints)
-      launch_configs = map(lambda c: EnsimeLaunchConfiguration(c.get("name"), c.get("main_class"), c.get("args")), session.get("launch_configs", []))
-      self.launch_configs = {}
-      # todo. this might lose user data
-      for c in launch_configs: self.launch_configs[c.name] = c
-      self.current_launch_config = session.get("current_launch_config")
+      try:
+        session = None
+        if os.path.exists(self.session_file):
+          with open(self.session_file, "r") as f:
+            contents = f.read()
+            session = json.loads(contents)
+        session = session or {}
+        self.breakpoints = map(lambda b: EnsimeBreakpoint(b.get("file_name"), b.get("line")), session.get("breakpoints", []))
+        self.breakpoints = filter(lambda b: b.is_meaningful(), self.breakpoints)
+        launch_configs = map(lambda c: EnsimeLaunchConfiguration(c.get("name"), c.get("main_class"), c.get("args")), session.get("launch_configs", []))
+        self.launch_configs = {}
+        # todo. this might lose user data
+        for c in launch_configs: self.launch_configs[c.name] = c
+        self.current_launch_config = session.get("current_launch_config") or ""
+        return True
+      except:
+        print "Ensime: " + str(self.session_file) + " has failed to load"
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        print detailed_info
 
   def _save_session(self):
     if self.session_file:
@@ -255,6 +269,7 @@ class EnsimeDebugger(object):
     if event:
       self.event = event
       message = None
+      focus_updated = False
 
       if event.type == "start":
         self.online = True
@@ -288,36 +303,70 @@ class EnsimeDebugger(object):
         #     return
         # print str(new_focus)
         self.focus = new_focus
+        focus_updated = True
         # message = "(step " + str(self.steps) + ") Debugger has stopped at " + str(event.file_name) + ", line " + str(event.line)
         message = "Debugger has stopped at " + str(event.file_name) + ", line " + str(event.line)
 
-      if message:
-        api = ensime_api(self.env.w.active_view())
-        api.status_message(message)
+      if focus_updated:
+        v = self.env.w.open_file("%s:%d:%d" % (self.focus.file_name, self.focus.line, 1), sublime.ENCODED_POSITION)
       for v in self.env.w.views():
         EnsimeHighlights(v).update_status()
         EnsimeHighlights(v).update_debug_focus()
+      if message:
+        api = ensime_api(self.env.w.active_view())
+        api.status_message(message)
 
   def _figure_out_launch_configuration(self):
-    try:
-      self._load_session()
-      config = self.launch_configs[self.current_launch_config]
-      if not config.is_valid():
-        name = self.current_launch_config or "default"
-        raise Exception("Launch configuration \"" + name + "\" is not valid")
-      return config
-    except:
-      message = "Ensime has failed to determine launch configuration stored from a config at " + str(self.session_file) + " because of the following error: "
+    if not os.path.exists(self.session_file) or not os.path.getsize(self.session_file):
+      message = "Launch configuration does not exist. "
+      message += "Sublime will now create a configuration file for you. Do you wish to proceed?"
+      if sublime.ok_cancel_dialog(message):
+        self._save_session()
+        self.env.w.run_command("ensime_modify_session")
+      return None
+
+    if not self._load_session():
+      message = "Launch configuration could not be loaded. "
+      message += "Maybe the config is not accessible, but most likely it's simply not a valid JSON. "
       message += "\n\n"
-      exc_type, exc_value, exc_tb = sys.exc_info()
-      detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
-      print detailed_info
-      message += (str(exc_type) + ": "+ str(exc_value))
-      message += ("\n" + "(for detailed info refer to Sublime console)")
-      message += "\n\n"
-      message += "Sublime will now open the offending configuration file for you to fix. Do you wish to proceed?"
+      message += "Sublime will now open the configuration file for you to fix. "
+      message += "If you don't know how to fix the config, delete it and Sublime will recreate it from scratch. "
+      message += "Do you wish to proceed?"
       if sublime.ok_cancel_dialog(message):
         self.env.w.run_command("ensime_modify_session")
+      return None
+
+    config_key = self.current_launch_config or ""
+    if config_key: config_name = "launch configuration \"" + config_key + "\""
+    else: config_name = "launch configuration"
+    config = self.launch_configs.get(config_key, None)
+
+    if not config:
+      message = "Your current " + config_name + " is not present. "
+      message += "\n\n"
+      message += "This means that the \"current_launch_config\" field of the config "
+      if config_key: config_status = "set to \"" + config_key + "\""
+      else: config_status = "set to an empty string"
+      message += "(which is currently " + config_status + ") "
+      message += "doesn't correspond to any entries in the \"launch_configs\" field of the config."
+      message += "\n\n"
+      message += "Sublime will now open the configuration file for you to fix. Do you wish to proceed?"
+      if sublime.ok_cancel_dialog(message):
+        self.env.w.run_command("ensime_modify_session")
+      return None
+
+    if not config.is_valid():
+      message = "Your current " + config_name + " doesn't specify the main class to start. "
+      message += "\n\n"
+      message += "This means that the entry with \"name\":  \"" + config_key + "\" in the \"launch_configs\" field of the config "
+      message += "does not have the \"main_class\" attribute set."
+      message += "\n\n"
+      message += "Sublime will now open the configuration file for you to fix. Do you wish to proceed?"
+      if sublime.ok_cancel_dialog(message):
+        self.env.w.run_command("ensime_modify_session")
+      return None
+
+    return config
 
   def start(self):
     config = self._figure_out_launch_configuration()
@@ -630,7 +679,7 @@ class EnsimeBase(object):
     return filename1_normalized == filename2_normalized
 
   def in_project(self, filename):
-    if filename and filename.endswith("scala"):
+    if filename and (filename.endswith("scala") or filename.endswith("java")):
       root = os.path.normcase(os.path.realpath(self.env.project_root))
       wannabe = os.path.normcase(os.path.realpath(filename))
       return wannabe.startswith(root)
@@ -673,10 +722,6 @@ class EnsimeEventListener(EventListener):
       return what(api)
     else:
       return default
-
-class ScalaOnly:
-  def is_enabled(self):
-    return self.w and self.v and self.v.file_name() and self.v.file_name().lower().endswith(".scala")
 
 class NotRunningOnly:
   def is_enabled(self):
@@ -1350,7 +1395,8 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
   @call_back_into_ui_thread
   def message_java_notes(self, msg_id, payload):
-    pass
+    notes = ensime_codec.decode_notes(payload)
+    self.add_notes(notes)
 
   @call_back_into_ui_thread
   def message_scala_notes(self, msg_id, payload):
@@ -1359,11 +1405,11 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
 
   @call_back_into_ui_thread
   def message_clear_all_java_notes(self, msg_id, payload):
-    pass
+    self.clear_notes(flavor = "java")
 
   @call_back_into_ui_thread
   def message_clear_all_scala_notes(self, msg_id, payload):
-    self.clear_notes()
+    self.clear_notes(flavor = "scala")
 
   @call_back_into_ui_thread
   def message_debug_event(self, msg_id, payload):
@@ -1743,8 +1789,6 @@ class EnsimeModifySessionCommand(EnsimeWindowCommand):
 
   def run(self):
     path = self.debugger.session_file
-    if not [v for v in self.w.views() if self.same_files(v.file_name(), path)]:
-      self.debugger._save_session()
     self.w.open_file(path)
 
 class EnsimeShowClientServerReplCommand(ReadyEnsimeOnly, EnsimeWindowCommand):
@@ -1944,6 +1988,9 @@ class EnsimeHighlights(EnsimeCommon):
     # Now let's refresh ourselves
     self.v.run_command("ensime_show_notes", {"refresh_only": True})
     self.update_status()
+    # breakpoints and debug focus should always have priority over red squiggles
+    self.update_breakpoints()
+    self.update_debug_focus()
 
   def update_status(self, custom_status = None):
     if custom_status:
@@ -2073,7 +2120,7 @@ class EnsimeShowNotesCommand(ProjectFileOnly, EnsimeTextCommand):
       edit = v.begin_edit()
       v.replace(edit, Region(0, v.size()), "")
 
-      v.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
+      v.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.](?:scala|java)):([0-9]+)")
       v.settings().set("result_line_regex", "")
       v.settings().set("result_base_dir", self.env.project_root)
       if not refresh_only:

@@ -41,6 +41,9 @@ so we'll do our best to do a polished release around the time of the final relea
 
     * Type-aware go to definition (implemented by `ensime_go_to_definition` command: bind it yourself
       to your favorite hotkey or uncomment an entry in the provided mousemap to bind to `Ctrl+Click`)
+      
+* Does not compile the project for you. Use one of the established build tools (Ant,
+  Maven, SBT, etc) to do that.
 
 * Implements prototype support for debugging. At the moment you can set breakpoints, create launch
   configurations and step through programs in the debugger. This is a very early prototype,
@@ -60,11 +63,15 @@ so we'll do our best to do a polished release around the time of the final relea
     If you use [Package Control](http://wbond.net/sublime_packages/package_control), install package Ensime.
     (`Preferences > Package Control > Install Package > Ensime`).
 
-    b. In your Sublime Text `Packages` dir (you can find it by `Preferences > Browse Packages`), invoke:
+    b. In your Sublime Text `Packages` directory, invoke:
 
     ```
     git clone git://github.com/sublimescala/sublime-ensime.git Ensime
     ```
+    
+    You can find the `Packages` directory by opening Sublime, selecting `View > Show Console`
+    and then running the `sublime.packages_path()` command.
+    Make sure you're using the right directory, or the plugin won't work.
 
 2. Install the ENSIME server:
 
@@ -72,9 +79,9 @@ so we'll do our best to do a polished release around the time of the final relea
     The archive will contain a directory with an Ensime version.
 
     Extract the contents of this directory into the `server` subdirectory
-    of just created `sublime-ensime` directory. If you do everything correctly,
-    `sublime-ensime/server/bin` will contain Ensime startup scripts and
-    `sublime-ensime/server/lib` will contain Ensime binaries.
+    of just created `Ensime` directory. If you do everything correctly,
+    `Ensime/server/bin` will contain Ensime startup scripts and
+    `Ensime/server/lib` will contain Ensime binaries.
 
 3. (Re)start Sublime Text editor.
 
@@ -100,6 +107,9 @@ and the server will initialize a resident instance of the Scala compiler.
 After the server is ready, a message will appear in the left-hand corner of the status bar.
 It will read either `ENSIME` if the currently opened file belongs to the active Ensime project
 or `ensime` if it doesn't. Keep an eye on this message - it's an indicator of things going well.
+
+Note that Ensime will not compile the project for you. Use one of the established build tools (Ant,
+Maven, SBT, etc) to do that.
 
 ## Contacts
 
