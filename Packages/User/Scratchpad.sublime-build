@@ -1,0 +1,4 @@
+{
+  "cmd": ["c:/Projects/Kepler/build/pack/bin/scalac.bat", "*.scala", "*.java", "-d", "target/classes"],
+  "working_dir": "$file_path"
+}
