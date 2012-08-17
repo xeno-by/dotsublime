@@ -1,12 +1,4 @@
-import sublime
-from sublime import *
-from sublime_plugin import *
-import os, threading, thread, socket, getpass, subprocess
-import killableprocess, tempfile, datetime, time
-import functools, inspect, traceback, random, re
-from sexp import sexp
-from sexp.sexp import key, sym
-from string import strip
+import threading
 
 envLock = threading.RLock()
 ensime_envs = {}
@@ -26,6 +18,3 @@ def for_window(window):
     finally:
       envLock.release()
   return None
-
-
-

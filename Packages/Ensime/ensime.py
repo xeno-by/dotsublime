@@ -1,12 +1,12 @@
 import sublime
 from sublime import *
 from sublime_plugin import *
-import os, threading, thread, socket, getpass, signal
-import subprocess, killableprocess, tempfile, datetime, time
+import os, threading, thread, socket, getpass, signal, glob
+import subprocess, tempfile, datetime, time
 import functools, inspect, traceback, random, re
 from functools import partial as bind
-from sexp import sexp
-from sexp.sexp import key, sym
+import sexp
+from sexp import key, sym
 from string import strip
 from types import *
 import env
@@ -14,6 +14,8 @@ import dotensime
 import diff
 import json
 import datetime
+import paths
+import zipfile
 
 def environment_constructor(window):
   return EnsimeEnvironment(window)
@@ -41,7 +43,7 @@ class EnsimeApi:
     elif flavor == "scala":
       self.env.notes = filter(lambda n: not n.file_name.endswith(".scala"), self.env.notes)
     else:
-      print "unknown flavor of notes: " + str(flavor)
+      raise Exception("unknown flavor of notes: " + str(flavor))
     for v in self.w.views():
       EnsimeHighlights(v).refresh()
 
@@ -131,6 +133,9 @@ class EnsimeDebugDashboard(object):
   def is_meaningful(self):
     return self.debugger.online or self.contents
 
+  def clear(self):
+    pass
+
   @property
   def focus(self):
     return self.debugger.focus
@@ -175,11 +180,25 @@ class EnsimeDebugger(object):
     self.breakpoints = []
     self.launch_configs = {}
     self.current_launch_config = ""
+    self.active_launch_config = None
     self.output = EnsimeDebugOutput(self)
     self.focus = None
     self.dashboard = EnsimeDebugDashboard(self)
     self.session_file = self.env.project_root + os.sep + ".ensime_session" if self.env.project_root else None
     self._load_session()
+
+  def shutdown(self):
+    self.online = False
+    self._clean_slate()
+
+  def _clean_slate(self, erase_output = True, erase_dashboard = True):
+    self.event = None
+    self.last_req = None
+    self.steps = 0
+    self.active_launch_config = None
+    self.focus = None
+    if erase_output: self.output.clear()
+    if erase_dashboard: self.dashboard.clear()
 
   def _load_session(self):
     if self.session_file:
@@ -190,7 +209,7 @@ class EnsimeDebugger(object):
             contents = f.read()
             session = json.loads(contents)
         session = session or {}
-        self.breakpoints = map(lambda b: EnsimeBreakpoint(b.get("file_name"), b.get("line")), session.get("breakpoints", []))
+        self.breakpoints = map(lambda b: EnsimeBreakpoint(paths.decode_path(b.get("file_name")), b.get("line")), session.get("breakpoints", []))
         self.breakpoints = filter(lambda b: b.is_meaningful(), self.breakpoints)
         launch_configs = map(lambda c: EnsimeLaunchConfiguration(c.get("name"), c.get("main_class"), c.get("args")), session.get("launch_configs", []))
         self.launch_configs = {}
@@ -207,7 +226,7 @@ class EnsimeDebugger(object):
   def _save_session(self):
     if self.session_file:
       session = {}
-      session["breakpoints"] = map(lambda b: {"file_name": b.file_name, "line": b.line}, self.breakpoints)
+      session["breakpoints"] = map(lambda b: {"file_name": paths.encode_path(b.file_name), "line": b.line}, self.breakpoints)
       session["launch_configs"] = map(lambda c: {"name": c.name, "main_class": c.main_class, "args": c.args}, self.launch_configs.values())
       session["current_launch_config"] = self.current_launch_config
       if not session["launch_configs"]:
@@ -245,7 +264,7 @@ class EnsimeDebugger(object):
     if file_name:
       old_breakpoints = self.breakpoints
       api = ensime_api(self.env.w.active_view())
-      new_breakpoints = filter(lambda b: api.same_files(b.file_name, file_name) or b.line != line, self.breakpoints)
+      new_breakpoints = filter(lambda b: not (api.same_files(b.file_name, file_name) and b.line == line), self.breakpoints)
       if len(old_breakpoints) == len(new_breakpoints):
         # add
         new_breakpoints.append(EnsimeBreakpoint(file_name, line))
@@ -273,16 +292,13 @@ class EnsimeDebugger(object):
 
       if event.type == "start":
         self.online = True
-        self.steps = 0
-        self.last_req = None
-        self.focus = None
-        self.output.clear()
+        active_launch_config = self.active_launch_config
+        self._clean_slate()
+        self.active_launch_config = active_launch_config
         message = "Debugger has successfully started"
       elif event.type == "death" or event.type == "disconnect":
         self.online = False
-        self.steps = 0
-        self.last_req = None
-        self.focus = None
+        self._clean_slate(erase_output = False, erase_dashboard = False) # so that people can take a look later
         message = "Debuggee has exited" if event.type == "death" else "Debugger has disconnected"
       elif event.type == "output":
         self.output.append(event.body)
@@ -307,6 +323,7 @@ class EnsimeDebugger(object):
         # message = "(step " + str(self.steps) + ") Debugger has stopped at " + str(event.file_name) + ", line " + str(event.line)
         message = "Debugger has stopped at " + str(event.file_name) + ", line " + str(event.line)
 
+      self.event = event
       if focus_updated:
         v = self.env.w.open_file("%s:%d:%d" % (self.focus.file_name, self.focus.line, 1), sublime.ENCODED_POSITION)
       for v in self.env.w.views():
@@ -410,6 +427,8 @@ class EnsimeDebugger(object):
       else:
         api.error_message("Cannot start debugger because of " + resp.details)
         api.status_message("Cannot start debugger")
+    else:
+      self.active_launch_config = config.name
 
   def stop(self):
     req = ensime_codec.encode_debug_stop()
@@ -436,25 +455,47 @@ class EnsimeEnvironment(object):
     self.w = window
     self.recalc()
 
+  @property
+  def project_root(self):
+    return paths.decode_path(self._project_root)
+
+  @property
+  def project_config(self):
+    config = self._project_config
+    if self.settings.get("os_independent_paths_in_dot_ensime"):
+      if type(config) == list:
+        i = 0
+        while i < len(config):
+          key = config[i]
+          literal_keys = [":root-dir", ":target"]
+          list_keys = [":compile-deps", ":compile-jars", ":runtime-deps", ":runtime-jars", ":test-deps", ":sources"]
+          if str(key) in literal_keys:
+            config[i + 1] = paths.decode_path(config[i + 1])
+          elif str(key) in list_keys:
+            config[i + 1] = map(lambda path: paths.decode_path(path), config[i + 1])
+          else:
+            pass
+          i += 2
+    return config
+
   def recalc(self):
     # plugin-wide stuff (immutable)
     self.settings = sublime.load_settings("Ensime.sublime-settings")
-    server_dir = self.settings.get(
-      "ensime_server_path",
-      "sublime_ensime" + os.sep + "server")
+    server_dir = self.settings.get("ensime_server_path", "Ensime" + os.sep + "server")
     self.server_path = (server_dir
                         if os.path.isabs(server_dir)
                         else os.path.join(sublime.packages_path(), server_dir))
     self.ensime_executable = (self.server_path + os.sep +
                               ("bin\\server.bat" if os.name == 'nt'
                                else "bin/server"))
+    self.ensime_args = self.settings.get("ensime_server_args")
     self.plugin_root = os.path.normpath(os.path.join(self.server_path, ".."))
     self.log_root = os.path.normpath(os.path.join(self.plugin_root, "logs"))
 
     # instance-specific stuff (immutable)
     (root, conf, _) = dotensime.load(self.w)
-    self.project_root = root
-    self.project_config = conf
+    self._project_root = root
+    self._project_config = conf
     self.valid = self.project_config != None
 
     # lifecycle (mutable)
@@ -1253,7 +1294,7 @@ class EnsimeClient(EnsimeClientListener, EnsimeCommon):
     self.handlers = dict((":" + m[0][len("message_"):].replace("_", "-"), (m[1], None, None)) for m in methods)
 
   def startup(self):
-    self.log_client("[" + str(datetime.datetime.now()) + "] Starting Ensime client")
+    self.log_client("Starting Ensime client")
     self.log_client("Launching Ensime client socket at port " + str(self.port))
     self.socket = EnsimeClientSocket(self.owner, self.port, self.timeout, [self, self.env.controller])
     self.socket.connect()
@@ -1450,98 +1491,32 @@ class EnsimeServerProcess(EnsimeCommon):
     self.killed = False
     self.listeners = listeners or []
 
-    # ensure the subprocess is always killed when the editor exits
-    # this doesn't work, so we have to go for hacks below
-    # import atexit
-    # atexit.register(self.kill)
-
-    # HACK #1: kill ensime servers that are already running and were launched by this instance of sublime
-    # this can happen when you press ctrl+s on sublime-ensime files, sublime reloads them
-    # and suddenly SublimeServerCommand has a new singleton instance, and a process it hosts becomes a zombie
-    processes = self.env.settings.get("processes", {})
-    previous = processes.get(str(os.getpid()), None)
-    if previous:
-      self.log_server("killing orphaned ensime server process with pid " + str(previous))
-      try:
-        if os.name == "nt":
-          job_name = "Global\\sublime-ensime-" + str(os.getpid())
-          self.log_server("killing a job named: " + job_name)
-          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, job_name)
-          killableprocess.winprocess.TerminateJobObject(job, 127)
-        else:
-          os.killpg(int(previous), signal.SIGKILL)
-      except:
-        self.log_server(sys.exc_info()[1])
-
-    # HACK #2: garbage collect ensime server processes that were started by sublimes, but weren't stopped
-    # unfortunately, atexit doesn't work (see the commented code above), so we have to resort to this ugliness
-    # todo. ideally, this should happen automatically from ensime
-    # e.g. if -Densime.explode.when.zombied is set, then ensime automatically quits when it becomes a zombie
-    if os.name == "nt":
-      import ctypes
-      EnumWindows = ctypes.windll.user32.EnumWindows
-      EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
-      GetWindowText = ctypes.windll.user32.GetWindowTextW
-      GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
-      IsWindowVisible = ctypes.windll.user32.IsWindowVisible
-      GetWindowThreadProcessId = ctypes.windll.user32.GetWindowThreadProcessId
-      active_sublimes = set()
-      def foreach_window(hwnd, lParam):
-        if IsWindowVisible(hwnd):
-          length = GetWindowTextLength(hwnd)
-          buff = ctypes.create_unicode_buffer(length + 1)
-          GetWindowText(hwnd, buff, length + 1)
-          title = buff.value
-          if title.endswith("- Sublime Text 2"):
-            pid = ctypes.c_int()
-            tid = GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
-            active_sublimes.add(pid.value)
-        return True
-      EnumWindows(EnumWindowsProc(foreach_window), 0)
-      for sublimepid in [sublimepid for sublimepid in processes.keys() if not int(sublimepid) in active_sublimes]:
-        ensimepid = processes[sublimepid]
-        del processes[sublimepid]
-        self.log_server("found a zombie ensime server process with pid " + str(ensimepid))
-        try:
-          # todo. Duh, this no longer works on Windows, but I swear it worked.
-          # Due to an unknown reason, job gets killed once Sublime quits, so we have no way to dispose of the zombies later.
-          job_name = "Global\\sublime-ensime-" + str(sublimepid)
-          self.log_server("killing a job named: " + job_name)
-          job = killableprocess.winprocess.OpenJobObject(0x1F001F, True, job_name)
-          killableprocess.winprocess.TerminateJobObject(job, 127)
-        except:
-          self.log_server(sys.exc_info()[1])
-    else:
-      # todo. Vlad, please, implement similar logic for Linux
-      pass
+    env = os.environ.copy()
+    args = self.env.ensime_args or "-Xms256M -Xmx1512M -XX:PermSize=128m -Xss1M -Dfile.encoding=UTF-8"
+    if not "-Densime.explode.on.disconnect" in args: args += " -Densime.explode.on.disconnect=1"
+    env["ENSIME_JVM_ARGS"] = str(args) # unicode not supported here
 
     if os.name =="nt":
-      startupinfo = killableprocess.STARTUPINFO()
-      startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
+      startupinfo = subprocess.STARTUPINFO()
+      startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
       startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
       creationflags = 0x8000000 # CREATE_NO_WINDOW
-      self.proc = killableprocess.Popen(
+      self.proc = subprocess.Popen(
         command,
         stdout = subprocess.PIPE,
         stderr = subprocess.PIPE,
         startupinfo = startupinfo,
         creationflags = creationflags,
-        env = os.environ.copy(),
+        env = env,
         cwd = self.env.server_path)
     else:
-      self.proc = killableprocess.Popen(
+      self.proc = subprocess.Popen(
         command,
         stdout = subprocess.PIPE,
         stderr = subprocess.PIPE,
-        env = os.environ.copy(),
+        env = env,
         cwd = self.env.server_path)
     self.log_server("started ensime server with pid " + str(self.proc.pid))
-    processes[str(os.getpid())] = str(self.proc.pid)
-    self.env.settings.set("processes", processes)
-    # todo. this will leak pids if there are multiple sublimes launching ensimes simultaneously
-    # and, in general, we should also address the fact that sublime-ensime assumes at most single ensime per window
-    # finally, it's unclear whether to allow multiple ensimes for the same project launched by different sublimes
-    sublime.save_settings("Ensime.sublime-settings")
 
     if self.proc.stdout:
       thread.start_new_thread(self.read_stdout, ())
@@ -1587,9 +1562,11 @@ class EnsimeServer(EnsimeServerListener, EnsimeCommon):
 
   def startup(self):
     ensime_command = self.get_ensime_command()
-    self.log_server("[" + str(datetime.datetime.now()) + "] Starting Ensime server")
-    self.log_server("Launching Ensime server process with: " + str(ensime_command))
-    self.proc = EnsimeServerProcess(self.owner, ensime_command, [self, self.env.controller])
+    if self.get_ensime_command() and self.verify_ensime_version():
+      self.log_server("Starting Ensime server")
+      self.log_server("Launching Ensime server process with command = " + str(ensime_command) + " and args = " + str(self.env.ensime_args))
+      self.proc = EnsimeServerProcess(self.owner, ensime_command, [self, self.env.controller])
+      return True
 
   def get_ensime_command(self):
     if not os.path.exists(self.env.ensime_executable):
@@ -1605,6 +1582,53 @@ class EnsimeServer(EnsimeServerListener, EnsimeCommon):
       self.error_message(message)
       return
     return [self.env.ensime_executable, self.port_file]
+
+  def verify_ensime_version(self):
+    self.log_server("Verifying Ensime server version")
+    ensime_jar_dir = self.env.server_path + os.sep + "lib"
+    ensime_jars = filter(os.path.isfile, glob.glob(ensime_jar_dir + os.sep + "ensime*.jar"))
+    if len(ensime_jars) != 1:
+      self.log_server("Error: no ensime*.jar files found in " + ensime_jar_dir)
+      self.log_server("Warning: skipping the version check, proceeding with starting up the server")
+      return True
+    ensime_jar = None
+    try:
+      ensime_jar = zipfile.ZipFile(ensime_jars[0], "r")
+      manifest = ensime_jar.open("META-INF/MANIFEST.MF", "r").readlines()
+      def parse_line(line):
+        try:
+          m = re.match(r"^(.*?):(.*)$", line)
+          return (m.group(1).strip(), m.group(2).strip())
+        except:
+          self.log_server("Problems parsing line: " + line)
+      manifest = dict(parse_line(line) for line in manifest if line.strip())
+      def parse_version(s):
+        try:
+          m = re.match(r"^(\d+)\.(\d+)(?:.(\d+)(?:.(\d+))?)?$", s)
+          return map(lambda s: int(s), filter(lambda s: s, m.groups()))
+        except:
+          self.log_server("Problems parsing version: " + s)
+      aversion = parse_version(manifest["Implementation-Version"])
+      rversion = parse_version(self.env.settings.get("min_ensime_server_version"))
+      self.log_server("Required version: " + str(rversion) + ", actual version: " + str(aversion))
+      if aversion < rversion:
+        message = "Ensime server version is " + manifest["Implementation-Version"] + ", "
+        message += "required version is at least " + str(self.env.settings.get("min_ensime_server_version")) + "."
+        message += "\n\n"
+        message += "To update your Ensime server, download a suitable version from http://download.sublimescala.org, "
+        message += "and unpack it into the \"server\" subfolder of the SublimeEnsime plugin home, which is usually located at " + sublime.packages_path() + os.sep + "sublime-ensime. "
+        message += "Your installation is correct if inside the \"server\" subfolder there are folders named \"bin\" and \"lib\"."
+        self.error_message(message)
+        return
+      return True
+    except:
+      exc_type, exc_value, exc_tb = sys.exc_info()
+      detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+      self.log_server("Error verifying Ensime server version:" + detailed_info)
+      self.log_server("Warning: skipping the version check, proceeding with starting up the server")
+      return True
+    finally:
+      if ensime_jar: ensime_jar.close()
 
   def on_server_data(self, data):
     str_data = str(data).replace("\r\n", "\n").replace("\r", "\n")
@@ -1643,13 +1667,21 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
             message += "Set it to a meaningful value and restart Ensime."
             sublime.set_timeout(bind(sublime.error_message, message), 0)
             raise Exception("external_server_port_file not specified")
+          if not os.path.exists(self.port_file):
+            message = "\"connect_to_external_server\" in your Ensime.sublime-settings is set to true, "
+            message += ("however \"external_server_port_file\" is set to a non-existent file \"" + self.port_file + "\" . ")
+            message += "Check the configuration and restart Ensime."
+            sublime.set_timeout(bind(sublime.error_message, message), 0)
+            raise Exception("external_server_port_file not specified")
           self.ready = True # external server is deemed to be always ready
           sublime.set_timeout(bind(self.request_handshake), 0)
         else:
           _, port_file = tempfile.mkstemp("ensime_port")
           self.port_file = port_file
           self.server = EnsimeServer(self.owner, port_file)
-          self.server.startup()
+          if not self.server.startup():
+            self.env.controller = None
+            self.running = False
     except:
       self.env.controller = None
       self.running = False
@@ -1694,6 +1726,11 @@ class EnsimeController(EnsimeCommon, EnsimeClientListener, EnsimeServerListener)
       if self.running:
         self.env.in_transition = True
         self.env.compiler_ready = False
+        try:
+          self.env.debugger.shutdown()
+        except:
+          self.log("Error shutting down ensime debugger:")
+          self.log(traceback.format_exc())
         try:
           sublime.set_timeout(self.clear_notes, 0)
         except:
@@ -2021,18 +2058,23 @@ class EnsimeHighlights(EnsimeCommon):
       heart_beats = self.env and self.env.valid and self.env.controller and self.env.controller.running
       if heart_beats:
         def calculate_heartbeat_message():
+          def format_debugging_message(msg):
+            active_config = (self.debugger.active_launch_config or "") if self.debugger.online else ""
+            try: return msg % active_config
+            except: return msg
           if self.v and self.in_project(self.v.file_name()):
             if self.debugger.online:
-              return settings.get("ensime_statusbar_heartbeat_inproject_debugging")
+              return format_debugging_message(settings.get("ensime_statusbar_heartbeat_inproject_debugging"))
             else:
               return settings.get("ensime_statusbar_heartbeat_inproject_normal")
           else:
             if self.debugger.online:
-              return settings.get("ensime_statusbar_heartbeat_notinproject_debugging")
+              return format_debugging_message(settings.get("ensime_statusbar_heartbeat_notinproject_debugging"))
             else:
               return settings.get("ensime_statusbar_heartbeat_notinproject_normal")
         heartbeat_message = calculate_heartbeat_message()
         if heartbeat_message:
+          heartbeat_message = heartbeat_message.strip()
           if not status:
             status = heartbeat_message
           else:

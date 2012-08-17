@@ -2,8 +2,5 @@
 	"log_to_console":
 	[
 	],
-	"processes":
-	{
-		"5220": "6240"
-	}
+	"os_independent_paths_in_dot_ensime": true
 }
