@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
-import time
+import time, functools
+from functools import partial as bind
 
 class LayoutDaemon(sublime_plugin.EventListener):
   def __init__(self):
@@ -8,15 +9,18 @@ class LayoutDaemon(sublime_plugin.EventListener):
 
   def on_new(self, view):
     # print "on_new: " + (view.name() or view.file_name() or "")
-    sublime.set_timeout(lambda: self.recheck_new(view), 100)
+    prev = sublime.active_window().active_view()
+    sublime.set_timeout(lambda: self.recheck_new(view, prev), 100)
 
-  def recheck_new(self, view):
+  def recheck_new(self, view, prev):
     # print "recheck_new: " + (view.name() or view.file_name() or "")
     if self.is_special(view):
       if self.window and self.window.num_groups() > 1:
         g, i = self.window.get_view_index(view)
         if g != 1:
           self.window.set_view_index(view, 1, len(self.window.views_in_group(1)))
+          self.window.focus_view(prev)
+          self.window.focus_view(view)
 
   def on_deactivated(self, view):
     # print "on_deactivated: " + (view.name() or view.file_name() or "")
@@ -53,7 +57,7 @@ class LayoutDaemon(sublime_plugin.EventListener):
 
   def is_special(self, view):
     name = view.name() or ""
-    if name.startswith("myke ") or name == "Find Results" or name == "Ensime notes" or name == "Ensime output" or name == "Ensime debug":
+    if name.startswith("myke ") or name == "Find Results" or name == "Ensime notes" or name == "Ensime output" or name == "Ensime stack" or name == "Ensime locals":
       return True
 
   def needs_relayout(self):

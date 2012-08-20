@@ -74,6 +74,7 @@
       ],
       "folder_exclude_patterns":
       [
+        "dist_2.9.2",
         "dist_2.10.0-SNAPSHOT"
       ],
       "path": "/C/Projects/SublimeScala/Ensime"

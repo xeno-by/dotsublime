@@ -94,8 +94,8 @@ class MykeSmartTraceLoader(sublime_plugin.EventListener):
           target = targs[:iof][1:-1]
           s_args = targs[(iof + 2):]
         args = s_args.split(" ") if s_args else []
-        print "target = " + target
-        print "args = " + str(args)
+        # print "target = " + target
+        # print "args = " + str(args)
 
         view.settings().set("myke_command", action)
         view.settings().set("myke_current_file", target)

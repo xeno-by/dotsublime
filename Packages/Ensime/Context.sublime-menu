@@ -12,22 +12,27 @@
               { "caption": "Restart", "command": "ensime_restart" },
               { "caption": "Shutdown", "command": "ensime_shutdown" },
               { "caption": "Create project", "command": "ensime_create_project" },
-              { "caption": "Modify project", "command": "ensime_modify_project" },
-              { "caption": "Modify session", "command": "ensime_modify_session" },
-              { "caption": "Show client log", "command": "ensime_show_client_messages" },
-              { "caption": "Show server log", "command": "ensime_show_server_messages" },
-              { "caption": "Show client/server REPL", "command": "ensime_show_client_server_repl" },
+              { "caption": "Show project", "command": "ensime_show_project" },
+              { "caption": "Show session", "command": "ensime_show_session" },
+              { "caption": "Show client log", "command": "ensime_show_client_log" },
+              { "caption": "Show server log", "command": "ensime_show_server_log" },
               { "caption": "Enable error highlighting", "command": "ensime_highlight", "args": { "enable": true } },
               { "caption": "Disable error highlighting", "command": "ensime_highlight", "args": { "enable": false } }
             ]
           },
           {
-            "caption": "Commands",
+            "caption": "Development",
             "children":
             [
               { "caption": "Show notes", "command": "ensime_show_notes" },
               { "caption": "Inspect type at point", "command": "ensime_inspect_type_at_point" },
-              { "caption": "Go to definition", "command": "ensime_go_to_definition" },
+              { "caption": "Go to definition", "command": "ensime_go_to_definition" }
+            ]
+          },
+          {
+            "caption": "Debugging",
+            "children":
+            [
               { "caption": "Toggle breakpoint", "command": "ensime_toggle_breakpoint" },
               { "caption": "Clear breakpoints", "command": "ensime_clear_breakpoints" },
               { "caption": "Start debugger", "command": "ensime_start_debugger" },
@@ -35,8 +40,9 @@
               { "caption": "Step into", "command": "ensime_step_into" },
               { "caption": "Step over", "command": "ensime_step_over" },
               { "caption": "Resume", "command": "ensime_resume_debugger" },
-              { "caption": "Show debug output", "command": "ensime_show_debug_output" },
-              { "caption": "Show debug dashboard", "command": "ensime_show_debug_dashboard" }
+              { "caption": "Show output", "command": "ensime_show_output" },
+              { "caption": "Show stack", "command": "ensime_show_stack" },
+              { "caption": "Show locals", "command": "ensime_show_locals" }
             ]
           }
         ]

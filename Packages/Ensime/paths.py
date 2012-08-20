@@ -32,3 +32,26 @@ def decode_path(path):
       return path.replace("/", "\\")
   else:
     return path
+
+def same_paths(path1, path2):
+  if not path1 or not path2:
+    return False
+  path1_normalized = os.path.normcase(os.path.realpath(path1))
+  path2_normalized = os.path.normcase(os.path.realpath(path2))
+  return path1_normalized == path2_normalized
+
+def is_subpath(root, wannabe):
+  if not root or not wannabe:
+    return False
+  root = os.path.normcase(os.path.realpath(root))
+  wannabe = os.path.normcase(os.path.realpath(wannabe))
+  return wannabe.startswith(root)
+
+def relative_path(root, wannabe):
+  if not root or not wannabe:
+    return None
+  if not is_subpath(root, wannabe):
+    return None
+  root = os.path.normcase(os.path.realpath(root))
+  wannabe = os.path.normcase(os.path.realpath(wannabe))
+  return wannabe[len(root) + 1:]

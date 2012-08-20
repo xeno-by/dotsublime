@@ -1,13 +1,8 @@
-import sublime
-from sublime import *
-from sublime_plugin import *
+import sublime, os, traceback, functools
+from functools import partial as bind
 import sexp
 from sexp import key, sym
-import functools
-from functools import partial as bind
-import traceback
-import os
-import paths
+from paths import *
 
 def locations(window):
   """Intelligently guess the appropriate .ensime file locations for the
@@ -25,7 +20,7 @@ def load(window):
   Return: (inferred project root directory, config sexp)
   """
   for f in locations(window):
-    root = paths.encode_path(os.path.dirname(f))
+    root = encode_path(os.path.dirname(f))
     src = "()"
     with open(f) as open_file:
       src = open_file.read()
@@ -204,8 +199,7 @@ def select_subproject(conf, window, on_complete):
   subprojects = [sexp.sexp_to_key_map(p) for p in m.get(":subprojects", [])]
   names = [p[":name"] for p in subprojects]
   if len(names) > 1:
-    window.show_quick_panel(
-        names, lambda i: on_complete(names[i]))
+    window.show_quick_panel(names, lambda i: on_complete(names[i]))
   elif len(names) == 1:
     sublime.set_timeout(functools.partial(on_complete, names[0]), 0)
   else:

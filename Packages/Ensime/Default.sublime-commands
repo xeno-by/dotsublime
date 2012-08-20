@@ -1,7 +1,7 @@
 [
   {
     "caption": "Ensime: Log",
-    "command": "ensime_show_server_messages"
+    "command": "ensime_show_server_log"
   },
   {
     "caption": "Ensime: Startup",
@@ -13,27 +13,31 @@
   },
   {
     "caption": "Ensime: Project",
-    "command": "ensime_modify_project"
+    "command": "ensime_show_project"
   },
   {
     "caption": "Ensime: Session",
-    "command": "ensime_modify_session"
+    "command": "ensime_show_session"
   },
   {
-    "caption": "Ensime: Debug",
+    "caption": "Ensime: Debug Start",
     "command": "ensime_start_debugger"
   },
   {
-    "caption": "Ensime: Stop Debug",
+    "caption": "Ensime: Debug Stop",
     "command": "ensime_stop_debugger"
   },
   {
     "caption": "Ensime: Debug Output",
-    "command": "ensime_show_debug_output"
+    "command": "ensime_show_output"
   },
   {
-    "caption": "Ensime: Debug Dashboard",
-    "command": "ensime_show_debug_dashboard"
+    "caption": "Ensime: Debug Stack",
+    "command": "ensime_show_stack"
+  },
+  {
+    "caption": "Ensime: Debug Locals",
+    "command": "ensime_show_locals"
   },
   {
     "caption": "Ensime: Notes",
