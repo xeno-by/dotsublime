@@ -16,8 +16,7 @@
 
   // performance settings
   "timeout_sync_roundtrip": 3,
-  "timeout_completion": 0.5,
-  "timeout_debugger": 0.5,
+  "timeout_completions": 1.0,
 
   // stylistic settings
   "error_highlight": true,

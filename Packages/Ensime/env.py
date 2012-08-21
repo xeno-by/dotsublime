@@ -76,6 +76,7 @@ class EnsimeEnvironment(object):
     # system stuff (mutable)
     self.running = False
     self.controller = None # injected by EnsimeStartup to ensure smooth reloading
+    self.compiler_ready = False
 
     # core stuff (mutable)
     self._notes = []

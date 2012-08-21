@@ -45,7 +45,7 @@ def error_no_config(window):
 
 def error_bad_config(window, f, ex):
   exc_type, exc_value, exc_tb = ex
-  detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+  detailed_info = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
   print detailed_info
   message = "Ensime has failed to parse the .ensime configuration file at " + str(f) + " because of the following error: "
   message += "\n\n"

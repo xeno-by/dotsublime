@@ -62,7 +62,7 @@ class EnsimeCommon(object):
         with open(file_name, "a") as f: f.write("[" + str(datetime.datetime.now()) + "]: " + data.strip() + "\n")
       except:
         exc_type, exc_value, exc_tb = sys.exc_info()
-        detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        detailed_info = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
         print detailed_info
 
   def is_valid(self):
@@ -82,7 +82,7 @@ class EnsimeCommon(object):
   def in_project(self, wannabe = None):
     filename = self._filename_from_wannabe(wannabe)
     extension_ok = filename and (filename.endswith("scala") or filename.endswith("java"))
-    subpath_ok = is_subpath(self.env.project_root, filename)
+    subpath_ok = self.env and is_subpath(self.env.project_root, filename)
     return extension_ok and subpath_ok
 
   def project_relative_path(self, wannabe):
@@ -90,9 +90,13 @@ class EnsimeCommon(object):
     if not self.in_project(filename): return None
     return relative_path(self.env.project_root, filename)
 
-  def _invoke_current_view_colorer(self, method, *args):
-    colorer = Colorer(self.v)
-    getattr(colorer, method)(*args)
+  def _invoke_view_colorer(self, method, *args):
+    view = args[0]
+    args = args[1:]
+    if view == "default": view = self.v
+    if view != None:
+      colorer = Colorer(view)
+      getattr(colorer, method)(*args)
 
   def _invoke_all_colorers(self, method, *args):
     # todo. only invoke colorer on visible views
@@ -101,16 +105,16 @@ class EnsimeCommon(object):
       colorer = Colorer(v)
       getattr(colorer, method)(*args)
 
-  def colorize(self): self._invoke_current_view_colorer("refresh")
+  def colorize(self, view = "default"): self._invoke_view_colorer("refresh", view)
   def colorize_all(self): self._invoke_all_colorers("refresh")
-  def uncolorize(self): self._invoke_current_view_colorer("clear_all")
+  def uncolorize(self, view = "default"): self._invoke_view_colorer("clear_all", view)
   def uncolorize_all(self): self._invoke_all_colorers("clear_all")
-  def redraw_highlights(self): self._invoke_current_view_colorer("update_highlights")
+  def redraw_highlights(self, view = "default"): self._invoke_view_colorer("update_highlights", view)
   def redraw_all_highlights(self): self._invoke_all_colorers("update_highlights")
-  def redraw_status(self): self._invoke_current_view_colorer("update_status")
-  def redraw_breakpoints(self): self._invoke_current_view_colorer("update_breakpoints")
+  def redraw_status(self, view = "default"): self._invoke_view_colorer("update_status", view)
+  def redraw_breakpoints(self, view = "default"): self._invoke_view_colorer("update_breakpoints", view)
   def redraw_all_breakpoints(self): self._invoke_all_colorers("update_breakpoints")
-  def redraw_debug_focus(self): self._invoke_current_view_colorer("update_debug_focus")
+  def redraw_debug_focus(self, view = "default"): self._invoke_view_colorer("update_debug_focus", view)
   def redraw_all_debug_focuses(self): self._invoke_all_colorers("update_debug_focus")
 
 class EnsimeWindowCommand(EnsimeCommon, WindowCommand):
@@ -135,11 +139,9 @@ class EnsimeEventListenerProxy(EventListener):
   def _invoke(self, view, handler_name, *args):
     for listener in self.listeners:
       instance = listener(view)
-      try:
-        handler = getattr(instance, handler_name)
-        handler(*args)
-      except:
-        pass
+      try: handler = getattr(instance, handler_name)
+      except: handler = None
+      if handler: return handler(*args)
 
   def on_new(self, view):
     return self._invoke(view, "on_new")
@@ -538,6 +540,7 @@ class Client(ClientListener, EnsimeCommon):
 
   @call_back_into_ui_thread
   def message_compiler_ready(self, msg_id, payload):
+    self.env.compiler_ready = True
     filename = self.env.plugin_root + os.sep + "Encouragements.txt"
     lines = [line.strip() for line in open(filename)]
     msg = lines[random.randint(0, len(lines) - 1)]
@@ -588,7 +591,7 @@ class Client(ClientListener, EnsimeCommon):
 
   @call_back_into_ui_thread
   def message_debug_event(self, msg_id, payload):
-    debug_event = DebugEvent.parse(payload)
+    debug_event = rpc.DebugEvent.parse(payload)
     if debug_event: self.env.debugger.handle(debug_event)
 
   def init_counters(self):
@@ -757,7 +760,7 @@ class Server(ServerListener, EnsimeCommon):
       return True
     except:
       exc_type, exc_value, exc_tb = sys.exc_info()
-      detailed_info = '\n'.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+      detailed_info = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
       self.log_server("Error verifying Ensime server version:" + detailed_info)
       self.log_server("Warning: skipping the version check, proceeding with starting up the server")
       return True
@@ -817,10 +820,10 @@ class Controller(EnsimeCommon, ClientListener, ServerListener):
     self.client = Client(self.owner, self.port_file, timeout)
     self.client.startup()
     self.status_message("Initializing Ensime server... ")
-    def initialize_project(subproject_name):
+    def init_project(subproject_name):
       conf = self.env.project_config + [key(":active-subproject"), subproject_name]
-      self.rpc.initialize_project(conf)
-    dotensime.select_subproject(self.env.project_config, self.owner, initialize_project)
+      self.rpc.init_project(conf)
+    dotensime.select_subproject(self.env.project_config, self.owner, init_project)
 
   def shutdown(self):
     try:
@@ -852,6 +855,7 @@ class Controller(EnsimeCommon, ClientListener, ServerListener):
     finally:
       self.port_file = None
       self.env.running = False
+      self.env.compiler_ready = False
       self.client = None
       self.server = None
 
@@ -861,15 +865,15 @@ class Daemon(EnsimeEventListener):
 
   def on_load(self):
     # print "on_load"
-    if self.in_project():
-      self.rpc.type_check_file(self.v.file_name())
+    if self.is_running() and self.in_project():
+      self.rpc.typecheck_file(self.v.file_name())
 
   def on_post_save(self):
     # print "on_post_save"
-    if self.in_project():
-      self.rpc.type_check_file(self.v.file_name())
+    if self.is_running() and self.in_project():
+      self.rpc.typecheck_file(self.v.file_name())
     if same_paths(self.v.file_name(), self.env.session_file):
-      self.env.reload_session()
+      self.env.load_session()
       self.redraw_all_breakpoints()
 
   def on_activated(self):
@@ -894,7 +898,7 @@ class Daemon(EnsimeEventListener):
         lines = self.v.lines(r)
         if lines:
           (linum, _) = self.v.rowcol(lines[0].begin())
-          return rpc.EnsimeBreakpoint(self.v.file_name(), linum + 1)
+          return dotsession.Breakpoint(self.v.file_name(), linum + 1)
       relevant_breakpoints = filter(lambda b: b, map(new_breakpoint_position, rs))
       self.env.breakpoints = irrelevant_breakpoints + relevant_breakpoints
       self.env.save_session()
@@ -980,7 +984,7 @@ class Colorer(EnsimeCommon):
       if heart_beats:
         def calculate_heartbeat_message():
           def format_debugging_message(msg):
-            try: return msg % (self.env.profile or "")
+            try: return msg % (self.env.profile.name or "")
             except: return msg
           if self.in_project():
             if self.env.profile:
@@ -1108,13 +1112,16 @@ class Completer(EnsimeEventListener):
       return self._completion_response([])
     else:
       self.env.completion_ignore_prefix = None
-    completions = self.rpc.get_completions(self.v.file_name(), locations[0], 0)
+    if self.v.is_dirty():
+      edits = diff.diff_view_with_disk(self.v)
+      self.rpc.patch_source(self.v.file_name(), edits)
+    completions = self.rpc.completions(self.v.file_name(), locations[0], 0, False, False)
     if not completions:
       self.env.completion_ignore_prefix = prefix
     return self._completion_response(completions)
 
   def on_query_completions(self, prefix, locations):
-    if self.running and self.in_project():
+    if self.env.running and self.in_project():
       return self._query_completions(prefix, locations)
     else:
       return []
@@ -1235,13 +1242,16 @@ class EnsimeAltClick(EnsimeMouseCommand):
 class EnsimeInspectTypeAtPoint(RunningProjectFileOnly, EnsimeTextCommand):
   def run(self, edit, target= None):
     pos = int(target or self.v.sel()[0].begin())
-    self.rpc.inspect_type_at_point(self.v.file_name(), pos, self.handle_reply)
+    self.rpc.type_at_point(self.v.file_name(), pos, self.handle_reply)
 
   def handle_reply(self, tpe):
     if tpe and tpe.name != "<notype>":
-      summary = tpe.full_name
-      if tpe.type_args:
-        summary += ("[" + ", ".join(map(lambda t: t.name, tpe.type_args)) + "]")
+      if tpe.arrow_type:
+        summary = "method type"
+      else:
+        summary = tpe.full_name
+        if tpe.type_args:
+          summary += ("[" + ", ".join(map(lambda t: t.name, tpe.type_args)) + "]")
       self.status_message(summary)
     else:
       self.status_message("Cannot find out type")
@@ -1381,7 +1391,7 @@ class EnsimeSmartRunDebugger(EnsimeWindowCommand):
 
   def run(self):
     if not self.env.profile:
-      if self.env.running:
+      if self.env.compiler_ready:
         self.startup_attempts = 0
         sublime.set_timeout(bind(self.w.run_command, "ensime_start_debugger"), 1000)
       else:
@@ -1430,7 +1440,7 @@ class Debugger(EnsimeCommon):
   def handle(self, event):
     if event.type == "start":
       self.shutdown(erase_dashboard = True)
-      self.profile = profile_being_launched
+      self.env.profile = self.env.profile_being_launched
       self.status_message("Debugger has successfully started")
     elif event.type == "death" or event.type == "disconnect":
       self.shutdown(erase_dashboard = False) # so that people can take a look later
@@ -1451,14 +1461,17 @@ class Debugger(EnsimeCommon):
         self.env.stack.refresh()
         self.env.locals.refresh()
         self.status_message("Debugger has stopped at " + str(event.file_name) + ", line " + str(event.line))
-    self.redraw_status()
+    self.redraw_status(self.w.active_view())
 
   def start(self):
-    launch = self.env.load_session().launch
+    launch = dotsession.load_launch(self.env)
     if launch:
       self.status_message("Starting the debugger...")
       self.env.profile_being_launched = launch
-      self.rpc.debug_start(launch)
+      def callback(status):
+        if status: self.status_message("Debugger has successfully started")
+        else: self.status_message("Debugger has failed to start")
+      self.rpc.debug_start(launch, self.env.breakpoints, callback)
     else:
       self.status_message("Bad debug configuration")
 
@@ -1506,12 +1519,13 @@ class Output(EnsimeToolView):
   def append(self, data):
     if data:
       self.env._output += data
-      selection_was_at_end = len(self.v.sel()) == 1 and self.v.sel()[0] == sublime.Region(self.v.size())
-      edit = v.begin_edit()
-      v.insert(edit, v.size(), data)
-      if selection_was_at_end:
-        v.show(v.size())
-      v.end_edit(edit)
+      if self.v:
+        selection_was_at_end = len(self.v.sel()) == 1 and self.v.sel()[0] == sublime.Region(self.v.size())
+        edit = v.begin_edit()
+        v.insert(edit, v.size(), data)
+        if selection_was_at_end:
+          v.show(v.size())
+        v.end_edit(edit)
 
   def render(self):
     return self.env._output
@@ -1532,7 +1546,7 @@ class Locals(EnsimeToolView):
 
   @property
   def name(self):
-    return ENSIME_OUTPUT_VIEW
+    return ENSIME_LOCALS_VIEW
 
   def render(self):
     pass
