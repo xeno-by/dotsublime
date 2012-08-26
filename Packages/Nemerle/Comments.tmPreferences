@@ -5,7 +5,7 @@
   <key>name</key>
   <string>Comments</string>
   <key>scope</key>
-  <string>source.scala</string>
+  <string>source.nemerle</string>
   <key>settings</key>
   <dict>
     <key>shellVariables</key>
@@ -31,6 +31,6 @@
     </array>
   </dict>
   <key>uuid</key>
-  <string>99FB23BA-DD49-447F-9F1A-FF07630CB940</string>
+  <string>1BA75B32-707C-11D9-A928-000D93589AFF</string>
 </dict>
 </plist>
