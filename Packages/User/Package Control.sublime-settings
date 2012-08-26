@@ -3,6 +3,7 @@
 	"installed_packages":
 	[
 		"BracketHighlighter",
+		"Gist",
 		"HexViewer",
 		"Package Control",
 		"SideBarEnhancements",
