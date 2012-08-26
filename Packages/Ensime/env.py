@@ -1,5 +1,6 @@
 import sublime
-import threading
+import threading, uuid
+from uuid import uuid4
 import dotensime, dotsession
 from paths import *
 
@@ -24,7 +25,14 @@ def for_window(window):
 class EnsimeEnvironment(object):
   def __init__(self, window):
     self.w = window
+    self.recalc() # might only see empty window.folders(), so initialized values will be bogus
+    sublime.set_timeout(self.__deferred_init__, 500)
+
+  def __deferred_init__(self):
     self.recalc()
+    from ensime import Daemon
+    v = self.w.active_view()
+    if v != None: Daemon(v).on_activated() # recolorize
 
   @property
   def project_root(self):
@@ -74,6 +82,7 @@ class EnsimeEnvironment(object):
     self.valid = self.project_config != None
 
     # system stuff (mutable)
+    self.session_id = uuid4()
     self.running = False
     self.controller = None # injected by EnsimeStartup to ensure smooth reloading
     self.compiler_ready = False

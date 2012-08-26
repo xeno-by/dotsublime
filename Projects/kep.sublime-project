@@ -51,6 +51,9 @@
       "path": "/D/Dropbox/Scratchpad/Scala"
     },
     {
+      "path": "/D/Dropbox/Scratchpad/Nemerle"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.js",
@@ -83,7 +86,7 @@
       "path": "/C/Projects/ScalaIDE"
     },
     {
-      "path": "/C/Projects/SublimeScala/PackageControl"
+      "path": "/C/Projects/Nemerle"
     },
     {
       "folder_exclude_patterns":
@@ -92,9 +95,6 @@
         "*.orig"
       ],
       "path": "/C/Projects/Pages"
-    },
-    {
-      "path": "/C/Projects/Meta2012"
     },
     {
       "path": "/C/Program Files (x86)/scripts"

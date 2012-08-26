@@ -11,7 +11,8 @@ class ActiveRecord(object):
     if not raw: return []
     if type(raw[0]) == type(key(":key")):
       m = sexp.sexp_to_key_map(raw)
-      return [cls.parse(raw) for raw in m[":" + cls.__name__.lower() + "s"]]
+      field = ":" + cls.__name__.lower() + "s"
+      return [cls.parse(raw) for raw in (m[field] if field in m else [])]
     else:
       [cls.parse(raw) for raw in raw]
 
@@ -242,6 +243,9 @@ class Rpc(object):
 
   @async_rpc()
   def init_project(self, conf): pass
+
+  @sync_rpc()
+  def shutdown_server(self): pass
 
   @async_rpc()
   def typecheck_file(self, file_name): pass

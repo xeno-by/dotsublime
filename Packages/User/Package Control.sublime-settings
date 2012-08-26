@@ -3,19 +3,14 @@
 	"installed_packages":
 	[
 		"BracketHighlighter",
-		"FileDiffs",
-		"GotoRecent",
 		"HexViewer",
-		"Origami",
 		"Package Control",
-		"Quick File Creator",
 		"SideBarEnhancements",
 		"SideBarGit",
+		"SublimeREPL",
 		"Theme - Aqua"
 	],
 	"repositories":
 	[
-		"http://wuub.net/sublimepty-alpha.json",
-		"http://sublime.wbond.net/testing/packages.json"
 	]
 }

@@ -1,5 +1,0 @@
-{
-  "excluded_dir_patterns": [
-    "tmp", "|.git", "|.svn"
-  ]
-}

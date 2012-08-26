@@ -98,5 +98,6 @@
   { "keys": ["shift+f5"], "command": "ensime_stop_debugger" },
   { "keys": ["f11"], "command": "ensime_step_into" },
   { "keys": ["f10"], "command": "ensime_step_over" },
-  { "keys": ["ctrl+r"], "command": "revert" }
+  { "keys": ["ctrl+r"], "command": "revert" },
+  { "keys": ["ctrl+shift+8"], "command": "my_playground" }
 ]

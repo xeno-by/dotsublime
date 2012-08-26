@@ -37,11 +37,11 @@ so we'll do our best to do a polished release around the time of the final relea
       displayed with `Tools > Ensime > Commands > Show notes`.
 
     * Type-aware completions for identifiers (integrates into the built-in mechanism of completions
-      in Sublime Text 2, depending on your configuration it might be bound to `Ctrl+Space` or `Tab`)
+      in Sublime Text 2, depending on your configuration it might be bound to `Ctrl+Space` or `Tab`).
 
     * Type-aware go to definition (implemented by `ensime_go_to_definition` command: bind it yourself
-      to your favorite hotkey or uncomment an entry in the provided mousemap to bind to `Ctrl+Click`)
-      
+      to your favorite hotkey or use the default `Ctrl+Click` binding).
+
 * Does not compile the project for you. Use one of the established build tools (Ant,
   Maven, SBT, etc) to do that.
 
@@ -53,7 +53,7 @@ so we'll do our best to do a polished release around the time of the final relea
 * Hosts ENSIME in a completely transparent fashion. Solves the problem of runaway processes
   on Windows (Linux and Mac is on to-do list, we also wouldn't mind pull requests)
 
-* Tested on sources of scalac on Windows and Ubuntu (using ENSIME v0.9.6.5 with embedded Scala 2.10.0-M6)
+* Tested on sources of scalac on Windows and Ubuntu (using ENSIME v0.9.8 with embedded Scala 2.10.0-M6)
 
 ## How to install?
 
@@ -68,7 +68,7 @@ so we'll do our best to do a polished release around the time of the final relea
     ```
     git clone git://github.com/sublimescala/sublime-ensime.git Ensime
     ```
-    
+
     You can find the `Packages` directory by opening Sublime, selecting `View > Show Console`
     and then running the `sublime.packages_path()` command.
     Make sure you're using the right directory, or the plugin won't work.
@@ -87,14 +87,13 @@ so we'll do our best to do a polished release around the time of the final relea
 
 4. Configure Ensime.
 
-    a. Use `Preferences > Package Settings > Ensime` to customize
+    a. Use `Preferences > Package Settings > Ensime` to configure
        different aspects of this plugin.
 
-    b. If you want to use Ctrl+Click for `Go to Definition`,
-       invoke `Preferences > Package Settings > Mousemap - Default`
-       and either uncomment the relevant entry or copy it to your custom mousemap.
-       (Warning: this is an experimental feature, it might work incorrectly
-       with other Sublime plugins).
+    b. By default Ensime customizes mouse bindings. It makes
+       Ctrl+Click invoke `Go to Definition` and Alt+Click stand for `Inspect Type at Point`.
+       If you want to disable these bindings or change them bindings to something else,
+       adjust the config at `Preferences > Package Settings > Mousemap - Default`.
 
 ## How to use?
 

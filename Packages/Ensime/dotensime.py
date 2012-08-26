@@ -1,4 +1,4 @@
-import sublime, os, traceback, functools
+import sublime, os, traceback, functools, sys
 from functools import partial as bind
 import sexp
 from sexp import key, sym
@@ -150,7 +150,7 @@ def mock(window, root):
       return '\n'.join(trimmed)
 
   contents = """
-    ;; This is a mock .ensime file created by the sublime-ensime plugin.
+    ;; This is a mock .ensime file created by the Ensime plugin.
     ;; It covers typical configuration entries necessary for an Ensime project.
 
     ;; Make sure that :sources contain only the folders that you need in your project,
@@ -183,7 +183,7 @@ def mock(window, root):
       )
       :target "%s"
     )
-  """ % root.replace("\\", "/")
+  """ % (root.replace("\\", "/"), root.replace("\\", "/"))
   contents = trim(contents)
 
   lines = contents.splitlines()

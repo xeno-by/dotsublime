@@ -3,6 +3,10 @@
   "ensime_server_path": "Ensime/server",
   "ensime_server_args": "-Xms256M -Xmx1512M -XX:PermSize=128m -Xss1M -Dfile.encoding=UTF-8",
 
+  // binding settings
+  "ctrl_click_goes_to_definition": true,
+  "alt_click_inspects_type_at_point": true,
+
   // status settings
   "ensime_statusbar_group": "ensime",
   "ensime_statusbar_heartbeat_enabled": true,
@@ -34,5 +38,6 @@
   "connect_to_external_server": false,
   "external_server_port_file": "",
   "os_independent_paths_in_dot_ensime": false,
+  "plugin_version": "0.5.0",
   "min_ensime_server_version": "0.9.8"
 }

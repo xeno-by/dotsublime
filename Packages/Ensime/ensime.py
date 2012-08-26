@@ -18,11 +18,13 @@ class EnsimeCommon(object):
     self.owner = owner
     if type(owner) == Window:
       self._env = env.for_window(owner)
+      self._recalc_session_id()
       self.w = owner
     elif type(owner) == View:
-      # todo. find out why this is necessary
+      # todo. find out why owner.window() is sometimes None
       w = owner.window() or sublime.active_window()
       self._env = env.for_window(w)
+      self._recalc_session_id()
       self.w = w
       self.v = owner
     else:
@@ -32,7 +34,11 @@ class EnsimeCommon(object):
   def env(self):
     if not self._env:
       self._env = env.for_window(self.w)
+      self._recalc_session_id()
     return self._env
+
+  def _recalc_session_id(self):
+    self.session_id = self._env.session_id if self._env else None
 
   @property
   def rpc(self):
@@ -54,6 +60,8 @@ class EnsimeCommon(object):
     sublime.set_timeout(bind(self.log_on_ui_thread, "server", data), 0)
 
   def log_on_ui_thread(self, flavor, data):
+    if flavor in self.env.settings.get("log_to_console", {}):
+      print data.strip()
     if flavor in self.env.settings.get("log_to_file", {}):
       try:
         if not os.path.exists(self.env.log_root):
@@ -105,17 +113,17 @@ class EnsimeCommon(object):
       colorer = Colorer(v)
       getattr(colorer, method)(*args)
 
-  def colorize(self, view = "default"): self._invoke_view_colorer("refresh", view)
-  def colorize_all(self): self._invoke_all_colorers("refresh")
-  def uncolorize(self, view = "default"): self._invoke_view_colorer("clear_all", view)
-  def uncolorize_all(self): self._invoke_all_colorers("clear_all")
-  def redraw_highlights(self, view = "default"): self._invoke_view_colorer("update_highlights", view)
-  def redraw_all_highlights(self): self._invoke_all_colorers("update_highlights")
-  def redraw_status(self, view = "default"): self._invoke_view_colorer("update_status", view)
-  def redraw_breakpoints(self, view = "default"): self._invoke_view_colorer("update_breakpoints", view)
-  def redraw_all_breakpoints(self): self._invoke_all_colorers("update_breakpoints")
-  def redraw_debug_focus(self, view = "default"): self._invoke_view_colorer("update_debug_focus", view)
-  def redraw_all_debug_focuses(self): self._invoke_all_colorers("update_debug_focus")
+  def colorize(self, view = "default"): self._invoke_view_colorer("colorize", view)
+  def colorize_all(self): self._invoke_all_colorers("colorize")
+  def uncolorize(self, view = "default"): self._invoke_view_colorer("uncolorize", view)
+  def uncolorize_all(self): self._invoke_all_colorers("uncolorize")
+  def redraw_highlights(self, view = "default"): self._invoke_view_colorer("redraw_highlights", view)
+  def redraw_all_highlights(self): self._invoke_all_colorers("redraw_highlights")
+  def redraw_status(self, view = "default"): self._invoke_view_colorer("redraw_status", view)
+  def redraw_breakpoints(self, view = "default"): self._invoke_view_colorer("redraw_breakpoints", view)
+  def redraw_all_breakpoints(self): self._invoke_all_colorers("redraw_breakpoints")
+  def redraw_debug_focus(self, view = "default"): self._invoke_view_colorer("redraw_debug_focus", view)
+  def redraw_all_debug_focuses(self): self._invoke_all_colorers("redraw_debug_focus")
 
 class EnsimeWindowCommand(EnsimeCommon, WindowCommand):
   def __init__(self, window):
@@ -183,6 +191,9 @@ class EnsimeMouseCommand(EnsimeTextCommand):
   def run(self, target):
     raise Exception("abstract method: EnsimeMouseCommand.run")
 
+  def is_applicable(self):
+    return self.is_running() and self.in_project()
+
   def _run_underlying(self, args):
     system_command = args["command"] if "command" in args else None
     if system_command:
@@ -191,8 +202,7 @@ class EnsimeMouseCommand(EnsimeTextCommand):
 
   # note the underscore in "run_"
   def run_(self, args):
-    is_applicable = self.is_running() and self.in_project()
-    if is_applicable:
+    if self.is_applicable():
       self.old_sel = [(r.a, r.b) for r in self.v.sel()]
       # unfortunately, running an additive drag_select is our only way of getting the coordinates of the click
       # I didn't find a way to convert args["event"]["x"] and args["event"]["y"] to text coordinates
@@ -367,7 +377,9 @@ class ClientSocket(EnsimeCommon):
         self.log_client(traceback.format_exc())
         self.connected = False
         self.status_message("Ensime server has disconnected")
-        self.env.controller.shutdown()
+        # todo. do we need to check session_ids somewhere else as well?
+        if self.env.session_id == self.session_id:
+          self.env.controller.shutdown()
 
   def start_receiving(self):
     t = threading.Thread(name = "ensime-client-" + str(self.w.id()) + "-" + str(self.port), target = self.receive_loop)
@@ -422,14 +434,13 @@ class Client(ClientListener, EnsimeCommon):
     self.handlers = dict((":" + m[0][len("message_"):].replace("_", "-"), (m[1], None, None)) for m in methods)
 
   def startup(self):
-    self.log_client("Starting Ensime client")
+    self.log_client("Starting Ensime client (plugin version is " + (self.env.settings.get("plugin_version") or "unknown") + ")")
     self.log_client("Launching Ensime client socket at port " + str(self.port))
     self.socket = ClientSocket(self.owner, self.port, self.timeout, [self, self.env.controller])
     return self.socket.connect()
 
   def shutdown(self):
-    if self.socket.connected:
-      self.sync_req([sym("swank:shutdown-server")])
+    if self.socket.connected: self.rpc.shutdown_server()
     self.socket.close()
     self.socket = None
 
@@ -700,7 +711,7 @@ class Server(ServerListener, EnsimeCommon):
   def startup(self):
     ensime_command = self.get_ensime_command()
     if self.get_ensime_command() and self.verify_ensime_version():
-      self.log_server("Starting Ensime server")
+      self.log_server("Starting Ensime server (plugin version is " + (self.env.settings.get("plugin_version") or "unknown") + ")")
       self.log_server("Launching Ensime server process with command = " + str(ensime_command) + " and args = " + str(self.env.ensime_args))
       self.proc = ServerProcess(self.owner, ensime_command, [self, self.env.controller])
       return True
@@ -906,22 +917,22 @@ class Daemon(EnsimeEventListener):
 
 class Colorer(EnsimeCommon):
 
-  def refresh(self):
-    self.clear_all()
-    self.update_highlights()
-    self.update_status()
-    self.update_breakpoints()
-    self.update_debug_focus()
+  def colorize(self):
+    self.uncolorize()
+    self.redraw_highlights()
+    self.redraw_status()
+    self.redraw_breakpoints()
+    self.redraw_debug_focus()
 
-  def clear_all(self):
+  def uncolorize(self):
     self.v.erase_regions(ENSIME_ERROR_OUTLINE_REGION)
     self.v.erase_regions(ENSIME_ERROR_UNDERLINE_REGION)
     # don't erase breakpoints, they should be permanent regardless of whether ensime is running or not
     # self.v.erase_regions(ENSIME_BREAKPOINT_REGION)
     self.v.erase_regions(ENSIME_DEBUGFOCUS_REGION)
-    self.update_status()
+    self.redraw_status()
 
-  def update_highlights(self):
+  def redraw_highlights(self):
     self.v.erase_regions(ENSIME_ERROR_OUTLINE_REGION)
     self.v.erase_regions(ENSIME_ERROR_UNDERLINE_REGION)
 
@@ -952,10 +963,10 @@ class Colorer(EnsimeCommon):
       self.redraw_status()
 
       # breakpoints and debug focus should always have priority over red squiggles
-      self.update_breakpoints()
-      self.update_debug_focus()
+      self.redraw_breakpoints()
+      self.redraw_debug_focus()
 
-  def update_status(self, custom_status = None):
+  def redraw_status(self, custom_status = None):
     if custom_status:
       self._update_statusbar(custom_status)
     elif self.env and self.env.settings.get("ensime_statusbar_showerrors"):
@@ -1012,10 +1023,10 @@ class Colorer(EnsimeCommon):
     else:
       self.v.erase_status(statusgroup)
 
-  def update_breakpoints(self):
+  def redraw_breakpoints(self):
     self.v.erase_regions(ENSIME_BREAKPOINT_REGION)
     if self.v.is_loading():
-      sublime.set_timeout(self.update_breakpoints, 100)
+      sublime.set_timeout(self.redraw_breakpoints, 100)
     else:
       if self.env:
         relevant_breakpoints = filter(
@@ -1032,10 +1043,10 @@ class Colorer(EnsimeCommon):
           sublime.HIDDEN)
           # sublime.DRAW_OUTLINED)
 
-  def update_debug_focus(self):
+  def redraw_debug_focus(self):
     self.v.erase_regions(ENSIME_DEBUGFOCUS_REGION)
     if self.v.is_loading():
-      sublime.set_timeout(self.update_debug_focus, 100)
+      sublime.set_timeout(self.redraw_debug_focus, 100)
     else:
       if self.env and self.env.focus and same_paths(self.env.focus.file_name, self.v.file_name()):
           focused_region = self.v.full_line(self.v.text_point(self.env.focus.line - 1, 0))
@@ -1046,7 +1057,7 @@ class Colorer(EnsimeCommon):
             self.env.settings.get("debugfocus_icon"))
           w = self.v.window() or sublime.active_window()
           w.focus_view(self.v)
-          self.update_breakpoints()
+          self.redraw_breakpoints()
           sublime.set_timeout(bind(self._scroll_viewport, self.v, focused_region), 0)
 
   def _scroll_viewport(self, v, region):
@@ -1195,7 +1206,7 @@ class EnsimeHighlight(RunningOnly, EnsimeWindowCommand):
   def run(self, enable = True):
     self.env.settings.set("error_highlight", not not enable)
     sublime.save_settings("Ensime.sublime-settings")
-    self.refresh_all_highlights()
+    self.colorize_all()
 
 ############################## SUBLIME COMMANDS: DEVELOPMENT ##############################
 
@@ -1236,6 +1247,9 @@ class Notes(EnsimeToolView):
     return "\n".join(lines)
 
 class EnsimeAltClick(EnsimeMouseCommand):
+  def is_applicable(self):
+    return self.env.settings.get("alt_click_inspects_type_at_point") and super(EnsimeAltClick, self).is_applicable()
+
   def run(self, target):
     self.v.run_command("ensime_inspect_type_at_point", {"target": target})
 
@@ -1257,6 +1271,9 @@ class EnsimeInspectTypeAtPoint(RunningProjectFileOnly, EnsimeTextCommand):
       self.status_message("Cannot find out type")
 
 class EnsimeCtrlClick(EnsimeMouseCommand):
+  def is_applicable(self):
+    return self.env.settings.get("ctrl_click_goes_to_definition") and super(EnsimeCtrlClick, self).is_applicable()
+
   def run(self, target):
     self.v.run_command("ensime_go_to_definition", {"target": target})
 
@@ -1357,7 +1374,7 @@ class EnsimeClearBreakpoints(EnsimeWindowCommand):
     self.env.load_session()
     if self.env.breakpoints and sublime.ok_cancel_dialog("This will delete all breakpoints. Do you wish to continue?"):
       self.env.breakpoints = []
-      if self.online: self.rpc.clear_all_breaks()
+      if self.env.profile: self.rpc.clear_all_breaks()
       self.env.save_session()
       self.redraw_all_breakpoints()
 

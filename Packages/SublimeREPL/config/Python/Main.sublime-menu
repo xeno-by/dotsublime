@@ -9,9 +9,10 @@
             "children":
             [
                 {"caption": "Python",
-                 
+                "id": "Python",
+
                  "children":[
-                    {"command": "repl_open", 
+                    {"command": "repl_open",
                      "caption": "Python",
                      "id": "repl_python",
                      "mnemonic": "p",
@@ -24,7 +25,10 @@
                         "external_id": "python"
                         }
                     },
-                    {"command": "repl_open", 
+                    {"command": "python_virtualenv_repl",
+                     "id": "python_virtualenv_repl",
+                     "caption": "Python - virtualenv"},
+                    {"command": "repl_open",
                      "caption": "Python - PDB current file",
                      "id": "repl_python_pdb",
                      "mnemonic": "d",
@@ -37,7 +41,7 @@
                         "external_id": "python"
                         }
                     },
-                    {"command": "repl_open", 
+                    {"command": "repl_open",
                      "caption": "Python - RUN current file",
                      "id": "repl_python_run",
                      "mnemonic": "d",
@@ -51,7 +55,7 @@
                         }
                     }
                 ]}
-            ]   
+            ]
         }]
     }
 ]
