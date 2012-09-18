@@ -42,6 +42,14 @@
         "*.js",
         "*.orig"
       ],
+      "path": "/C/Projects/Donor/src/scalap"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/C/Projects/Kepler/src/continuations"
     },
     {
@@ -89,12 +97,34 @@
       "path": "/C/Projects/Nemerle"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.orig",
+        "*.aux",
+        "*.log",
+        "*.nav",
+        "*.snm",
+        "*.toc",
+        "*.vrb"
+      ],
       "folder_exclude_patterns":
       [
-        "_site",
-        "*.orig"
+        "_site"
       ],
       "path": "/C/Projects/Pages"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.orig",
+        "*.aux",
+        "*.log",
+        "*.nav",
+        "*.snm",
+        "*.toc",
+        "*.vrb"
+      ],
+      "path": "/C/Projects/CandidacyExam"
     },
     {
       "path": "/C/Program Files (x86)/scripts"
