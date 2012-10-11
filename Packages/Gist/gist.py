@@ -30,7 +30,8 @@ if settings.get('max_gists'):
     if settings.get('max_gists') <= 100:
         GISTS_URL += '?per_page=%d' % settings.get('max_gists'); 
     else:
-        sublime.error_message("Gist: GitHub API does not support a value of higher than 100")
+        settings.set( "max_gists",100 )
+        sublime.status_message("Gist: GitHub API does not support a value of higher than 100")
 
 class MissingCredentialsException(Exception):
     pass
@@ -216,10 +217,10 @@ def open_gist(gist_url):
         edit = view.begin_edit()
         view.insert(edit, 0, gist['files'][gist_filename]['content'])
         view.end_edit(edit)
+        if not language: continue        
         language = gist['files'][gist_filename]['language']        
         new_syntax = os.path.join(language,"{0}.tmLanguage".format(language))
         new_syntax_path = os.path.join(sublime.packages_path(), new_syntax)
-        print new_syntax_path
         if os.path.exists(new_syntax_path):
             view.set_syntax_file( new_syntax_path )
 

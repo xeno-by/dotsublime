@@ -21,9 +21,9 @@
 	"detect_slow_plugins": false,
 	"draw_indent_guides": false,
 	"ensure_newline_at_eof_on_save": false,
-	"fallback_encoding": "Cyrillic (Windows 1251)",
-	"font_face": "Consolas",
-	"font_size": 11,
+	"font_face": "Monaco",
+	"font_size": 13,
+	"gpu_window_buffer": true,
 	"highlight_line": true,
 	"ignored_packages":
 	[
