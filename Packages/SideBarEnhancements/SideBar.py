@@ -1220,12 +1220,14 @@ class SideBarOpenInBrowserCommand(sublime_plugin.WindowCommand):
 					,'%HOMEPATH%\\Chromium\\Application\\chrome.exe'
 					,'%PROGRAMFILES%\\Chromium\\Application\\chrome.exe'
 					,'%PROGRAMFILES(X86)%\\Chromium\\Application\\chrome.exe'
+					,'%HOMEPATH%\\Local Settings\\Application Data\\Google\\Chrome\\Application\\chrome.exe'
 					,'chrome.exe'
 
 					, reg_value+'\\Chromium\\Application\\chromium.exe'
 					,'%HOMEPATH%\\Chromium\\Application\\chromium.exe'
 					,'%PROGRAMFILES%\\Chromium\\Application\\chromium.exe'
 					,'%PROGRAMFILES(X86)%\\Chromium\\Application\\chromium.exe'
+					,'%HOMEPATH%\\Local Settings\\Application Data\\Google\\Chrome\\Application\\chromium.exe'
 					,'chromium.exe'
 				]
 				commands = ['-new-tab', url]
@@ -1351,7 +1353,7 @@ class SideBarOpenWithFinderCommand(sublime_plugin.WindowCommand):
 	def run(self, paths = []):
 		import subprocess
 		for item in SideBarSelection(paths).getSelectedDirectoriesOrDirnames():
-			subprocess.Popen(['open', item.nameSystem()], cwd=item.pathSystem())
+			subprocess.Popen(['open', item.nameSystem()], cwd=item.dirnameSystem())
 
 	def is_visible(self, paths =[]):
 		return sublime.platform() == 'osx'

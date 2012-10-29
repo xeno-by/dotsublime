@@ -8,20 +8,20 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open",
-                "id": "repl_coffeescript",
-                 "caption": "CoffeeScript",
+                {"command": "repl_open", 
+                "id": "repl_tower",
+                 "caption": "Tower Console",
                  "args": {
+                    "cwd": "$file_path",               
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["coffee", "-i"],
-                    "cwd": "$file_path",
+                    "cmd": ["tower", "console", "-c"],    
                     "syntax": "Packages/CoffeeScript/CoffeeScript.tmLanguage",
-                    "external_id": "coffeescript",
+                    "external_id": "tower",
                     "extend_env": {"NODE_DISABLE_COLORS": "1"}
                     }
                 }
-            ]
+            ]   
         }]
     }
 ]

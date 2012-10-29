@@ -1,13 +1,31 @@
 [
+	{ "keys": ["up"], "command": "repl_view_previous",
+	"context":
+		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false }
+		]
+	},
 	{ "keys": ["ctrl+p"], "command": "repl_view_previous",
 	"context":
 		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": false },
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["down"], "command": "repl_view_next",
+	"context":
+		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false }
 		]
 	},
 	{ "keys": ["ctrl+n"], "command": "repl_view_next",
 	"context":
 		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": false },
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
@@ -32,6 +50,27 @@
 			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
 		]
 	},
+	{ "keys": ["ctrl+backspace"], "command": "repl_ctrl_backspace", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
+		]
+	},
+	{ "keys": ["super+backspace"], "command": "repl_super_backspace", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
+		]
+	},
+	{ "keys": ["alt+backspace"], "command": "repl_ctrl_backspace", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
+		]
+	},
 	{ "keys": ["left"], "command": "repl_left", "args": {},
 	"context":
 		[
@@ -39,6 +78,12 @@
 		]
 	},
 	{ "keys": ["home"], "command": "repl_home", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["ctrl+a"], "command": "repl_home", "args": {},
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }

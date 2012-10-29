@@ -1,4 +1,4 @@
-from sublimerepl import find_repl
+from sublimerepl import manager
 import sublime_plugin
 import sublime
 from collections import defaultdict
@@ -6,9 +6,10 @@ import tempfile
 
 
 """This is a bit stupid, but it's really difficult to create a temporary file with
-a persistent name that can be passed to external process using this name, and then 
+a persistent name that can be passed to external process using this name, and then
 delete it reliably..."""
 TEMP_FILE = None
+
 
 def temp_file():
     global TEMP_FILE
@@ -24,6 +25,7 @@ def unload_handler():
         return
     os.unlink(TEMP_FILE.name)
 
+
 def default_sender(repl, text, file_name=None):
     repl.write(text)
 
@@ -31,33 +33,33 @@ def default_sender(repl, text, file_name=None):
    specific load_file action"""
 SENDERS = defaultdict(lambda: default_sender)
 
+
 def sender(external_id,):
     def wrap(func):
         SENDERS[external_id] = func
     return wrap
 
+
 @sender("python")
-def python_sender(repl, text, file_name=None):    
-    import codecs
-    tfile = temp_file()
-    with codecs.open(tfile.name, "w", "utf-8") as tmp:
-        tmp.write(text)
-    repl.write('execfile(r"{0}")\n'.format(codecs.encode(tfile.name, "utf8")))
+def python_sender(repl, text, file_name=None):
+    code = text.encode("hex")
+    execute = 'exec compile(\'%s\'.decode("hex"), "<string>", "exec")\n' % (code,)
+    return default_sender(repl, execute, file_name)
 
 
 class ReplViewWrite(sublime_plugin.WindowCommand):
     def run(self, external_id, text, file_name=None):
-        rv = find_repl(external_id)
+        rv = manager.find_repl(external_id)
         if not rv:
-            return 
+            return
         rv.append_input_text(text)
 
 
 class ReplSend(sublime_plugin.WindowCommand):
     def run(self, external_id, text, with_auto_postfix=True, file_name=None):
-        rv = find_repl(external_id)
+        rv = manager.find_repl(external_id)
         if not rv:
-            return 
+            return
         cmd = text
         if with_auto_postfix:
             cmd += rv.repl.cmd_postfix
@@ -92,7 +94,7 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         # TODO: Clojure only for now
         v = self.view
         strs = []
-        old_sel = list(v.sel()) 
+        old_sel = list(v.sel())
         v.run_command("expand_selection", {"to": "brackets"})
         v.run_command("expand_selection", {"to": "brackets"})
         for s in v.sel():

@@ -5,6 +5,12 @@
 			"path": "/Users/xeno_by/Projects/Metadata/Kepler"
 		},
 		{
+			"path": "/Users/xeno_by/Projects/Docs"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/Kepler/sandbox"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"*.js",
@@ -89,6 +95,9 @@
 		},
 		{
 			"path": "/Users/xeno_by/Projects/Dotx"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/Libscala"
 		}
 	]
 }

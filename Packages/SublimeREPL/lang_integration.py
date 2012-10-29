@@ -91,7 +91,7 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         (name, directory) = choices[index]
         activate_file = os.path.join(directory, "activate_this.py")
 
-        init_cmd = "execfile('{activate_file}', dict(__file__='{activate_file}')); import site; import sys; sys.ps1 = '({name}) >>> '; del sys;".format(name=name, activate_file=activate_file)
+        init_cmd = "execfile(r'{activate_file}', dict(__file__=r'{activate_file}')); import site; import sys; sys.ps1 = '({name}) >>> '; del sys;".format(name=name, activate_file=activate_file)
         self.window.run_command("repl_open",
             {
                 "type":"telnet",
@@ -102,7 +102,8 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
-                "external_id": "python"
+                "external_id": "python",
+                "extend_env": {"PYTHONIOENCODING": "utf-8"}
              })
 
     def run(self):
@@ -137,7 +138,7 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
         ch = gw.remote_exec(VENV_SCAN_CODE)
         with closing(ch):
             ch.send(venv_paths)
-            directories = ch.receive(10)
+            directories = ch.receive(60)
         gw.exit()
 
         choices = [[host_string + ":" + path.split(os.path.sep)[-2], path] for path in sorted(directories)]
