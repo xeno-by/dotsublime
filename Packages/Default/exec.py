@@ -238,8 +238,8 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
             settings = sublime.load_settings("Exec.sublime-settings")
             for mask in settings.get("rules").keys():
                 if re.match(mask, self.output_view.name()):
-                    rule = settings.get("rules")(mask)
-                    if hasattr(rule, "autoclose") and rule.autoclose and exit_code == 0 or exit_code == None:
+                    rule = settings.get("rules").get(mask)
+                    if rule.get("autoclose") and exit_code == 0 or exit_code == None:
                         self.output_view.window().run_command("close_file")
 
         if proc != self.proc:
