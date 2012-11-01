@@ -4,6 +4,8 @@ import thread
 import subprocess
 import functools
 import time
+import signal
+import re
 
 class ProcessListener(object):
     def on_data(self, proc, data):
@@ -61,10 +63,7 @@ class AsyncProcess(object):
     def kill(self):
         if not self.killed:
             self.killed = True
-            # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
-            #self.proc.terminate()
-            print "[exec] killing " + str(self.proc.pid)
-            subprocess.Popen("mykill /tree " + str(self.proc.pid), creationflags=0x08000000)
+            self.proc.terminate()
             self.listener = None
 
     def poll(self):
@@ -115,10 +114,12 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         #xeno.by: if not hasattr(self, 'output_view'):
         #    # Try not to call get_output_panel until the regexes are assigned
         #    # self.output_view = self.window.get_output_panel("exec")
-        wannabes = filter(lambda v: v.name() == (title or " ".join(cmd)), self.window.views())
-        self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
+        title = title or (cmd if type(cmd)==type(u"") else " ".join(cmd))
+        # wannabes = filter(lambda v: v.name() == title, self.window.views())
+        # self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
+        self.output_view = self.window.new_file()
         self.output_view.settings().set("no_history", True)
-        self.output_view.set_name(title or " ".join(cmd))
+        self.output_view.set_name(title)
         self.output_view.set_scratch(True)
         self.output_view.show(self.output_view.size())
         self.output_view.set_read_only(False)
@@ -129,11 +130,6 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         self.output_view.sel().add(sublime.Region(self.output_view.size()))
         self.output_view.end_edit(edit)
         self.output_view.set_read_only(True)
-
-        #xeno.by: hack: would be much nicer if we could communicate with myke about these
-        # sure, it sets the regexes after the build, but that's not very convenient, especially given that we can press Ctrl+C before the build ends
-        file_regex = file_regex if file_regex and file_regex != "hello from myke" else "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)"
-        line_regex = line_regex if line_regex and line_regex != "hello from myke" else ""
 
         # Default the to the current files directory if no working directory was given
         if (working_dir == "" and self.window.active_view()
@@ -157,8 +153,8 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         self.proc = None
         if not self.quiet:
-            print "Running " + " ".join(cmd)
-            sublime.status_message("Running " + " ".join(cmd))
+            print "Running " + title
+            sublime.status_message("Running " + title)
 
         #xeno.by: show_panel_on_build = sublime.load_settings("Preferences.sublime-settings").get("show_panel_on_build", True)
         #xeno.by: if show_panel_on_build:
@@ -239,6 +235,13 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
             else:
                 self.append_data(proc, ("[Finished in %.1fs with exit code %d]") % (elapsed, exit_code))
 
+            settings = sublime.load_settings("Exec.sublime-settings")
+            for mask in settings.get("rules").keys():
+                if re.match(mask, self.output_view.name()):
+                    rule = settings.get("rules")(mask)
+                    if hasattr(rule, "autoclose") and rule.autoclose and exit_code == 0 or exit_code == None:
+                        self.output_view.window().run_command("close_file")
+
         if proc != self.proc:
             return
 
@@ -261,7 +264,7 @@ class ExecListener(sublime_plugin.EventListener):
   def on_close(self, view):
     pid = view.settings().get("pid")
     if pid:
-      # xeno.by: look for an explanation in subprocess_repl.py in my take on SublimeREPL
-      #self.proc.kill()
-      print "[exec] killing " + str(pid)
-      subprocess.Popen("mykill /tree " + str(pid), creationflags=0x08000000)
+      try:
+        os.kill(int(pid), signal.SIGTERM)
+      except OSError as ex:
+        pass

@@ -1,0 +1,6 @@
+{
+  "rules":
+  {
+    "^stree": { "autoclose": true }
+  }
+}
