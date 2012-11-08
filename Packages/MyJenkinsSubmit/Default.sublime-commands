@@ -1,0 +1,6 @@
+[
+  {
+    "caption": "Jenkins Submit",
+    "command": "my_jenkins_submit"
+  }
+]

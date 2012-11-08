@@ -8,7 +8,7 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Shell",
                  "id": "repl_shell",
                  "mnemonic": "s",
@@ -21,13 +21,13 @@
                             "linux": ["bash", "-i"],
                             "osx": ["bash", "-i"]},
                     "cwd": "$file_path",
-                    "cmd_postfix": "\n", 
+                    "cmd_postfix": "\n",
                     "env": {},
-                    "suppress_echo": true, 
+                    "suppress_echo": true,
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
