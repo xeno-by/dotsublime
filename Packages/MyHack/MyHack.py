@@ -8,8 +8,8 @@ class MyHackCommand(sublime_plugin.ApplicationCommand):
     for window in sublime.windows():
       if window.folders():
         if self.home in window.folders():
+          self.window = window
           if self.delete:
-            print "self-destruct!!!"
             window.run_command("close")
           else:
             # activate this window
@@ -21,7 +21,11 @@ class MyHackCommand(sublime_plugin.ApplicationCommand):
           window.run_command("close")
 
   def generate_snippets_if_necessary(self):
-    pass
+    if self.add:
+      if self.target == "snippet":
+        self.window.run_command("my_sandbox_vanilla_snippet")
+      elif self.target == "macrosnippet":
+        self.window.run_command("my_sandbox_macro_snippet")
 
   def run(self):
     with open(os.path.expandvars("$HOME/.hack_sublime"), "r") as f:
