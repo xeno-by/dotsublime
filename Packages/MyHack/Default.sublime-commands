@@ -1,0 +1,10 @@
+[
+  {
+    "caption": "Kepler: Create a Vanilla Snippet in Sandbox",
+    "command": "my_sandbox_vanilla_snippet"
+  },
+  {
+    "caption": "Kepler: Create a Macro Snippet in Sandbox",
+    "command": "my_sandbox_macro_snippet"
+  }
+]
