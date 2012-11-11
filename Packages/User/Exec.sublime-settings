@@ -1,6 +1,7 @@
 {
   "rules":
   {
-    "^stree": { "autoclose": true }
+    "^stree": { "autoclose": true },
+    "^shell$": { "autoclose": true }
   }
 }

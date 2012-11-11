@@ -8,7 +8,3 @@ class MyRevealInSideBar(sublime_plugin.WindowCommand):
     window.run_command("move", { "by": "lines", "forward": False })
     window.run_command("move", { "by": "lines", "forward": True })
 
-class MySideBarDelete(sublime_plugin.WindowCommand):
-  def run(self):
-    window = self.window
-    window.run_command("side_bar_delete")

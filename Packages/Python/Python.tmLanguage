@@ -20,6 +20,7 @@
 		<string>Sconstruct</string>
 		<string>sconstruct</string>
 		<string>SConscript</string>
+		<string>.pystartup</string>
 	</array>
 	<key>firstLineMatch</key>
 	<string>^#!/.*\bpython[0-9.-]*\b</string>
