@@ -1,31 +1,36 @@
 import sublime, sublime_plugin
 import os, re, shutil
 from functools import partial as bind
+from subprocess import Popen, PIPE
 
 class MyHackCommand(sublime_plugin.ApplicationCommand):
-  def activate_project_window(self):
-    with open(os.path.expandvars("$HOME/.hack_sublime"), "r") as f: target = f.read().strip()
-    template = os.path.expandvars("$HOME/Projects/Metadata/Kepler_\g<shortname>")
-    expected = re.match("^scalamacros:(.*?)/(?P<shortname>.*)$", target).expand(template)
-    actual = sublime.active_window().folders()
-    actual = actual[0] if actual else None
-    if expected != actual:
-      for window in sublime.windows():
-        if window.folders():
-          if window.folders()[0] == expected:
+  def activate_or_deactivate_project_window(self):
+    for window in sublime.windows():
+      if window.folders():
+        if self.home in window.folders():
+          if self.delete:
+            print "self-destruct!!!"
+            window.run_command("close")
+          else:
             # activate this window
             # but how???
-            # anyways we're fine, since it's enough to just close the extraneous empty window
+            # anyways we're fine, since for now it's enough to just close the extraneous empty window
             pass
-        else:
-          if not window.views():
-            window.run_command("close")
+      else:
+        if not window.views():
+          window.run_command("close")
 
   def generate_snippets_if_necessary(self):
     pass
 
   def run(self):
-    self.activate_project_window()
+    with open(os.path.expandvars("$HOME/.hack_sublime"), "r") as f:
+      lines = f.read().splitlines()
+      self.target = lines[0]
+      self.home = lines[1] + "/sandbox"
+    self.add, self.delete = self.target.startswith("+"), self.target.startswith("-")
+    if self.add or self.delete: self.target = self.target[1:]
+    self.activate_or_deactivate_project_window()
     self.generate_snippets_if_necessary()
 
 class MySandboxSnippetCommand(sublime_plugin.WindowCommand):
@@ -78,5 +83,5 @@ class MySandboxVanillaSnippetCommand(MySandboxSnippetCommand):
     return ["Test.scala"]
 
 class MySandboxMacroSnippetCommand(MySandboxSnippetCommand):
-  def list_files(self, folder):
+  def list_files(self):
     return ["Macros.scala", "Test.scala"]
