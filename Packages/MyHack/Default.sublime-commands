@@ -6,5 +6,15 @@
   {
     "caption": "Kepler: Create a Macro Snippet in Sandbox",
     "command": "my_sandbox_macro_snippet"
+  },
+  {
+    "caption": "Kepler: Create a Partest",
+    "command": "my_partest_create",
+    "args": { "flags": false }
+  },
+  {
+    "caption": "Kepler: Create a Partest With Flags",
+    "command": "my_partest_create",
+    "args": { "flags": true }
   }
 ]
