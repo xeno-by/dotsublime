@@ -18,8 +18,9 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
     name = "files/" + self.test_type + "/" + name
     script = Popen(["partest-create", name] + (["--create-flags"] if self.flags else []), stdout=PIPE)
     output = script.communicate()[0][:-1]
-    call(["growlnotify", "-n", "Partest", "-m", output])
+    call(["growlnotify", "-n", "Partest", "-m", output.replace("\n", " ").replace("/Users/xeno_by/Projects/", "")])
     if script.returncode == 0:
       created = map(lambda path: path[len("Created "):], output.splitlines())
       files = filter(os.path.isfile, created)
+      files = filter(lambda path: not path.endswith(".check"), files)
       for file in files: self.window.open_file(file)
