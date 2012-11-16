@@ -1,4 +1,5 @@
 import sublime, sublime_plugin
+import os
 from functools import partial as bind
 from subprocess import call, Popen, PIPE
 
@@ -16,7 +17,8 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
 
   def on_entered(self, name):
     name = "files/" + self.test_type + "/" + name
-    script = Popen(["partest-create", name] + (["--create-flags"] if self.flags else []), stdout=PIPE)
+    root = os.path.dirname(os.readlink(os.path.join(self.window.folders()[0], "build.xml")))
+    script = Popen(["partest-create", name] + (["--create-flags"] if self.flags else []), stdout=PIPE, cwd = root)
     output = script.communicate()[0][:-1]
     call(["growlnotify", "-n", "Partest", "-m", output.replace("\n", " ").replace("/Users/xeno_by/Projects/", "")])
     if script.returncode == 0:
