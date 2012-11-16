@@ -46,10 +46,8 @@ class AsyncProcess(object):
         for k, v in proc_env.iteritems():
             proc_env[k] = os.path.expandvars(v).encode(sys.getfilesystemencoding())
 
-        print "[exec] launching " + str(arg_list)
         self.proc = subprocess.Popen(arg_list, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, startupinfo=startupinfo, env=proc_env, shell=shell)
-        print "[exec] pid is " + str(self.proc.pid)
 
         if path:
             os.environ["PATH"] = old_path
@@ -115,9 +113,9 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
         #    # Try not to call get_output_panel until the regexes are assigned
         #    # self.output_view = self.window.get_output_panel("exec")
         title = title or (cmd if type(cmd)==type(u"") else " ".join(cmd))
-        # wannabes = filter(lambda v: v.name() == title, self.window.views())
-        # self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
-        self.output_view = self.window.new_file()
+        wannabes = filter(lambda v: v.name() == title, self.window.views())
+        self.output_view = wannabes[0] if len(wannabes) else self.window.new_file()
+        # self.output_view = self.window.new_file()
         self.output_view.settings().set("no_history", True)
         self.output_view.set_name(title)
         self.output_view.set_scratch(True)

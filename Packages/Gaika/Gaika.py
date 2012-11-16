@@ -32,13 +32,22 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     wannabe.settings().set("prev_time", time.time())
     wannabe.settings().set("prev_active_group", prev_active_group)
     cmd = ["gaika", self.cmd] + self.args
-    self.window.run_command("exec", {"title": view_name, "cmd": cmd, "cont": "gaika_continuation", "shell": "true", "working_dir": self.current_dir, "file_regex": "dummy set by gaika", "line_regex": "dummy set by gaika"})
+    self.window.run_command("exec", {
+      "title": view_name,
+      "cmd": cmd,
+      "cont": "gaika_continuation",
+      "working_dir": self.current_dir,
+      "file_regex": "dummy set by gaika",
+      "line_regex": "dummy set by gaika"
+    })
 
 class GaikaContinuationCommand(sublime_plugin.TextCommand):
   def run(self, edit, returncode):
     view = self.view
     window = self.view.window()
-    with open(dotgaika, "f") as f: env = json.load(f)
+
+    dotgaika = os.path.expandvars("$HOME/.gaika")
+    with open(dotgaika, "r") as f: env = json.load(f)
 
     cont = env["continuation"] if "continuation" in env else None
     if cont:
