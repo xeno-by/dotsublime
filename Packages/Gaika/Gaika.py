@@ -8,7 +8,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     self.view = view
     self.cmd = cmd
     self.args = args or (view.settings().get("gaika_args") if view else None) or []
-    # how do I reliably detect currently open project?!
+    # how do I reliably detect the currently open project?!
     self.project_root = (view.settings().get("gaika_project_root") if view else None) or self.window.folders()[1] + "/.."
     self.current_file = view.file_name() if view else None
     self.current_dir = os.path.dirname(self.current_file) if self.current_file else self.project_root

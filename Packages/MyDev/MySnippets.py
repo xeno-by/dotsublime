@@ -31,7 +31,7 @@ class MySandboxSnippetCommand(sublime_plugin.WindowCommand):
 
   def generate(self, folder):
     flavor = re.match("^MySandbox(?P<flavor>.*?)SnippetCommand$", self.__class__.__name__).expand("\g<flavor>")
-    files = map(lambda name: sublime.packages_path() + "/MyHack/" + flavor + "/" + name, self.list_files())
+    files = map(lambda name: sublime.packages_path() + "/MyDev/" + flavor + "/" + name, self.list_files())
     for source in files:
       template = open(os.path.expandvars(source)).read()
       template = os.path.expandvars(template)

@@ -1,5 +1,13 @@
 [
   {
+    "caption": "GitHub Pull Request",
+    "command": "my_github_pullrequest"
+  },
+  {
+    "caption": "Jenkins Submit",
+    "command": "my_jenkins_submit"
+  },
+  {
     "caption": "Kepler: Create a Vanilla Snippet in Sandbox",
     "command": "my_sandbox_vanilla_snippet"
   },

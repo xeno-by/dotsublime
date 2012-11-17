@@ -1,0 +1,10 @@
+[
+  {
+    "caption": "Smaller Font",
+    "command": "my_smaller_font"
+  },
+  {
+    "caption": "Bigger Font",
+    "command": "my_bigger_font"
+  }
+]
