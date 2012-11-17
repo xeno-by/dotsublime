@@ -31,7 +31,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     wannabe.settings().set("gaika_args", self.args)
     wannabe.settings().set("prev_time", time.time())
     wannabe.settings().set("prev_active_group", prev_active_group)
-    cmd = ["gaika", self.cmd] + self.args
+    cmd = ["gaika", self.cmd, "--sublime"] + self.args
     self.window.run_command("exec", {
       "title": view_name,
       "cmd": cmd,
@@ -55,8 +55,8 @@ class GaikaContinuationCommand(sublime_plugin.TextCommand):
       window.run_command("exec", {"title": view.name(), "cmd": [cont], "cont": "gaika_continuation", "shell": "true"})
       return
 
-    success = True if env["status"] == "0" else False
-    meaningful = env["meaningful"] == "1" if "meaningful" in env else None
+    success = True if env["status"] == 0 else False
+    meaningful = env["meaningful"] == 1 if "meaningful" in env else None
     auto_close = success and not meaningful
     if not success:
       line = self.view.substr(self.view.line(0))
