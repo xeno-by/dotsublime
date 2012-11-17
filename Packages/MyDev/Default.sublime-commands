@@ -24,5 +24,9 @@
     "caption": "Kepler: Create a Partest With Flags",
     "command": "my_partest_create",
     "args": { "flags": true }
+  },
+  {
+    "caption": "Kepler: Clean",
+    "command": "my_clean"
   }
 ]
