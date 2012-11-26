@@ -16,7 +16,7 @@ This is a beta version. Basic things will work (for example, error highlighting)
 but there might still be problems. Please, submit issues to our tracker
 if you catch SublimeScala misbehaving: https://github.com/sublimescala/sublime-ensime/issues/new.
 
-Also note that SublimeScala uses a pre-release Scala compiler (which roughly corresponds to 2.10.0-M6).
+Also note that SublimeScala uses a pre-release Scala compiler (which roughly corresponds to 2.10.0-RC2).
 This might also produce funny bugs. Use our bug reporting facility to report those:
 https://issues.scala-lang.org/secure/CreateIssue!default.jspa.
 
@@ -53,17 +53,17 @@ so we'll do our best to do a polished release around the time of the final relea
 * Hosts ENSIME in a completely transparent fashion. Solves the problem of runaway processes
   on Windows (Linux and Mac is on to-do list, we also wouldn't mind pull requests)
 
-* Tested on sources of scalac on Windows and Ubuntu (using ENSIME v0.9.8 with embedded Scala 2.10.0-M6)
+* Tested on sources of scalac on Windows and Ubuntu (using ENSIME v0.9.8.2 with embedded Scala 2.10.0-RC2)
 
 ## How to install?
 
 1. Install the package itself:
 
-    a. (Not yet available, [coming soon](https://github.com/wbond/package_control_channel/pull/514))
-    If you use [Package Control](http://wbond.net/sublime_packages/package_control), install package Ensime.
+    a. If you use [Package Control](http://wbond.net/sublime_packages/package_control), install package Ensime.
     (`Preferences > Package Control > Install Package > Ensime`).
 
-    b. In your Sublime Text `Packages` directory, invoke:
+    b. Otherwise install manually.
+       In your Sublime Text `Packages` directory, invoke:
 
     ```
     git clone git://github.com/sublimescala/sublime-ensime.git Ensime
@@ -87,8 +87,9 @@ so we'll do our best to do a polished release around the time of the final relea
 
 4. Configure Ensime.
 
-    a. Use `Preferences > Package Settings > Ensime` to configure
-       different aspects of this plugin.
+    a. Use `Preferences > Package Settings > Ensime` (Windows/Linux) or 
+       `Sublime Text 2 > Preferences > Package Settings > Ensime` (Mac OS) 
+       to configure different aspects of this plugin.
 
     b. By default Ensime customizes mouse bindings. It makes
        Ctrl+Click invoke `Go to Definition` and Alt+Click stand for `Inspect Type at Point`.

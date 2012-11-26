@@ -7,7 +7,6 @@ class MyGitCommand(sublime_plugin.WindowCommand):
     sublime_plugin.WindowCommand.__init__(self, window)
 
   def run(self):
-    print "hey"
     self.view = self.window.active_view()
     if self.view and self.view.file_name():
       self.cwd = os.path.dirname(self.view.file_name())
@@ -16,6 +15,9 @@ class MyGitCommand(sublime_plugin.WindowCommand):
       self.cwd = self.window.folders()[1] + "/.."
       self.target = None
     self.do_run()
+
+  def do_run(self):
+    call(["stree"], cwd = self.cwd)
 
 class MyGitLogAll(MyGitCommand):
   def do_run(self):

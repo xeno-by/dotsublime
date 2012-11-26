@@ -3,6 +3,7 @@
 	"installed_packages":
 	[
 		"BracketHighlighter",
+		"Ensime",
 		"Gist",
 		"HexViewer",
 		"Package Control",
