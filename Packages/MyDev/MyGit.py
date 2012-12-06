@@ -17,6 +17,7 @@ class MyGitCommand(sublime_plugin.WindowCommand):
     self.do_run()
 
   def do_run(self):
+    print self.cwd
     call(["stree"], cwd = self.cwd)
 
 class MyGitLogAll(MyGitCommand):
