@@ -1,4 +1,4 @@
-import os.path, pipes, re, subprocess
+import os.path, pipes, re, subprocess, tempfile
 import sublime, sublime_plugin
 from functools import partial
 from sublime_readline import show_input_panel_with_readline
@@ -76,7 +76,8 @@ def run_cmd(cwd, cmd, wait, input_str=None):
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE,
                                      stdin=(subprocess.PIPE if input_str else None))
-        output, error = proc.communicate(input_str.encode('utf8'))
+        encoded_input = None if input_str == None else input_str.encode('utf8')
+        output, error = proc.communicate(encoded_input)
         return_code = proc.poll()
         if return_code:
             sublime.error_message("The following command exited with status "
@@ -143,10 +144,12 @@ class ShellPromptCommand(sublime_plugin.WindowCommand):
                 self.process_region(active_view, region, cwd, shell_cmd, cmd['output'])
         else:
             if input_regions:
-                # Since Sublime's build system don't support piping to STDIN
-                # directly, pipe the selected text via `echo`.
+                # Since Sublime's build system doesn't support piping to STDIN
+                # directly, use a tempfile.
                 text = "".join([active_view.substr(r) for r in input_regions])
-                shell_cmd = "echo %s | %s" % (pipes.quote(text), shell_cmd)
+                temp = tempfile.NamedTemporaryFile(delete=False)
+                temp.write(text.encode('utf8'))
+                shell_cmd = "%s < %s" % (shell_cmd, pipes.quote(temp.name))
             exec_args = settings['exec_args']
             exec_args.update({'cmd': shell_cmd, 'shell': True, 'working_dir': cwd})
 
@@ -166,6 +169,7 @@ class ShellPromptCommand(sublime_plugin.WindowCommand):
             elif outpt == '>':
                 self.window.run_command("new_file")
                 new_view = self.window.active_view()
+                new_view.set_name(shell_cmd.strip())
                 edit = new_view.begin_edit()
                 new_view.insert(edit, 0, output)
                 new_view.end_edit(edit)

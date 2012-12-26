@@ -9,21 +9,21 @@
             "children":
             [
                 {"command": "repl_open", 
-                 "caption": "Shell",
-                 "id": "repl_shell",
+                 "caption": "PHP",
+                 "id": "repl_php",
                  "mnemonic": "s",
                  "args": {
                     "type": "subprocess",
                     "encoding": {"windows": "$win_cmd_encoding",
                                  "linux": "utf-8",
                                  "osx": "utf-8"},
-                    "cmd": {"windows": ["cmd.exe"],
-                            "linux": ["bash", "-i"],
-                            "osx": ["bash", "-i"]},
+                    "cmd": {"windows": ["php.exe -a"],
+                            "linux": ["php", "-a"],
+                            "osx": ["php", "-a"]},
                     "cwd": "$file_path",
                     "cmd_postfix": "\n", 
                     "env": {},
-                    "suppress_echo": true, 
+                    "suppress_echo": false, 
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 }

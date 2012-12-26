@@ -16,6 +16,10 @@
     "command": "my_sandbox_macro_snippet"
   },
   {
+    "caption": "Kepler: Create a Type Macro Snippet in Sandbox",
+    "command": "my_sandbox_type_macro_snippet"
+  },
+  {
     "caption": "Kepler: Create a Partest",
     "command": "my_partest_create",
     "args": { "flags": false }

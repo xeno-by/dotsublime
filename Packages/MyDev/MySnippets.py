@@ -54,3 +54,7 @@ class MySandboxVanillaSnippetCommand(MySandboxSnippetCommand):
 class MySandboxMacroSnippetCommand(MySandboxSnippetCommand):
   def list_files(self):
     return ["Macros.scala", "Test.scala"]
+
+class MySandboxTypeMacroSnippetCommand(MySandboxSnippetCommand):
+  def list_files(self):
+    return ["Macros.scala", "Test.scala"]

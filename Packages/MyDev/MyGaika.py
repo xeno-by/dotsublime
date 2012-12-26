@@ -11,6 +11,8 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     # how do I reliably detect the currently open project?!
     self.project_root = (view.settings().get("gaika_project_root") if view else None) or self.window.folders()[1] + "/.."
     self.current_file = view.file_name() if view else None
+    # TODO: looks like I can't reasonably get away without gaika supporting multiple compilation scenarios
+    if self.current_file and self.current_file.endswith(".tex"): self.args.append(self.current_file)
     self.current_dir = os.path.dirname(self.current_file) if self.current_file else self.project_root
     self.launch_gaika()
 

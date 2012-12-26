@@ -1,11 +1,9 @@
 <snippet>
   <content><![CDATA[
-object Main extends App {
-  $1
-}
+println(showRaw($1))
 ]]></content>
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-  <tabTrigger>oma</tabTrigger>
+  <tabTrigger>sr</tabTrigger>
   <!-- Optional: Set a scope to limit where the snippet will trigger -->
   <!-- <scope>source.python</scope> -->
 </snippet>

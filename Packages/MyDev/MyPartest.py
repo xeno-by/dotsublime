@@ -13,14 +13,14 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
 
   def on_selected(self, index):
     self.test_type = self.test_types()[index]
-    self.window.show_input_panel("Test name: ", "", self.on_entered, None, None)
+    self.window.show_input_panel("Test name (" + self.test_type + "): ", "", self.on_entered, None, None)
 
   def on_entered(self, name):
     name = "files/" + self.test_type + "/" + name
     root = os.path.dirname(os.readlink(os.path.join(self.window.folders()[0], "build.xml")))
     script = Popen(["partest-create", name] + (["--create-flags"] if self.flags else []), stdout=PIPE, cwd = root)
     output = script.communicate()[0][:-1]
-    call(["growlnotify", "-n", "Partest", "-m", output.replace("\n", " ").replace("/Users/xeno_by/Projects/", "")])
+    # call(["growlnotify", "-n", "Partest", "-m", output.replace("\n", " ").replace("/Users/xeno_by/Projects/", "")])
     if script.returncode == 0:
       created = map(lambda path: path[len("Created "):], output.splitlines())
       files = filter(os.path.isfile, created)

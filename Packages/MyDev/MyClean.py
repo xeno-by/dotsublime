@@ -6,7 +6,7 @@ class MyCleanCommand(sublime_plugin.WindowCommand):
 
   @property
   def quick(self):
-    return map(lambda target: "quick/" + target, ["compiler", "reflect", "library"])
+    return map(lambda target: "quick/" + target, ["compiler+reflect", "compiler", "reflect", "library"])
 
   @property
   def targets(self):
