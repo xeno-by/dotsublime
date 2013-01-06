@@ -3,7 +3,7 @@
 println(scala.tools.nsc.util.stackTraceString(new Exception))
 ]]></content> -->
   <content><![CDATA[
-{ val psst = new java.io.StringWriter(); new Exception().printStackTrace(new java.io.PrintWriter(psst)); println(psst.toString) }
+;{ val psst = new java.io.StringWriter(); new Exception().printStackTrace(new java.io.PrintWriter(psst)); println(psst.toString) }
 ]]></content>
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
   <tabTrigger>pst</tabTrigger>

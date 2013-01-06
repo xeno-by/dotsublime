@@ -3,7 +3,7 @@
 This project provides integration with ENSIME and Sublime Text Editor 2.
 It's a fork of the original sublime-ensime project, written by Ivan Porto Carrero.
 This fork introduces additional features, stability improvements, user-friendly setup and error messages,
-better logging. It also works with the latest pre-release version of Scala 2.10.
+better logging.
 
 Sublime ENSIME strives to realize the dream of having Scala semantic services
 inside a lightning fast and feature-rich text editor. Big thanks to Aemon Cannon,
@@ -15,13 +15,6 @@ and inspired us to kick off the project.
 This is a beta version. Basic things will work (for example, error highlighting),
 but there might still be problems. Please, submit issues to our tracker
 if you catch SublimeScala misbehaving: https://github.com/sublimescala/sublime-ensime/issues/new.
-
-Also note that SublimeScala uses a pre-release Scala compiler (which roughly corresponds to 2.10.0-RC2).
-This might also produce funny bugs. Use our bug reporting facility to report those:
-https://issues.scala-lang.org/secure/CreateIssue!default.jspa.
-
-Anyways this venture is very important for the project maintainers, since we use Scala every day,
-so we'll do our best to do a polished release around the time of the final release of Scala 2.10.0.
 
 ## Features
 
@@ -52,8 +45,6 @@ so we'll do our best to do a polished release around the time of the final relea
 
 * Hosts ENSIME in a completely transparent fashion. Solves the problem of runaway processes
   on Windows (Linux and Mac is on to-do list, we also wouldn't mind pull requests)
-
-* Tested on sources of scalac on Windows and Ubuntu (using ENSIME v0.9.8.2 with embedded Scala 2.10.0-RC2)
 
 ## How to install?
 
