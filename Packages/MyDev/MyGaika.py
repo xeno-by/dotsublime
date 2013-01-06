@@ -104,8 +104,10 @@ class GaikaStatusMessageListener(sublime_plugin.EventListener):
   def on_deactivated(self, view):
     self.disable_status_message(view)
 
-  def on_selection_modified(self, view):
-    self.disable_status_message(view)
+  # commented out to workaround the bug described at:
+  # http://www.sublimetext.com/forum/viewtopic.php?f=2&t=10518&p=41638#p41638
+  # def on_selection_modified(self, view):
+  #   self.disable_status_message(view)
 
   def disable_status_message(self, view):
     view.settings().set("gaika_status_message", None)
