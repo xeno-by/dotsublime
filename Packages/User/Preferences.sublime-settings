@@ -43,6 +43,7 @@
 	"save_on_focus_lost": true,
 	"shift_tab_unindent": false,
 	"smart_indent": true,
+	"soda_retina_fix": true,
 	"tab_completion": true,
 	"tab_size": 2,
 	"theme": "Soda Light Refined.sublime-theme",

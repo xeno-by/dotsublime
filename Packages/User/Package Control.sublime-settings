@@ -10,10 +10,10 @@
 		"Pretty JSON",
 		"Shell Turtlestein",
 		"SideBarEnhancements",
-		"SublimeREPL",
-		"Theme - Aqua"
+		"SublimeREPL"
 	],
 	"repositories":
 	[
-	]
+	],
+	"ignore_vcs_packages": true
 }

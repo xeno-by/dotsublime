@@ -602,6 +602,7 @@
     // Quick panel background
     {
         "class": "overlay_control",
+        "settings": ["!soda_retina_fix"],
         "layer0.texture": "Theme - Soda Refined/Soda Light Refined/overlay-background.png",
         "layer0.inner_margin": [12, 6, 12, 15],
         "layer0.opacity": 1.0,
@@ -609,6 +610,14 @@
         "layer1.inner_margin": [12, 37, 12, 19],
         "layer1.opacity": 1.0,
         "content_margin": [11, 8, 11, 17]
+    },
+    // Quick panel background (Retina fix)
+    {
+        "class": "overlay_control",
+        "settings": ["soda_retina_fix"],
+        "layer0.tint": [238, 238, 238],
+        "layer0.opacity": 1.0,
+        "content_margin": [6, 8, 6, 6]
     },
 
 //
