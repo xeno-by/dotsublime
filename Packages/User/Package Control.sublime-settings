@@ -3,7 +3,6 @@
 	"installed_packages":
 	[
 		"BracketHighlighter",
-		"Ensime",
 		"Gist",
 		"HexViewer",
 		"Package Control",
@@ -14,6 +13,5 @@
 	],
 	"repositories":
 	[
-	],
-	"ignore_vcs_packages": true
+	]
 }
