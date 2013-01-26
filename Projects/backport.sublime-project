@@ -5,21 +5,13 @@
 			"path": "/Users/xeno_by/Projects/Metadata/Paradise"
 		},
 		{
-			"path": "/Users/xeno_by/Projects/Paradise/src/build"
+			"path": "/Users/xeno_by/Projects/Backport/src/build"
 		},
 		{
-			"path": "/Users/xeno_by/Projects/Paradise/project"
+			"path": "/Users/xeno_by/Projects/Backport/project"
 		},
 		{
-			"path": "/Users/xeno_by/Projects/Paradise/sandbox"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"path": "/Users/xeno_by/Projects/Paradise/src/library"
+			"path": "/Users/xeno_by/Projects/Backport/sandbox"
 		},
 		{
 			"file_exclude_patterns":
@@ -27,7 +19,7 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Paradise/src/reflect"
+			"path": "/Users/xeno_by/Projects/Backport/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -35,10 +27,7 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Paradise/src/compiler"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Paradise/src/partest"
+			"path": "/Users/xeno_by/Projects/Backport/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -46,7 +35,10 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Paradise/test/files"
+			"path": "/Users/xeno_by/Projects/Backport/src/compiler"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/Backport/src/partest"
 		},
 		{
 			"file_exclude_patterns":
@@ -54,7 +46,15 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Paradise/test/pending"
+			"path": "/Users/xeno_by/Projects/Backport/test/files"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"path": "/Users/xeno_by/Projects/Backport/test/pending"
 		},
 		{
 			"file_exclude_patterns":
@@ -130,6 +130,12 @@
 		},
 		{
 			"path": "/Users/xeno_by/Projects/Libscala"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/ScalaMock"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/jenkins-scripts"
 		}
 	]
 }
