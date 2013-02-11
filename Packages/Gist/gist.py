@@ -1,10 +1,10 @@
+from __future__ import print_function
 import sublime
 import sublime_plugin
 import os
 import sys
 import json
 import base64
-import urllib2
 import subprocess
 import functools
 import webbrowser
@@ -13,6 +13,11 @@ import traceback
 import contextlib
 import shutil
 import re
+
+try:
+    import urllib2 as urllib
+except ImportError: # Python 3
+    import urllib.request as urllib
 
 DEFAULT_CREATE_PUBLIC_VALUE = 'false'
 DEFAULT_USE_PROXY_VALUE = 'false'
@@ -232,6 +237,7 @@ def ungistify_view(view):
 def open_gist(gist_url):
     gist = api_request(gist_url)
     files = sorted(gist['files'].keys())
+
     for gist_filename in files:
         view = sublime.active_window().new_file()
 
@@ -240,12 +246,22 @@ def open_gist(gist_url):
         edit = view.begin_edit()
         view.insert(edit, 0, gist['files'][gist_filename]['content'])
         view.end_edit(edit)
-        if not "language" in locals(): continue
-        language = gist['files'][gist_filename]['language']        
-        new_syntax = os.path.join(language,"{0}.tmLanguage".format(language))
+
+        if not "language" in gist['files'][gist_filename]: continue
+
+        language = gist['files'][gist_filename]['language']
+
+        if language is None: continue
+
+        if language == 'C':
+            new_syntax = os.path.join('C++',"{0}.tmLanguage".format(language))
+        else:
+            new_syntax = os.path.join(language,"{0}.tmLanguage".format(language))
+
         new_syntax_path = os.path.join(sublime.packages_path(), new_syntax)
+
         if os.path.exists(new_syntax_path):
-            view.set_syntax_file( new_syntax_path )
+            view.set_syntax_file(new_syntax_path)
 
 def insert_gist(gist_url):
     gist = api_request(gist_url)
@@ -314,7 +330,7 @@ def gists_filter(all_gists):
     return [gists, gists_names]
 
 def api_request_native(url, data=None, method=None):
-    request = urllib2.Request(url)
+    request = urllib.Request(url)
     if method:
         request.get_method = lambda: method
     try:
@@ -328,18 +344,18 @@ def api_request_native(url, data=None, method=None):
         request.add_data(data)
 
     if settings.get('https_proxy'):
-        opener = urllib2.build_opener(urllib2.HTTPHandler(), urllib2.HTTPSHandler(),
-                                      urllib2.ProxyHandler({'https': settings.get('https_proxy')}))
+        opener = urllib.build_opener(urllib.HTTPHandler(), urllib.HTTPSHandler(),
+                                     urllib.ProxyHandler({'https': settings.get('https_proxy')}))
 
-        urllib2.install_opener(opener)
+        urllib.install_opener(opener)
 
     try:
-        with contextlib.closing(urllib2.urlopen(request)) as response:
+        with contextlib.closing(urllib.urlopen(request)) as response:
             if response.code == 204: # No Content
                 return None
             else:
                 return json.loads(response.read())
-    except urllib2.HTTPError as err:
+    except urllib.HTTPError as err:
         with contextlib.closing(err):
             raise SimpleHTTPError(err.code, err.read())
 
@@ -568,7 +584,7 @@ class GistListCommandBase(object):
 
             gist_names = ["> " + org for org in self.orgs] + gist_names
 
-        print gist_names
+        print(gist_names)
 
         def on_gist_num(num):
             offOrgs = len(self.orgs)
@@ -586,7 +602,7 @@ class GistListCommandBase(object):
                 filtered = gists_filter(self.gists)
                 self.gists = filtered[0]
                 gist_names = filtered[1]
-                print gist_names
+                print(gist_names)
 
                 self.orgs = self.users = []
                 self.get_window().show_quick_panel(gist_names, on_gist_num)
@@ -594,7 +610,7 @@ class GistListCommandBase(object):
                 filtered = gists_filter(get_user_gists(self.users[num - offOrgs]))
                 self.gists = filtered[0]
                 gist_names = filtered[1]
-                print gist_names
+                print(gist_names)
 
                 self.orgs = self.users = []
                 self.get_window().show_quick_panel(gist_names, on_gist_num)
