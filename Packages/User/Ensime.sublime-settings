@@ -1,6 +1,82 @@
 {
+	"debug_layout_when_entering_debugmode":
+	{
+		"Ensime output": null,
+		"Ensime stack": 1,
+		"Ensime watches": 2,
+		"layout":
+		{
+			"cells":
+			[
+				[
+					0.0,
+					0.0,
+					1.0,
+					2.0
+				],
+				[
+					1.0,
+					0.0,
+					2.0,
+					1.0
+				],
+				[
+					1.0,
+					1.0,
+					2.0,
+					2.0
+				]
+			],
+			"cols":
+			[
+				0.0,
+				0.65,
+				1.0
+			],
+			"rows":
+			[
+				0.0,
+				0.65,
+				1.0
+			]
+		}
+	},
+	"debug_layout_when_leaving_debugmode":
+	{
+		"Ensime output": null,
+		"Ensime stack": null,
+		"Ensime watches": null,
+		"layout":
+		{
+			"cells":
+			[
+				[
+					0.0,
+					0.0,
+					1.0,
+					1.0
+				]
+			],
+			"cols":
+			[
+				0.0,
+				1.0
+			],
+			"rows":
+			[
+				0.0,
+				1.0
+			]
+		}
+	},
+	"last_debug_attach_address": "localhost:8998",
 	"log_to_console":
 	[
 	],
-	"os_independent_paths_in_dot_ensime": true
+	"os_independent_paths_in_dot_ensime": true,
+	"sbt_flags":
+	[
+		"-Dsbt.log.noformat=true",
+		"-sbt-create"
+	]
 }

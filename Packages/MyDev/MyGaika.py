@@ -1,20 +1,28 @@
 import sublime, sublime_plugin
 import subprocess, os, time, re, json
+from env import EnsimeEnvironment
+from paths import is_subpath
 
 class GaikaCommand(sublime_plugin.WindowCommand):
   def run(self, cmd, args=[]):
     window = self.window
     view = self.window.active_view()
-    self.view = view
-    self.cmd = cmd
-    self.args = args or (view.settings().get("gaika_args") if view else None) or []
-    # how do I reliably detect the currently open project?!
-    self.project_root = (view.settings().get("gaika_project_root") if view else None) or self.window.folders()[1] + "/.."
-    self.current_file = view.file_name() if view else None
-    # TODO: looks like I can't reasonably get away without gaika supporting multiple compilation scenarios
-    if self.current_file and self.current_file.endswith(".tex"): self.args.append(self.current_file)
-    self.current_dir = os.path.dirname(self.current_file) if self.current_file else self.project_root
-    self.launch_gaika()
+    ensime_project_root = EnsimeEnvironment(window).project_root
+    if ensime_project_root and view != None and is_subpath(ensime_project_root, view.file_name()):
+      self.window.run_command("ensime_build")
+    else:
+      self.view = view
+      self.cmd = cmd
+      self.args = args or (view.settings().get("gaika_args") if view else None) or []
+      # how do I reliably detect the currently open project?!
+      folder_idx = min(len(self.window.folders()) - 1, 1)
+      self.project_root = (view.settings().get("gaika_project_root") if view else None) or self.window.folders()[folder_idx] + "/.."
+      self.current_file = view.file_name() if view else None
+      # TODO: looks like I can't reasonably get away without gaika supporting multiple compilation scenarios
+      if self.current_file and self.current_file.endswith(".tex"): self.args.append(self.current_file)
+      if self.current_file and self.current_file.endswith(".c"): self.args.append(self.current_file)
+      self.current_dir = os.path.dirname(self.current_file) if self.current_file else self.project_root
+      self.launch_gaika()
 
   def launch_gaika(self):
     view_name = "gaika " + self.cmd
@@ -34,6 +42,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     wannabe.settings().set("prev_time", time.time())
     wannabe.settings().set("prev_active_group", prev_active_group)
     cmd = ["gaika", self.cmd, "--sublime"] + self.args
+    self.window.run_command("ensime_shutdown") # FIXME
     self.window.run_command("exec", {
       "title": view_name,
       "cmd": cmd,
