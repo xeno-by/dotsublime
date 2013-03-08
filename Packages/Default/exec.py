@@ -156,7 +156,7 @@ class ExecCommand(sublime_plugin.WindowCommand, ProcessListener):
 
         self.proc = None
         if not self.quiet:
-            print "Running " + " ".join(cmd)
+            print "Running " + " ".join(cmd) + " in " + str(working_dir)
             sublime.status_message("Running " + " ".join(cmd))
 
         #xeno.by: show_panel_on_build = sublime.load_settings("Preferences.sublime-settings").get("show_panel_on_build", True)

@@ -12,7 +12,7 @@ class MyGitCommand(sublime_plugin.WindowCommand):
       self.cwd = os.path.dirname(self.view.file_name())
       self.target = self.view.file_name()
     else:
-      self.cwd = self.window.folders()[1] + "/.."
+      self.cwd = self.window.folders()[1]
       self.target = None
     self.do_run()
 

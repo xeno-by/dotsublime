@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.sublime_session",
+				"*.sublime-project",
+				"*.sublime-workspace",
+				"*.orig"
+			],
+			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 2"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/scala-pickling"
+		},
+		{
+			"path": "/Users/xeno_by/Projects/Dotx"
+		}
+	]
+}
