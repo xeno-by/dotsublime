@@ -1,0 +1,9 @@
+{
+  "rules":
+  {
+    "^stree": { "autoclose": true },
+    "^gitx": { "autoclose": true },
+    "^gc": { "autoclose": true },
+    "^shell$": { "autoclose": true }
+  }
+}
