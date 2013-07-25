@@ -1,8 +1,11 @@
 # encoding: utf-8
 import code
 import contextlib
-import repl
-from Queue import Queue
+from .repl import Repl
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 import sys
 import threading
 
@@ -27,18 +30,19 @@ class InterceptingConsole(code.InteractiveConsole):
     PS1 = ">>> "
     PS2 = "... "
 
-    def __init__(self):
+    def __init__(self, encoding):
         code.InteractiveConsole.__init__(self, locals={"__name__": "__main__"})
         self.input = Queue()
         self.output = Queue()
         self.output.put(self.PS1)
+        self._encoding = encoding
 
     def write(self, data):
         self.output.put(data)
 
     def push(self, line):
         with redirect_stdio(self.output):
-            more = code.InteractiveConsole.push(self, line)
+            more = code.InteractiveConsole.push(self, line.decode(self._encoding))
         self.output.put(self.PS2 if more else self.PS1)
         return more
 
@@ -50,12 +54,12 @@ class InterceptingConsole(code.InteractiveConsole):
             self.push(line)
 
 
-class SublimePythonRepl(repl.Repl):
+class SublimePythonRepl(Repl):
     TYPE = "sublime_python"
 
     def __init__(self, encoding):
-        super(SublimePythonRepl, self).__init__(encoding, u"python", "\n", False)
-        self._console = InterceptingConsole()
+        super(SublimePythonRepl, self).__init__(encoding, "python", "\n", False)
+        self._console = InterceptingConsole(encoding)
         self._thread = threading.Thread(target=self._console.run)
         self._thread.start()
 
@@ -69,7 +73,7 @@ class SublimePythonRepl(repl.Repl):
         self._console.input.put(bytes)
 
     def read_bytes(self):
-        return self._console.output.get()
+        return self._console.output.get().encode(self._encoding)
 
     def kill(self):
         self._console.input.put(None)

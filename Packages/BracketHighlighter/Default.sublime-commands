@@ -1,93 +1,152 @@
 [
+    // Toggle Global Enable
     {
-        "caption": "Bracket Highlighter: Toggle Bracket String Escape Mode",
-        "command": "toggle_bracket_string_escape_mode"
+        "caption": "BracketHighlighter: Toggle Global Enable",
+        "command": "bh_toggle_enable"
     },
+    // Search to end of file for bracket
     {
-        "caption": "Bracket Highlighter: Show Bracket String Escape Mode",
-        "command": "show_bracket_string_escape_mode"
+        "caption": "BracketHighlighter: Match Brackets (ignore threshold)",
+        "command": "bh_key",
+        "args": {"lines" : true}
     },
+    // Remove brackets
     {
-        "caption": "Bracket Highlighter: Match Brackets",
-        "command": "bracket_highlighter_key",
-        "args": {"lines": true}
+        "caption": "BracketHighlighter: Remove Brackets",
+        "command": "bh_remove_brackets"
     },
+    // Go to left bracket
     {
-        "caption": "Bracket Highlighter: Show Left Bracket",
-        "command": "bracket_highlighter_key",
+        "caption": "BracketHighlighter: Jump to Left Bracket",
+        "command": "bh_key",
         "args":
         {
             "lines" : true,
             "plugin":
             {
-                "type": ["quote","bracket","tag"],
-                "command": "bracket_plugins.select_bracket",
+                "type": ["__all__"],
+                "command": "bh_modules.bracketselect",
                 "args": {"select": "left"}
             }
         }
     },
+    // Go to right bracket
     {
-        "caption": "Bracket Highlighter: Show Right Bracket",
-        "command": "bracket_highlighter_key",
+        "caption": "BracketHighlighter: Jump to Right Bracket",
+        "command": "bh_key",
         "args":
         {
             "lines" : true,
             "plugin":
             {
-                "type": ["quote","bracket","tag"],
-                "command": "bracket_plugins.select_bracket",
+                "type": ["__all__"],
+                "command": "bh_modules.bracketselect",
                 "args": {"select": "right"}
             }
         }
     },
+    // Select text between brackets
     {
-        "caption": "Bracket Highlighter: Select Bracket Content",
-        "command": "bracket_highlighter_key",
+        "caption": "BracketHighlighter: Select Bracket Content",
+        "command": "bh_key",
         "args":
         {
             "lines" : true,
             "plugin":
             {
-                "type": ["quote","bracket","tag"],
-                "command": "bracket_plugins.select_bracket"
+                "type": ["__all__"],
+                "command": "bh_modules.bracketselect"
             }
         }
     },
+    // Fold contents between brackets
     {
-        "caption": "Bracket Highlighter: Select Tag",
-        "command": "bracket_highlighter_key",
+        "caption": "BracketHighlighter: Fold Bracket Content",
+        "command": "bh_key",
         "args":
         {
-            "ignore": ["quote"],
-            "plugin":
-            {
-                "type": ["tag"],
-                "command": "bracket_plugins.select_tag"
+            "plugin": {
+                "type": ["__all__"],
+                "command" : "bh_modules.foldbracket"
             }
         }
     },
+    { "caption": "-" },
+    // Toggle between string and regex escape mode for string brackets
     {
-        "caption": "Bracket Highlighter: Swap Quotes",
-        "command": "bracket_highlighter_key",
+        "caption": "BracketHighlighter: Toggle String Bracket Escape Mode",
+        "command": "bh_toggle_string_escape_mode"
+    },
+    // Toggle high visibility mode
+    {
+        "caption": "BracketHighlighter: Toggle High Visibility Mode",
+        "command": "bh_toggle_high_visibility"
+    },
+    { "caption": "-" },
+    // Select tag name of HTML/XML tag (both opening name and closing)
+    {
+        "caption": "BracketHighlighter: Select Tag Name (closing and opening)",
+        "command": "bh_key",
         "args":
         {
             "plugin":
             {
-                "type": ["quote"],
-                "command": "bracket_plugins.swap_quotes"
+                "type": ["cfml", "html", "angle"],
+                "command": "bh_modules.tagnameselect"
             }
         }
     },
+    // Select the attribute to the right of the cursor (will wrap inside the tag)
     {
-        "caption": "Bracket Highlighter: Swap Brackets",
+        "caption": "BracketHighlighter: Select Next Attribute (right)",
+        "command": "bh_key",
+        "args":
+        {
+            "plugin":
+            {
+                "type": ["cfml", "html", "angle"],
+                "command": "bh_modules.tagattrselect",
+                "args": {"direction": "right"}
+            }
+        }
+    },
+    // Select the attribute to the left of the cursor (will wrap inside the tag)
+    {
+        "caption": "BracketHighlighter: Select Next Attribute (left)",
+        "command": "bh_key",
+        "args":
+        {
+            "plugin":
+            {
+                "type": ["cfml", "html", "angle"],
+                "command": "bh_modules.tagattrselect",
+                "args": {"direction": "left"}
+            }
+        }
+    },
+    // Convert single quote string to double quoted string and vice versa
+    // Will handle escaping or unescaping quotes within the string
+    {
+        "caption": "BracketHighlighter: Swap Quotes",
+        "command": "bh_key",
+        "args":
+        {
+            "lines" : true,
+            "plugin":
+            {
+                "type": ["single_quote", "double_quote", "py_single_quote", "py_double_quote"],
+                "command": "bh_modules.swapquotes"
+            }
+        }
+    },
+    // Swap Brackets
+    {
+        "caption": "BracketHighlighter: Swap Brackets",
         "command": "swap_brackets"
     },
+    // Surround selection with brackets from quick panel
     {
-        "caption": "Bracket Highlighter: Fold by Brackets",
-        "command": "bracket_highlighter_key",
-        "args":
-        {
-            "plugin": {"type": ["quote", "tag", "bracket"],"command" : "bracket_plugins.fold_bracket"}
-        }
+        "caption": "BracketHighlighter: Wrap Selections with Brackets",
+        "command": "wrap_brackets"
     }
 ]

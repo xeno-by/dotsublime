@@ -43,6 +43,14 @@
 				"*.js",
 				"*.orig"
 			],
+			"path": "/Users/xeno_by/Projects/Master/src/repl"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"path": "/Users/xeno_by/Projects/Master/test/files"
 		},
 		{
@@ -85,6 +93,91 @@
 				"_site"
 			],
 			"path": "/Users/xeno_by/Projects/Pages"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"path": "/Users/xeno_by/Projects/ScalaDays2013"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"path": "/Users/xeno_by/Projects/BASE2013"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"path": "/Users/xeno_by/Projects/Scala2013"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"path": "/Users/xeno_by/Projects/Scala2013-slides"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"path": "/Users/xeno_by/Projects/Scalapeno2013"
 		},
 		{
 			"file_exclude_patterns":

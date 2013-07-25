@@ -2,16 +2,7 @@
 	"folders":
 	[
 		{
-			"path": "/Users/xeno_by/Projects/Metadata/210x"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/210x/project"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/ScalaMock"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Docs"
+			"path": "/Users/xeno_by/Metadata/210x"
 		},
 		{
 			"path": "/Users/xeno_by/Projects/210x/sandbox"
@@ -46,6 +37,14 @@
 				"*.js",
 				"*.orig"
 			],
+			"path": "/Users/xeno_by/Projects/210x/src/continuations"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"path": "/Users/xeno_by/Projects/210x/test/files"
 		},
 		{
@@ -57,29 +56,8 @@
 			"path": "/Users/xeno_by/Projects/210x/test/pending"
 		},
 		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"folder_exclude_patterns":
-			[
-				"dist_2.9.2",
-				"dist_2.10.0-SNAPSHOT"
-			],
-			"path": "/Users/xeno_by/Projects/Ensime"
-		},
-		{
-			"path": "/Users/xeno_by/.sbt/0.12.1/plugins"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/ScalaIDE"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/scala-refactoring"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/scalariform"
+			"name": "Docs",
+			"path": "/Users/xeno_by/Projects/SiteDocsScalaLangOrg"
 		},
 		{
 			"file_exclude_patterns":
@@ -96,7 +74,12 @@
 			[
 				"_site"
 			],
-			"path": "/Users/xeno_by/Projects/Pages"
+			"name": "Pages",
+			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
+		},
+		{
+			"name": "Dotx",
+			"path": "/usr/local/dotx"
 		},
 		{
 			"file_exclude_patterns":
@@ -107,12 +90,6 @@
 				"*.orig"
 			],
 			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 2"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Dotx"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Libscala"
 		}
 	]
 }

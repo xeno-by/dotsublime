@@ -9,7 +9,7 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
     self.window.show_quick_panel(self.test_types(), bind(self.on_selected))
 
   def test_types(self):
-    return ["run", "neg", "pos"]
+    return ["run", "neg", "pos", "pickling"]
 
   def on_selected(self, index):
     self.test_type = self.test_types()[index]

@@ -21,6 +21,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
       self.current_file = view.file_name() if view else None
       # TODO: looks like I can't reasonably get away without gaika supporting multiple compilation scenarios
       if self.current_file and self.current_file.endswith(".tex"): self.args.append(self.current_file)
+      if self.current_file and self.current_file.endswith(".bib"): self.args.append(self.current_file)
       if self.current_file and self.current_file.endswith(".c"): self.args.append(self.current_file)
       self.current_dir = os.path.dirname(self.current_file) if self.current_file else self.project_root
       if self.window.folders() and self.window.folders()[0] == "/Users/xeno_by/Projects/ACC":
@@ -77,7 +78,7 @@ class GaikaContinuationCommand(sublime_plugin.TextCommand):
       if re.match("unsupported action", line):
         auto_close = True
     if auto_close:
-      active = window.active_view()
+      active = window and window.active_view()
       if not active or active.id() == self.view.id():
         prev_active_group = self.view.settings().get("prev_active_group")
         delta = time.time() - self.view.settings().get("prev_time")

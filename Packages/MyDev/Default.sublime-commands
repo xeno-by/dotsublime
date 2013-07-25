@@ -32,5 +32,9 @@
   {
     "caption": "Kepler: Clean",
     "command": "my_clean"
+  },
+  {
+    "caption": "Diff First Conflict",
+    "command": "my_diff_first_conflict"
   }
 ]
