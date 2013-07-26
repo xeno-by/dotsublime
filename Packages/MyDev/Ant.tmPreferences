@@ -10,6 +10,8 @@
   <dict>
     <key>showInSymbolList</key>
     <integer>1</integer>
+    <key>showInIndexedSymbolList</key>
+    <integer>1</integer>
   </dict>
   <key>uuid</key>
   <string>31262BAA-520A-4253-A81C-60023C0CFC8B</string>
