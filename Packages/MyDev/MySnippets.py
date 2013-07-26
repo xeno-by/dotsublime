@@ -9,6 +9,8 @@ class MySandboxSnippetCommand(sublime_plugin.WindowCommand):
   def run(self):
     for folder in self.window.folders():
       if folder.endswith("sandbox"):
+        if not os.path.exists(folder):
+          os.mkdir(folder)
         if os.listdir(folder):
           self.window.show_quick_panel(["Yes, clean " + folder, "No, don't delete anything"], bind(self.on_selected, folder))
         else:
@@ -53,8 +55,4 @@ class MySandboxVanillaSnippetCommand(MySandboxSnippetCommand):
 
 class MySandboxMacroSnippetCommand(MySandboxSnippetCommand):
   def list_files(self):
-    return ["Macros.scala", "Test.scala"]
-
-class MySandboxTypeMacroSnippetCommand(MySandboxSnippetCommand):
-  def list_files(self):
-    return ["Macros.scala", "Test.scala"]
+    return ["Macros.scala", "Test.scala", ""]
