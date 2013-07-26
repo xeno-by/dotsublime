@@ -1,0 +1,7 @@
+[
+  {
+    "button": "button1", "count": 1, "modifiers": ["super"],
+    "press_command": "my_command_click",
+    "press_args": {"command": "drag_select", "args": {"additive": true}}
+  },
+]
