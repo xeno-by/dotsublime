@@ -1,4 +1,5 @@
 import sublime, sublime_plugin
+from functools import partial as bind
 
 class MyCommandClickCommand(sublime_plugin.TextCommand):
   # note the underscore in "run_"
@@ -25,7 +26,7 @@ class MyCommandClickCommand(sublime_plugin.TextCommand):
       sel = self.v.sel()
       sel.clear()
       sel.add(sublime.Region(self.diff[0][0], self.diff[0][1]))
-      self.v.window().run_command("goto_definition")
+      sublime.set_timeout(bind(self.v.window().run_command, "goto_definition"), 100)
     else:
       # this shouldn't happen
       self.log("len(diff) > 1: command = " + str(type(self)) + ", old_sel = " + str(self.old_sel) + ", new_sel = " + str(self.new_sel))
