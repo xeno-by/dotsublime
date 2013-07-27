@@ -7,13 +7,12 @@ class MyHackCommand(sublime_plugin.ApplicationCommand):
   def run(self):
     command, project_file_name, action = open(os.path.expandvars("$HOME/.hack_sublime"), "r").read().splitlines()
     add, delete = command.startswith("+"), command.startswith("-")
+    project_window = next(filter(lambda w: w.project_file_name() == project_file_name, sublime.windows()), None)
     if action == "OPEN?":
-      for window in sublime.windows():
-        if window.project_file_name() == project_file_name:
-          with open(os.path.expandvars("$HOME/.hack_sublime"), "w") as f: f.write("YEP")
-          return
-      with open(os.path.expandvars("$HOME/.hack_sublime"), "w") as f: f.write("NOPE")
+      status = "YEP" if project_window else "NOPE"
+      with open(os.path.expandvars("$HOME/.hack_sublime"), "w") as f: f.write(status)
     elif action == "FOCUS!":
-      pass
+      if project_window and sublime.active_window().id() != project_window.id():
+        project_window.focus_group(project_window.active_group())
     else:
       print("unknown action: " + str(action))
