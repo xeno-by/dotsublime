@@ -2,13 +2,7 @@
 	"folders":
 	[
 		{
-			"path": "/Users/xeno_by/Projects/Metadata/Master"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Master/project"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Docs"
+			"path": "/Users/xeno_by/Metadata/Master"
 		},
 		{
 			"path": "/Users/xeno_by/Projects/Master/sandbox"
@@ -43,7 +37,7 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/src/repl"
+			"path": "/Users/xeno_by/Projects/Master/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -62,20 +56,12 @@
 			"path": "/Users/xeno_by/Projects/Master/test/pending"
 		},
 		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
 			"folder_exclude_patterns":
 			[
-				"dist_2.9.2",
-				"dist_2.10.0-SNAPSHOT"
+				"_site"
 			],
-			"path": "/Users/xeno_by/Projects/Ensime"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/ScalaIDE"
+			"name": "Docs",
+			"path": "/Users/xeno_by/Projects/SiteDocsScalaLangOrg"
 		},
 		{
 			"file_exclude_patterns":
@@ -92,92 +78,12 @@
 			[
 				"_site"
 			],
-			"path": "/Users/xeno_by/Projects/Pages"
+			"name": "Pages",
+			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
 		},
 		{
-			"file_exclude_patterns":
-			[
-				"*.orig",
-				"*.aux",
-				"*.log",
-				"*.nav",
-				"*.snm",
-				"*.toc",
-				"*.vrb"
-			],
-			"folder_exclude_patterns":
-			[
-				"_site"
-			],
-			"path": "/Users/xeno_by/Projects/ScalaDays2013"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.orig",
-				"*.aux",
-				"*.log",
-				"*.nav",
-				"*.snm",
-				"*.toc",
-				"*.vrb"
-			],
-			"folder_exclude_patterns":
-			[
-				"_site"
-			],
-			"path": "/Users/xeno_by/Projects/BASE2013"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.orig",
-				"*.aux",
-				"*.log",
-				"*.nav",
-				"*.snm",
-				"*.toc",
-				"*.vrb"
-			],
-			"folder_exclude_patterns":
-			[
-				"_site"
-			],
-			"path": "/Users/xeno_by/Projects/Scala2013"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.orig",
-				"*.aux",
-				"*.log",
-				"*.nav",
-				"*.snm",
-				"*.toc",
-				"*.vrb"
-			],
-			"folder_exclude_patterns":
-			[
-				"_site"
-			],
-			"path": "/Users/xeno_by/Projects/Scala2013-slides"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.orig",
-				"*.aux",
-				"*.log",
-				"*.nav",
-				"*.snm",
-				"*.toc",
-				"*.vrb"
-			],
-			"folder_exclude_patterns":
-			[
-				"_site"
-			],
-			"path": "/Users/xeno_by/Projects/Scalapeno2013"
+			"name": "Dotx",
+			"path": "/usr/local/dotx"
 		},
 		{
 			"file_exclude_patterns":
@@ -187,16 +93,7 @@
 				"*.sublime-workspace",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 2"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Dotx"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/Libscala"
-		},
-		{
-			"path": "/Users/xeno_by/Projects/ScalaMock"
+			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3"
 		}
 	]
 }
