@@ -93,7 +93,8 @@
 				"*.sublime-workspace",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3"
+			"name": "Sublime",
+			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3/Packages"
 		}
 	]
 }
