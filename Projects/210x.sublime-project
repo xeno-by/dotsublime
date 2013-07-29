@@ -45,6 +45,15 @@
 				"*.js",
 				"*.orig"
 			],
+			"name": "ScalaIDE",
+			"path": "/Users/xeno_by/Projects/scala-ide"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"path": "/Users/xeno_by/Projects/210x/test/files"
 		},
 		{
