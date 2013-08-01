@@ -12,8 +12,9 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
     return ["run", "neg", "pos"]
 
   def on_selected(self, index):
-    self.test_type = self.test_types()[index]
-    self.window.show_input_panel("Test name (" + self.test_type + "): ", "", self.on_entered, None, None)
+    if index != -1:
+      self.test_type = self.test_types()[index]
+      self.window.show_input_panel("Test name (" + self.test_type + "): ", "", self.on_entered, None, None)
 
   def on_entered(self, name):
     name = "files/" + self.test_type + "/" + name
@@ -25,4 +26,6 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
       created = map(lambda path: path[len("Created "):], output.splitlines())
       files = filter(os.path.isfile, created)
       files = filter(lambda path: not path.endswith(".check"), files)
-      for file in files: self.window.open_file(file)
+      for file in files:
+        self.window.open_file(file)
+        self.window.run_command('reveal_in_side_bar')

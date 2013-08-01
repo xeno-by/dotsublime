@@ -54,6 +54,15 @@
 				"*.js",
 				"*.orig"
 			],
+			"name": "SBT",
+			"path": "/Users/xeno_by/Projects/sbt"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"path": "/Users/xeno_by/Projects/210x/test/files"
 		},
 		{
