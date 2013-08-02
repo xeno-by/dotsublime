@@ -28,4 +28,5 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
       files = filter(lambda path: not path.endswith(".check"), files)
       for file in files:
         self.window.open_file(file)
-        self.window.run_command('reveal_in_side_bar')
+        # TODO: this thing doesn't work
+        # self.window.run_command('reveal_in_side_bar')
