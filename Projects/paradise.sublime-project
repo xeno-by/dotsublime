@@ -5,7 +5,23 @@
       "path": "/Users/xeno_by/Metadata/210x"
     },
     {
-      "path": "/Users/xeno_by/Projects/Paradise"
+      "name": "sandbox",
+      "path": "/Users/xeno_by/Projects/Paradise/sandbox/src/main/scala"
+    },
+    {
+      "path": "/Users/xeno_by/Projects/Paradise/project"
+    },
+    {
+      "name": "plugin",
+      "path": "/Users/xeno_by/Projects/Paradise/plugin/src/main/scala/org/scalalang/macroparadise"
+    },
+    {
+      "name": "macros",
+      "path": "/Users/xeno_by/Projects/Paradise/tests/src/main/scala"
+    },
+    {
+      "name": "tests",
+      "path": "/Users/xeno_by/Projects/Paradise/tests/src/test/scala"
     },
     {
       "file_exclude_patterns":
