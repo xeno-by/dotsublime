@@ -6,8 +6,9 @@ class MyDiffFirstConflictCommand(sublime_plugin.TextCommand):
   def run(self, edit):
     v = self.view
     lines = v.substr(sublime.Region(0, v.size())).split("\n")
+    print(lines)
     def find(prefix):
-      try: return (i for i,v in enumerate(lines) if v.startswith(prefix)).next()
+      try: return (i for i,v in enumerate(lines) if v.startswith(prefix)).__next__()
       except: return -1
     start_local = find("<<<<<<<")
     start_base = find("|||||||")
@@ -22,8 +23,8 @@ class MyDiffFirstConflictCommand(sublime_plugin.TextCommand):
       hlocal, flocal = tempfile.mkstemp("", "mine.")
       hbase, fbase = tempfile.mkstemp("", "parent.")
       hremote, fremote = tempfile.mkstemp("", "theirs.")
-      os.write(hlocal, local)
-      os.write(hbase, base)
-      os.write(hremote, remote)
+      os.write(hlocal, local.encode())
+      os.write(hbase, base.encode())
+      os.write(hremote, remote.encode())
       call(["open", "-a", "Araxis Merge"])
       call(["/usr/local/bin/araxisgitmerge", fremote, fbase, flocal])
