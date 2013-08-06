@@ -24,6 +24,10 @@
       "path": "/Users/xeno_by/Projects/Paradise/tests/src/test/scala"
     },
     {
+      "name": "example",
+      "path": "/Users/xeno_by/Projects/sbt-example-paradise"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.js",
@@ -118,6 +122,9 @@
     {
       "name": "Dotx",
       "path": "/usr/local/dotx"
+    },
+    {
+      "path": "/Users/xeno_by/Projects/jenkins-scripts"
     },
     {
       "file_exclude_patterns":
