@@ -45,6 +45,14 @@
 				"*.js",
 				"*.orig"
 			],
+			"path": "/Users/xeno_by/Projects/toolbooxclasspathproblem2"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"name": "ScalaIDE",
 			"path": "/Users/xeno_by/Projects/scala-ide"
 		},
