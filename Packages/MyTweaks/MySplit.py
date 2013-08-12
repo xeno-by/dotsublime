@@ -1,13 +1,17 @@
 import sublime, sublime_plugin
 import time
+from functools import partial as bind
 
 # sure thing, it's a hack, but I have no idea how to get hold of a view created by clone_file
 shared = {}
 class CloneDaemon(sublime_plugin.EventListener):
-  def on_clone(self, view):
+  def on_clone_async(self, view):
     proto = shared["proto"]
     shared["proto"] = None
     if proto:
+      window = view.window()
+      group, index = window.get_view_index(proto)
+      if group != 1: window.set_view_index(view, 1, len(window.views_in_group(1)))
       view.show(proto.visible_region())
       view.set_viewport_position(proto.viewport_position())
       view.sel().clear()
@@ -22,9 +26,6 @@ class CloneFileAndSplit(sublime_plugin.WindowCommand):
     window.run_command("clone_file")
     window.run_command("set_layout", {"cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0], "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]})
     view.settings().set("myclone", True)
-    group, index = window.get_view_index(view)
-    if group != 1:
-      window.set_view_index(view, 1, len(window.views_in_group(1)))
 
 class UndoCloneFileAndSplit(sublime_plugin.WindowCommand):
   def run(self):
