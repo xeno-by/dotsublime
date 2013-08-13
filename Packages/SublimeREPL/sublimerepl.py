@@ -179,6 +179,7 @@ class ReplView(object):
 
         view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
         view.settings().set("result_line_regex", "")
+        view.settings().set("result_base_dir", repl_restart_args["cwd"])
         other_view = self._window.new_file()
         self._window.focus_view(other_view)
         self._window.run_command("close_file")
