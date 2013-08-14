@@ -32,6 +32,6 @@ class MyDoubleClick(sublime_plugin.TextCommand):
       after_click = substr_and_fixup(sel[0].a, v.line(sel[0]).b)
       view_dir = os.path.basename(v.file_name()) if v.file_name() else None
       cwd = v.settings().get("result_base_dir") or view_dir or ""
-      os.spawnlp(os.P_NOWAIT, "subl-click-through", "subl-click-through", file_name, line_number, before_click, after_click, cwd)
+      os.spawnlp(os.P_NOWAIT, "click-through", "click-through", file_name, line_number, before_click, after_click, cwd)
     else:
       sel.add(v.word(sel[0]))
