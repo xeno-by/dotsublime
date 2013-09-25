@@ -8,7 +8,7 @@ class MySandboxSnippetCommand(sublime_plugin.WindowCommand):
 
   def run(self):
     for folder in self.window.folders():
-      if folder.endswith("sandbox"):
+      if folder.endswith("sandbox") or folder.endswith("sandbox/src/main/scala"):
         if not os.path.exists(folder):
           os.mkdir(folder)
         if os.listdir(folder):
