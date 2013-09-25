@@ -6,7 +6,7 @@ class MyDiffFirstConflictCommand(sublime_plugin.TextCommand):
   def run(self, edit):
     v = self.view
     lines = v.substr(sublime.Region(0, v.size())).split("\n")
-    print(lines)
+    # print(lines)
     def find(prefix):
       try: return (i for i,v in enumerate(lines) if v.startswith(prefix)).__next__()
       except: return -1
@@ -23,8 +23,12 @@ class MyDiffFirstConflictCommand(sublime_plugin.TextCommand):
       hlocal, flocal = tempfile.mkstemp("", "mine.")
       hbase, fbase = tempfile.mkstemp("", "parent.")
       hremote, fremote = tempfile.mkstemp("", "theirs.")
+      houtput, foutput = tempfile.mkstemp("", "output.")
       os.write(hlocal, local.encode())
       os.write(hbase, base.encode())
       os.write(hremote, remote.encode())
       call(["open", "-a", "Araxis Merge"])
       call(["/usr/local/bin/araxisgitmerge", fremote, fbase, flocal])
+      # os.spawnlp(os.P_NOWAIT, "/usr/local/bin/ksdiff", "/usr/local/bin/ksdiff", "--merge", "--output", foutput, "--base", fbase, fremote, flocal)
+    else:
+      sublime.status_message("Merge conflicts not found")
