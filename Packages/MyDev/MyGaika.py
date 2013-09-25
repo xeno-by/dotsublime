@@ -59,7 +59,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     self.w.run_command("repl_open", {
       "type": "subprocess",
       "encoding": "utf8",
-      "external_id": " ".join(cmd),
+      "external_id": " ".join(cmd[0:2]),
       "view_id": existing_id,
       "cmd": cmd,
       "cwd": self.project_root
