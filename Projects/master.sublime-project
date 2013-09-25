@@ -56,6 +56,9 @@
 			"path": "/Users/xeno_by/Projects/Master/test/pending"
 		},
 		{
+			"path": "/Users/xeno_by/Projects/sbt"
+		},
+		{
 			"folder_exclude_patterns":
 			[
 				"_site"

@@ -8,6 +8,9 @@
 			"path": "/Users/xeno_by/Projects/210x/sandbox"
 		},
 		{
+			"path": "/Users/xeno_by/Projects/tpsinnem"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"*.js",

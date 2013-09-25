@@ -123,6 +123,24 @@
       "path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
     },
     {
+      "file_exclude_patterns":
+      [
+        "*.orig",
+        "*.aux",
+        "*.log",
+        "*.nav",
+        "*.snm",
+        "*.toc",
+        "*.vrb"
+      ],
+      "name": "StrangeLoop2013",
+      "path": "/Users/xeno_by/Projects/StrangeLoop2013"
+    },
+    {
+      "name": "Spire",
+      "path": "/Users/xeno_by/Projects/Spire"
+    },
+    {
       "name": "Dotx",
       "path": "/usr/local/dotx"
     },
