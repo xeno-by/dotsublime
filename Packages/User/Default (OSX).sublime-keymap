@@ -45,6 +45,7 @@
   { "keys": ["ctrl+shift+l"], "command": "my_git_log_all"},
   { "keys": ["ctrl+shift+;"], "command": "my_git_log_this"},
   { "keys": ["ctrl+shift+g"], "command": "my_git"},
+  { "keys": ["ctrl+shift+п"], "command": "my_git"},
   { "keys": ["ctrl+shift+m"], "command": "my_diff_first_conflict"},
   { "keys": ["super+shift+z"], "command": "reopen_last_file" },
   { "keys": ["ctrl+up"], "command": "repl_view_previous", "context": [{ "key": "setting.repl", "operator": "equal", "operand": true }]},
