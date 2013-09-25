@@ -13,5 +13,6 @@ class MyCleanCommand(sublime_plugin.WindowCommand):
     return self.quick + ["all"]
 
   def on_selected(self, index):
-    target = self.targets[index]
-    self.window.run_command("gaika", {"cmd": "clean", "args": [target]})
+    if index != -1:
+      target = self.targets[index]
+      self.window.run_command("gaika", {"cmd": "clean", "args": [target]})
