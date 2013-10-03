@@ -13,6 +13,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
 
   def detect_current_file(self):
     current_file = self.v.file_name() if self.v else None
+    if current_file and current_file.endswith(".src"): self.args.append(current_file)
     if current_file and current_file.endswith(".tex"): self.args.append(current_file)
     if current_file and current_file.endswith(".bib"): self.args.append(current_file)
     if current_file and current_file.endswith(".c"): self.args.append(current_file)
