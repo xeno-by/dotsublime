@@ -6,10 +6,10 @@
       "name": "fos2-problem",
       "path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects-out/2-untyped"
     },
-		{
-			"follow_symlinks": true,
+    {
+      "follow_symlinks": true,
       "name": "fos2-solution",
-			"path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects/2-untyped"
-		}
+      "path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects/2-untyped"
+    }
 	]
 }

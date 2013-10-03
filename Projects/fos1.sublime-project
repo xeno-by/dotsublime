@@ -1,15 +1,15 @@
 {
 	"folders":
 	[
-		{
-			"follow_symlinks": true,
+    {
+      "follow_symlinks": true,
       "name": "fos1-problem",
-			"path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects/1-arithmetic"
-		},
+      "path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects-out/1-arithmetic"
+    },
     {
       "follow_symlinks": true,
       "name": "fos1-solution",
-      "path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects-out/1-arithmetic"
+      "path": "/Users/xeno_by/Projects/teaching/fos/exercises/projects/1-arithmetic"
     }
 	]
 }
