@@ -1,5 +1,5 @@
 import scala.reflect.macros.Context
-import language.experimental.macros
+import scala.language.experimental.macros
 
 object Macros {
   def impl(c: Context) = {
