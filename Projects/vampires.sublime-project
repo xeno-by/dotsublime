@@ -37,6 +37,14 @@
         "*.js",
         "*.orig"
       ],
+      "path": "/Users/xeno_by/Projects/vampires/src/repl"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/Users/xeno_by/Projects/vampires/src/continuations"
     },
     {
