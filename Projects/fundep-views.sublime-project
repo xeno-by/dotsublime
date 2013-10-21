@@ -8,6 +8,34 @@
       "path": "/Users/xeno_by/Projects/fundep-views/sandbox"
     },
     {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "path": "/Users/xeno_by/Projects/scalaz"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "path": "/Users/xeno_by/Projects/specs2"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "path": "/Users/xeno_by/Projects/shapeless"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "path": "/Users/xeno_by/Projects/spray"
+    },
+    {
       "file_exclude_patterns":
       [
         "*.js",

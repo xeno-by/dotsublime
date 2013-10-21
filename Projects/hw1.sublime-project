@@ -1,0 +1,24 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/hw1-linuxosx"
+		},
+    {
+      "name": "Dotx",
+      "path": "/usr/local/dotx"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.sublime_session",
+        "*.sublime-project",
+        "*.sublime-workspace",
+        "*.orig"
+      ],
+      "name": "Sublime",
+      "path": "/Users/xeno_by/Library/Application Support/Sublime Text 3/Packages"
+    }
+	]
+}

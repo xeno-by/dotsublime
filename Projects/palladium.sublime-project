@@ -12,10 +12,54 @@
 			[
 				"target"
 			],
-			"path": "/Users/xeno_by/Projects/eleven"
+			"path": "/Users/xeno_by/Projects/eleven/project"
 		},
 		{
-			"path": "/usr/local/include/llvm-c"
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"name": "llvm-java",
+			"path": "/Users/xeno_by/Projects/eleven/llvm/src/main/java"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"name": "llvm-scala",
+			"path": "/Users/xeno_by/Projects/eleven/llvm/src/main/scala"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"name": "llvm-test",
+			"path": "/Users/xeno_by/Projects/eleven/llvm/src/test/scala"
+		},
+		// {
+		// 	"folder_exclude_patterns":
+		// 	[
+		// 		"target"
+		// 	],
+		// 	"name": "quasiquotes",
+		// 	"path": "/Users/xeno_by/Projects/eleven/quasiquotes/src/main/scala"
+		// },
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"name": "sandbox",
+			"path": "/Users/xeno_by/Projects/eleven/sandbox"
+		},
+		{
+			"name": "llvm-cxx",
+			"path": "/opt/local/libexec/llvm-3.3/include/llvm/"
+		},
+		{
+			"path": "/opt/local/libexec/llvm-3.3/include/llvm-c/"
 		},
 		{
 			"file_exclude_patterns":
