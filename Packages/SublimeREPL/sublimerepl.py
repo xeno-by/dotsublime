@@ -177,7 +177,7 @@ class ReplView(object):
         for setting, value in list(rv_settings.items()):
             view.settings().set(setting, value)
 
-        view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.]scala):([0-9]+)")
+        view.settings().set("result_file_regex", "([:.a-z_A-Z0-9\\\\/-]+[.](?:c|h|cpp|hpp|scala)):([0-9]+)")
         view.settings().set("result_line_regex", "")
         view.settings().set("result_base_dir", repl_restart_args["cwd"])
         other_view = self._window.new_file()

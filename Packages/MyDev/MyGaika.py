@@ -28,6 +28,8 @@ class GaikaCommand(sublime_plugin.WindowCommand):
           return path
         if os.path.exists(os.path.join(path, "project")):
           return path
+        if os.path.exists(os.path.join(path, "Makefile")):
+          return path
         parent = os.path.dirname(path)
         if parent != path:
           return try_project_root(parent)
@@ -57,6 +59,8 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     # sublime.save_settings("SublimeREPL.sublime-settings")
 
     cmd = ["gaika", self.cmd] + self.args
+    # print(cmd)
+    # print(self.project_root)
     self.w.run_command("repl_open", {
       "type": "subprocess",
       "encoding": "utf8",
