@@ -9,6 +9,7 @@
       "path": "/Users/xeno_by/Projects/Paradise2103/sandbox/src/main/scala"
     },
     {
+      "folder_exclude_patterns": ["target"],
       "path": "/Users/xeno_by/Projects/Paradise2103/project"
     },
     {

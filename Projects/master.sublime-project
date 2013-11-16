@@ -8,6 +8,9 @@
 			"path": "/Users/xeno_by/Projects/Master/sandbox"
 		},
 		{
+			"path": "/Users/xeno_by/Projects/macrotest"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"*.js",

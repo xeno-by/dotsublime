@@ -2,14 +2,45 @@
 	"folders":
 	[
 		{
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Metadata/210x"
 		},
 		{
-			"path": "/Users/xeno_by/Projects/210x/sandbox"
+			"follow_symlinks": true,
+			"name": "sandbox",
+			"path": "/Users/xeno_by/Projects/Paradise210x/sandbox/src/main/scala"
 		},
 		{
-			"folder_exclude_patterns": ["target"],
-			"path": "/Users/xeno_by/Projects/slick"
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Paradise210x/project"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "plugin",
+			"path": "/Users/xeno_by/Projects/Paradise210x/plugin/src/main/scala/org/scalalang/macroparadise"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "macros",
+			"path": "/Users/xeno_by/Projects/Paradise210x/tests/src/main/scala"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "tests",
+			"path": "/Users/xeno_by/Projects/Paradise210x/tests/src/test/scala"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "example",
+			"path": "/Users/xeno_by/Projects/sbt-example-paradise"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/jenkins-scripts"
 		},
 		{
 			"file_exclude_patterns":
@@ -17,6 +48,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/src/library"
 		},
 		{
@@ -25,6 +57,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/src/reflect"
 		},
 		{
@@ -33,6 +66,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/src/compiler"
 		},
 		{
@@ -41,6 +75,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/src/continuations"
 		},
 		{
@@ -49,6 +84,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"name": "ScalaIDE",
 			"path": "/Users/xeno_by/Projects/scala-ide"
 		},
@@ -58,6 +94,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"name": "SBT",
 			"path": "/Users/xeno_by/Projects/sbt"
 		},
@@ -67,6 +104,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/test/files"
 		},
 		{
@@ -75,6 +113,7 @@
 				"*.js",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/210x/test/pending"
 		},
 		{
@@ -82,6 +121,7 @@
 			[
 				"_site"
 			],
+			"follow_symlinks": true,
 			"name": "Docs",
 			"path": "/Users/xeno_by/Projects/SiteDocsScalaLangOrg"
 		},
@@ -100,10 +140,32 @@
 			[
 				"_site"
 			],
+			"follow_symlinks": true,
 			"name": "Pages",
 			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
 		},
 		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"follow_symlinks": true,
+			"name": "talks",
+			"path": "/Users/xeno_by/Projects/talks"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "Spire",
+			"path": "/Users/xeno_by/Projects/Spire"
+		},
+		{
+			"follow_symlinks": true,
 			"name": "Dotx",
 			"path": "/usr/local/dotx"
 		},
@@ -115,6 +177,7 @@
 				"*.sublime-workspace",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"name": "Sublime",
 			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3/Packages"
 		}

@@ -60,6 +60,14 @@
         "*.js",
         "*.orig"
       ],
+      "path": "/Users/xeno_by/Projects/Master/src/repl"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "path": "/Users/xeno_by/Projects/Master/src/continuations"
     },
     {
