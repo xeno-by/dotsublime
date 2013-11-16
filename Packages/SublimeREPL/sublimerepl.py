@@ -369,7 +369,7 @@ class ReplView(object):
             self.write("\n***Repl Killed***\n""" if self.repl._killed else "\n***Repl Closed***\n""")
             self._view.set_read_only(True)
             config = sublime.load_settings(SETTINGS_FILE).get("view_auto_close") or "never"
-            autoclose = config == "always" or (config == "onsuccess" and data and "[Exited with code 0]" in data)
+            autoclose = config == "always" or (config == "onsuccess" and data and ("[Exited with code 0]" in data or "press ESC to quit" in data))
             if autoclose:
                 window = self._view.window()
                 if window is not None:
