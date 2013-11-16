@@ -15,18 +15,18 @@ class MyGithubComment(sublime_plugin.TextCommand):
     folder_name, _ = os.path.split(full_name)
     git_root = Popen([os.environ["SHELL"], "-c", "git-root"], cwd=folder_name, stdout=PIPE).communicate()[0].decode()[:-1]
     curr_relative_name = full_name[len(git_root)+1:]
-    line_number = self.view.rowcol(self.view.sel()[0].begin())[0] + 1
+    curr_line_number = self.view.rowcol(self.view.sel()[0].begin())[0] + 1
 
-    incantation = "git blame -L" + str(line_number) + ",+1 \"" + full_name + "\" | cut -d' ' -f1 -f2"
-    sha, prev_relative_name = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split(" ")
-    if sha.startswith("^"): sha = sha[1:]
-    print(sha)
+    incantation = "git blame -L" + str(curr_line_number) + ",+1 -p \"" + full_name + "\" | head -n 1 | cut -d' ' -f1 -f2"
+    sha, prev_line_number = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split(" ")
+    incantation = "git blame -L" + str(curr_line_number) + ",+1 \"" + full_name + "\" | cut -d' ' -f2"
+    prev_relative_name = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1]
     incantation = "hub-introspect"
     user, repo, _, _ = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
     incantation = "git show --name-only " + sha
     diff_files = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
     diff_files = diff_files[(len(diff_files) - 1) - diff_files[::-1].index("")+1:]
-    print(diff_files)
+    # print(diff_files)
     file_id = "diff-" + str(diff_files.index(prev_relative_name))
 
     # TODO: no idea what's the purpose of ids that come after "diff-" in urls like the following
@@ -39,7 +39,7 @@ class MyGithubComment(sublime_plugin.TextCommand):
     index = content.index("<div id=\"" + file_id)
     fragment = content[0:index][-100:]
     file_ghid = re.search(r"(diff-[0123456789abcdefABCDEF]+)", fragment).groups()[0]
-    web_url += "#" + file_ghid + "R" + str(line_number)
+    web_url += "#" + file_ghid + "R" + str(prev_line_number)
     import webbrowser
     webbrowser.open(web_url)
 
