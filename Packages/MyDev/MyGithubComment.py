@@ -14,19 +14,20 @@ class MyGithubComment(sublime_plugin.TextCommand):
     full_name = os.path.realpath(self.f)
     folder_name, _ = os.path.split(full_name)
     git_root = Popen([os.environ["SHELL"], "-c", "git-root"], cwd=folder_name, stdout=PIPE).communicate()[0].decode()[:-1]
-    relative_name = full_name[len(git_root)+1:]
+    curr_relative_name = full_name[len(git_root)+1:]
     line_number = self.view.rowcol(self.view.sel()[0].begin())[0] + 1
 
-    incantation = "git blame -L" + str(line_number) + ",+1 \"" + full_name + "\" | cut -d' ' -f1"
-    sha = Popen([os.environ["SHELL"], "-c", incantation], cwd=folder_name, stdout=PIPE).communicate()[0].decode()[:-1]
+    incantation = "git blame -L" + str(line_number) + ",+1 \"" + full_name + "\" | cut -d' ' -f1 -f2"
+    sha, prev_relative_name = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split(" ")
     if sha.startswith("^"): sha = sha[1:]
+    print(sha)
     incantation = "hub-introspect"
-    user, repo, _, _ = Popen([os.environ["SHELL"], "-c", incantation], cwd=folder_name, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
+    user, repo, _, _ = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
     incantation = "git show --name-only " + sha
-    diff_files = Popen([os.environ["SHELL"], "-c", incantation], cwd=folder_name, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
+    diff_files = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
     diff_files = diff_files[(len(diff_files) - 1) - diff_files[::-1].index("")+1:]
     print(diff_files)
-    file_id = "diff-" + str(diff_files.index(relative_name))
+    file_id = "diff-" + str(diff_files.index(prev_relative_name))
 
     # TODO: no idea what's the purpose of ids that come after "diff-" in urls like the following
     # view-source:https://github.com/xeno-by/dotsublime/commit/e30cb9ba851f05d0ca8df6a993714299ae5c0794#diff-733841a6a6ee6dfcaf59536c44894ee7L180
