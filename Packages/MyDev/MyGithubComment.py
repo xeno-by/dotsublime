@@ -23,11 +23,6 @@ class MyGithubComment(sublime_plugin.TextCommand):
     prev_relative_name = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1]
     incantation = "hub-introspect"
     user, repo, _, _ = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
-    incantation = "git show --name-only " + sha
-    diff_files = Popen([os.environ["SHELL"], "-c", incantation], cwd=git_root, stdout=PIPE).communicate()[0].decode()[:-1].split("\n")
-    diff_files = diff_files[(len(diff_files) - 1) - diff_files[::-1].index("")+1:]
-    # print(diff_files)
-    file_id = "diff-" + str(diff_files.index(prev_relative_name))
 
     # TODO: no idea what's the purpose of ids that come after "diff-" in urls like the following
     # view-source:https://github.com/xeno-by/dotsublime/commit/e30cb9ba851f05d0ca8df6a993714299ae5c0794#diff-733841a6a6ee6dfcaf59536c44894ee7L180
@@ -36,8 +31,8 @@ class MyGithubComment(sublime_plugin.TextCommand):
     # api_url = "https://api.github.com/repos/" + user + "/" + repo + "/commits/" + sha
     web_url = "https://github.com/" + user + "/" + repo + "/commit/" + sha
     content = urlopen(web_url).read().decode("utf-8")
-    index = content.index("<div id=\"" + file_id)
-    fragment = content[0:index][-100:]
+    index = content.index("data-path=\"" + prev_relative_name + "\"")
+    fragment = content[0:index][-150:]
     file_ghid = re.search(r"(diff-[0123456789abcdefABCDEF]+)", fragment).groups()[0]
     web_url += "#" + file_ghid + "R" + str(prev_line_number)
     import webbrowser
