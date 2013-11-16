@@ -42,6 +42,7 @@
   { "keys": ["command+shift+b"], "command": "gaika", "args": {"cmd": "compile"}},
   { "keys": ["ctrl+c"], "command": "exec", "args": {"kill": true}},
   { "keys": ["shift+super+\\"], "command": "my_github_pullrequest"},
+  { "keys": ["shift+super+k"], "command": "my_github_comment"},
   { "keys": ["ctrl+shift+j"], "command": "my_git_blame"},
   { "keys": ["ctrl+shift+l"], "command": "my_git_log_all"},
   { "keys": ["ctrl+shift+;"], "command": "my_git_log_this"},
