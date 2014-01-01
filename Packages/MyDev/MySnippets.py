@@ -55,4 +55,8 @@ class MySandboxVanillaSnippetCommand(MySandboxSnippetCommand):
 
 class MySandboxMacroSnippetCommand(MySandboxSnippetCommand):
   def list_files(self):
-    return ["Macros.scala", "Test.scala", ""]
+    prefix = "211x"
+    for folder in self.window.project_data()["folders"]:
+      if "210x" in folder["path"]:
+        prefix = "210x"
+    return [prefix + "/Macros.scala", prefix + "/Test.scala"]
