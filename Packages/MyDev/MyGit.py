@@ -18,18 +18,18 @@ class MyGitCommand(sublime_plugin.WindowCommand):
 
   def do_run(self):
     # print(self.cwd)
-    call(["stree"], cwd = self.cwd)
+    call(["/usr/local/bin/stree"], cwd = self.cwd)
 
 class MyGitLogAll(MyGitCommand):
   def do_run(self):
-    call(["gitblit", "log"], cwd = self.cwd)
+    call(["/usr/local/bin/gitblit", "log"], cwd = self.cwd)
 
 class MyGitLogThis(MyGitCommand):
   def do_run(self):
     if self.target:
-      call(["gitblit", "log", self.target], cwd = self.cwd)
+      call(["/usr/local/bin/gitblit", "log", self.target], cwd = self.cwd)
 
 class MyGitBlame(MyGitCommand):
   def do_run(self):
     if self.target:
-      call(["gitblit", "blame", self.target], cwd = self.cwd)
+      call(["/usr/local/bin/gitblit", "blame", self.target], cwd = self.cwd)
