@@ -7,6 +7,8 @@
 	<key>fileTypes</key>
 	<array>
 		<string>scala</string>
+		<string>sbt</string>
+		<string>sc</string>
 	</array>
 	<key>foldingStartMarker</key>
 	<string>/\*\*|\{\s*$</string>
