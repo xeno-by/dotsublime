@@ -2,18 +2,12 @@
 	"folders":
 	[
 		{
-			"path": "/Users/xeno_by/Metadata/Master"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Metadata/Scala2110M7"
 		},
 		{
-			"path": "/Users/xeno_by/Projects/Master/sandbox"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"path": "/Users/xeno_by/Projects/Master/src/library"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/sandbox"
 		},
 		{
 			"file_exclude_patterns":
@@ -21,7 +15,8 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/src/reflect"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -29,7 +24,8 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/src/compiler"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -37,7 +33,8 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/src/continuations"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/src/compiler"
 		},
 		{
 			"file_exclude_patterns":
@@ -45,7 +42,8 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/test/files"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -53,22 +51,20 @@
 				"*.js",
 				"*.orig"
 			],
-			"path": "/Users/xeno_by/Projects/Master/test/pending"
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/test/files"
 		},
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "specs2",
-      "path": "/Users/xeno_by/Projects/specs2"
-    },
 		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2110M7/test/pending"
+		},
+		{
+			"follow_symlinks": true,
 			"path": "/Users/xeno_by/Projects/sbt"
 		},
 		{
@@ -76,6 +72,7 @@
 			[
 				"_site"
 			],
+			"follow_symlinks": true,
 			"name": "Docs",
 			"path": "/Users/xeno_by/Projects/SiteDocsScalaLangOrg"
 		},
@@ -94,10 +91,12 @@
 			[
 				"_site"
 			],
+			"follow_symlinks": true,
 			"name": "Pages",
 			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
 		},
 		{
+			"follow_symlinks": true,
 			"name": "Dotx",
 			"path": "/usr/local/dotx"
 		},
@@ -109,6 +108,7 @@
 				"*.sublime-workspace",
 				"*.orig"
 			],
+			"follow_symlinks": true,
 			"name": "Sublime",
 			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3/Packages"
 		}

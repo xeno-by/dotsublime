@@ -14,7 +14,11 @@
     },
     {
       "name": "plugin",
-      "path": "/Users/xeno_by/Projects/Paradise2103/plugin/src/main/scala/org/scalalang/macroparadise"
+      "path": "/Users/xeno_by/Projects/Paradise2103/plugin/src/main/scala/org/scalamacros/paradise"
+    },
+    {
+      "name": "quasiquotes",
+      "path": "/Users/xeno_by/Projects/Paradise2103/quasiquotes/src/main/scala/org/scalamacros/quasiquotes"
     },
     {
       "name": "macros",

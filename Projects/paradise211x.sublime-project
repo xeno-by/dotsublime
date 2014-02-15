@@ -13,7 +13,7 @@
     },
     {
       "name": "plugin",
-      "path": "/Users/xeno_by/Projects/Paradise211x/plugin/src/main/scala/org/scalalang/macroparadise"
+      "path": "/Users/xeno_by/Projects/Paradise211x/plugin/src/main/scala/org/scalamacros/paradise"
     },
     {
       "name": "macros",
