@@ -32,3 +32,32 @@ class MyDiffFirstConflictCommand(sublime_plugin.TextCommand):
       # os.spawnlp(os.P_NOWAIT, "/usr/local/bin/ksdiff", "/usr/local/bin/ksdiff", "--merge", "--output", foutput, "--base", fbase, fremote, flocal)
     else:
       sublime.status_message("Merge conflicts not found")
+
+class MyDiffAutoCompareCommand(sublime_plugin.TextCommand):
+  def diff(self, file1, file2):
+    call(["open", "-a", "Araxis Merge"])
+    call(["/usr/local/bin/araxisopendiff", file1, file2])
+
+  def run(self, edit):
+    v = self.view
+    w = v.window()
+    if (len(w.views()) < 2):
+      pass
+    elif (len(w.views()) == 2):
+      self.diff(w.views()[0].file_name(), w.views()[1].file_name())
+    else:
+      self.this_file = v.file_name()
+      self.other_files = []
+      for other_v in w.views():
+        if v.id() != other_v.id() and other_v.file_name():
+          self.other_files.append(other_v.file_name())
+      w.show_quick_panel(self.other_files, self.on_selected)
+
+  def on_selected(self, index):
+    if index != -1:
+      self.diff(self.this_file, self.other_files[index])
+
+
+
+
+

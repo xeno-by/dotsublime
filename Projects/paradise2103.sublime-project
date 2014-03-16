@@ -29,6 +29,10 @@
       "path": "/Users/xeno_by/Projects/Paradise2103/tests/src/test/scala"
     },
     {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
       "name": "example",
       "path": "/Users/xeno_by/Projects/sbt-example-paradise"
     },
@@ -142,6 +146,10 @@
       "path": "/Users/xeno_by/Projects/talks"
     },
     {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
       "name": "Spire",
       "path": "/Users/xeno_by/Projects/Spire"
     },
