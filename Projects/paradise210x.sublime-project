@@ -25,6 +25,16 @@
 		},
 		{
 			"follow_symlinks": true,
+			"name": "liftables",
+			"path": "/Users/xeno_by/Projects/Paradise210x/quasiquotes/src/main/java/scala/reflect/api"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "quasiquotes",
+			"path": "/Users/xeno_by/Projects/Paradise210x/quasiquotes/src/main/scala/scala/quasiquotes"
+		},
+		{
+			"follow_symlinks": true,
 			"name": "macros",
 			"path": "/Users/xeno_by/Projects/Paradise210x/tests/src/main/scala"
 		},

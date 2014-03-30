@@ -38,6 +38,24 @@
       "path": "/Users/xeno_by/Projects/mars"
     },
     {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scalahost",
+      "path": "/Users/xeno_by/Projects/scalahost"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "runtimehost",
+      "path": "/Users/xeno_by/Projects/runtimehost"
+    },
+    {
       "name": "library",
       "path": "/Users/xeno_by/Projects/Master/src/library"
     },

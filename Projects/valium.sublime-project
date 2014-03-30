@@ -5,21 +5,21 @@
       "path": "/Users/xeno_by/Metadata/Master"
     },
     {
-      "path": "/Users/xeno_by/Projects/valium/sandbox"
+      "path": "/Users/xeno_by/Projects/value-plugin/sandbox"
     },
     {
-      "path": "/Users/xeno_by/Projects/valium/examples",
+      "path": "/Users/xeno_by/Projects/value-plugin/examples",
     },
     {
-      "path": "/Users/xeno_by/Projects/valium/project",
+      "path": "/Users/xeno_by/Projects/value-plugin/project",
     },
     {
       "name": "plugin",
-      "path": "/Users/xeno_by/Projects/valium/components/plugin/src/valium/plugin",
+      "path": "/Users/xeno_by/Projects/value-plugin/components/plugin/src/valium/plugin",
     },
     {
       "name": "tests",
-      "path": "/Users/xeno_by/Projects/valium/tests/correctness",
+      "path": "/Users/xeno_by/Projects/value-plugin/tests/correctness",
     },
     // {
     //   "name": "miniboxing",

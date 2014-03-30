@@ -192,20 +192,6 @@
     {
       "folder_exclude_patterns":
       [
-        "target"
-      ],
-      "path": "/Users/xeno_by/Projects/ASTpersistence"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "path": "/Users/xeno_by/Projects/scala-macros-interpreter"
-    },
-    {
-      "folder_exclude_patterns":
-      [
         "_site"
       ],
       "name": "docs.scala-lang.org",

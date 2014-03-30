@@ -76,6 +76,23 @@
         "*.js",
         "*.orig"
       ],
+      "name": "scala-partest",
+      "path": "/Users/xeno_by/Projects/scala-partest"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
+      "path": "/Users/xeno_by/Projects/Master/src/partest-extras"
+    },
+    {
+      "file_exclude_patterns":
+      [
+        "*.js",
+        "*.orig"
+      ],
       "name": "ScalaIDE",
       "path": "/Users/xeno_by/Projects/scala-ide"
     },

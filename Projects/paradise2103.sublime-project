@@ -17,8 +17,12 @@
       "path": "/Users/xeno_by/Projects/Paradise2103/plugin/src/main/scala/org/scalamacros/paradise"
     },
     {
+      "name": "liftables",
+      "path": "/Users/xeno_by/Projects/Paradise2103/quasiquotes/src/main/java/scala/reflect/api"
+    },
+    {
       "name": "quasiquotes",
-      "path": "/Users/xeno_by/Projects/Paradise2103/quasiquotes/src/main/scala/org/scalamacros/quasiquotes"
+      "path": "/Users/xeno_by/Projects/Paradise2103/quasiquotes/src/main/scala/scala/quasiquotes"
     },
     {
       "name": "macros",
