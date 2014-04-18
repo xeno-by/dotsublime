@@ -35,6 +35,11 @@
 		},
 		{
 			"follow_symlinks": true,
+			"name": "myma",
+			"path": "/Users/xeno_by/Projects/Paradise2102/myma/src/main/scala/org/scalamacros/myma"
+		},
+		{
+			"follow_symlinks": true,
 			"name": "macros",
 			"path": "/Users/xeno_by/Projects/Paradise2102/tests/src/main/scala"
 		},

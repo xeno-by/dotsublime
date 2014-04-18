@@ -3,7 +3,19 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Metadata/Scala2110M8"
+			"path": "/Users/xeno_by/Metadata/Scala2102"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2102/sandbox"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/slick"
 		},
 		{
 			"file_exclude_patterns":
@@ -12,7 +24,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/src/library"
+			"path": "/Users/xeno_by/Projects/Scala2102/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -21,7 +33,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/src/reflect"
+			"path": "/Users/xeno_by/Projects/Scala2102/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -30,7 +42,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/src/compiler"
+			"path": "/Users/xeno_by/Projects/Scala2102/src/compiler"
 		},
 		{
 			"file_exclude_patterns":
@@ -39,7 +51,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/src/continuations"
+			"path": "/Users/xeno_by/Projects/Scala2102/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -48,7 +60,8 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/test/files"
+			"name": "ScalaIDE",
+			"path": "/Users/xeno_by/Projects/scala-ide"
 		},
 		{
 			"file_exclude_patterns":
@@ -57,25 +70,27 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/test/pending"
+			"name": "SBT",
+			"path": "/Users/xeno_by/Projects/sbt"
 		},
 		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110M8/sandbox"
+			"path": "/Users/xeno_by/Projects/Scala2102/test/files"
 		},
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "specs2",
-      "path": "/Users/xeno_by/Projects/specs2"
-    },
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/Scala2102/test/pending"
+		},
 		{
 			"folder_exclude_patterns":
 			[

@@ -3,33 +3,51 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Metadata/Scala2110RC3"
+			"path": "/Users/xeno_by/Metadata/Scala2110"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "sandbox",
-			"path": "/Users/xeno_by/Projects/Paradise2110RC3/sandbox/src/main/scala"
+			"path": "/Users/xeno_by/Projects/Paradise2110/sandbox/src/main/scala"
 		},
 		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Paradise2110RC3/project"
+			"path": "/Users/xeno_by/Projects/Paradise2110/project"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "plugin",
-			"path": "/Users/xeno_by/Projects/Paradise2110RC3/plugin/src/main/scala/org/scalamacros/paradise"
+			"path": "/Users/xeno_by/Projects/Paradise2110/plugin/src/main/scala/org/scalamacros/paradise"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "liftables",
+			"path": "/Users/xeno_by/Projects/Paradise2110/quasiquotes/src/main/java/scala/reflect/api"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "quasiquotes",
+			"path": "/Users/xeno_by/Projects/Paradise2110/quasiquotes/src/main/scala/scala/quasiquotes"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "macros",
-			"path": "/Users/xeno_by/Projects/Paradise2110RC3/tests/src/main/scala"
+			"path": "/Users/xeno_by/Projects/Paradise2110/tests/src/main/scala"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "tests",
-			"path": "/Users/xeno_by/Projects/Paradise2110RC3/tests/src/test/scala"
+			"path": "/Users/xeno_by/Projects/Paradise2110/tests/src/test/scala"
 		},
 		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
 			"follow_symlinks": true,
 			"name": "example",
 			"path": "/Users/xeno_by/Projects/sbt-example-paradise"
@@ -45,7 +63,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/src/library"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -54,7 +72,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/src/reflect"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -63,7 +81,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/src/compiler"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/compiler"
 		},
 		{
 			"file_exclude_patterns":
@@ -72,16 +90,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/src/repl"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/src/continuations"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -110,7 +119,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/test/files"
+			"path": "/Users/xeno_by/Projects/Scala2110/test/files"
 		},
 		{
 			"file_exclude_patterns":
@@ -119,7 +128,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110RC3/test/pending"
+			"path": "/Users/xeno_by/Projects/Scala2110/test/pending"
 		},
 		{
 			"folder_exclude_patterns":
@@ -148,6 +157,30 @@
 			"follow_symlinks": true,
 			"name": "Pages",
 			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"follow_symlinks": true,
+			"name": "talks",
+			"path": "/Users/xeno_by/Projects/talks"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "Spire",
+			"path": "/Users/xeno_by/Projects/Spire"
 		},
 		{
 			"follow_symlinks": true,

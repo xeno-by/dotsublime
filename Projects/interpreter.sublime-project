@@ -1,0 +1,158 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "interpreter",
+			"path": "/Users/xeno_by/Projects/interpreter"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "core",
+			"path": "/Users/xeno_by/Projects/core"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "persistence",
+			"path": "/Users/xeno_by/Projects/persistence"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "mars",
+			"path": "/Users/xeno_by/Projects/mars"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "scalahost",
+			"path": "/Users/xeno_by/Projects/scalahost"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "runtimehost",
+			"path": "/Users/xeno_by/Projects/runtimehost"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "library",
+			"path": "/Users/xeno_by/Projects/Master/src/library"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "reflect",
+			"path": "/Users/xeno_by/Projects/Master/src/reflect"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "compiler",
+			"path": "/Users/xeno_by/Projects/Master/src/compiler"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "dotty",
+			"path": "/Users/xeno_by/Projects/Dotty/src/dotty/tools/dotc"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"follow_symlinks": true,
+			"name": "docs.scala-lang.org",
+			"path": "/Users/xeno_by/Projects/SiteDocsScalaLangOrg"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"follow_symlinks": true,
+			"name": "scalamacros.org",
+			"path": "/Users/xeno_by/Projects/SiteScalamacrosOrg"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"folder_exclude_patterns":
+			[
+				"_site"
+			],
+			"follow_symlinks": true,
+			"name": "scalareflect.org",
+			"path": "/Users/xeno_by/Projects/SiteScalareflectOrg"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.orig",
+				"*.aux",
+				"*.log",
+				"*.nav",
+				"*.snm",
+				"*.toc",
+				"*.vrb"
+			],
+			"follow_symlinks": true,
+			"name": "talks",
+			"path": "/Users/xeno_by/Projects/talks"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "Dotx",
+			"path": "/usr/local/dotx"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.sublime_session",
+				"*.sublime-project",
+				"*.sublime-workspace",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"name": "Sublime",
+			"path": "/Users/xeno_by/Library/Application Support/Sublime Text 3/Packages"
+		}
+	]
+}

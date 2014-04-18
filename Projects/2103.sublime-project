@@ -62,6 +62,18 @@
 			"path": "/Users/xeno_by/Projects/sbt"
 		},
 		{
+			"path": "/Users/xeno_by/Projects/Paradise2103"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"name": "prickle",
+			"path": "/Users/xeno_by/Projects/prickle"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"*.js",

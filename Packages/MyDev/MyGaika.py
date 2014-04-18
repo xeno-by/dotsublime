@@ -43,6 +43,8 @@ class GaikaCommand(sublime_plugin.WindowCommand):
       for folder in folders:
         maybe_root = try_project_root(folder["path"])
         if maybe_root: return maybe_root
+
+      return folders[0]["path"]
     except:
       pass
 
@@ -59,8 +61,6 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     # sublime.save_settings("SublimeREPL.sublime-settings")
 
     cmd = ["gaika", self.cmd] + self.args
-    # print(cmd)
-    # print(self.project_root)
     self.w.run_command("repl_open", {
       "type": "subprocess",
       "encoding": "utf8",
