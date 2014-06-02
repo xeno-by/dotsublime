@@ -9,7 +9,7 @@
 		},
 		{
 			"folder_exclude_patterns": ["target"],
-			"path": "/Users/xeno_by/Projects/scalikejdbc"
+			"path": "/Users/xeno_by/Projects/embed-lambda"
 		},
 		{
 			"file_exclude_patterns":

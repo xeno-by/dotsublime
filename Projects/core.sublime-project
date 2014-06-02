@@ -55,20 +55,34 @@
 			"name": "runtimehost",
 			"path": "/Users/xeno_by/Projects/runtimehost"
 		},
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "macrotracker",
+      "path": "/Users/xeno_by/Projects/macrotracker"
+    },
+    {
+      "follow_symlinks": true,
+      "name": "paradise",
+      "path": "/Users/xeno_by/Projects/Paradise2110"
+    },
 		{
 			"follow_symlinks": true,
 			"name": "library",
-			"path": "/Users/xeno_by/Projects/Master/src/library"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/library"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "reflect",
-			"path": "/Users/xeno_by/Projects/Master/src/reflect"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/reflect"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "compiler",
-			"path": "/Users/xeno_by/Projects/Master/src/compiler"
+			"path": "/Users/xeno_by/Projects/Scala2110/src/compiler"
 		},
 		{
 			"follow_symlinks": true,
@@ -187,19 +201,6 @@
       ],
       "name": "scalaz",
       "path": "/Users/xeno_by/Projects/scalaz"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "utest",
-      "path": "/Users/xeno_by/Projects/utest"
     },
 		{
 			"folder_exclude_patterns":

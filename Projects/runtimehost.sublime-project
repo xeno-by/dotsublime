@@ -7,8 +7,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "mars",
-			"path": "/Users/xeno_by/Projects/mars"
+			"name": "runtimehost",
+			"path": "/Users/xeno_by/Projects/runtimehost"
 		},
 		{
 			"folder_exclude_patterns":
@@ -43,6 +43,15 @@
 				"target"
 			],
 			"follow_symlinks": true,
+			"name": "mars",
+			"path": "/Users/xeno_by/Projects/mars"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
 			"name": "scalahost",
 			"path": "/Users/xeno_by/Projects/scalahost"
 		},
@@ -52,8 +61,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "runtimehost",
-			"path": "/Users/xeno_by/Projects/runtimehost"
+			"name": "macrotracker",
+			"path": "/Users/xeno_by/Projects/macrotracker"
 		},
 		{
 			"follow_symlinks": true,
@@ -75,119 +84,128 @@
 			"name": "dotty",
 			"path": "/Users/xeno_by/Projects/Dotty/src/dotty/tools/dotc"
 		},
-    {
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "ScalaIDE",
-      "path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "async",
-      "path": "/Users/xeno_by/Projects/async"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "SBT",
-      "path": "/Users/xeno_by/Projects/sbt"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "shapeless",
-      "path": "/Users/xeno_by/Projects/shapeless"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "specs2",
-      "path": "/Users/xeno_by/Projects/specs2"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "spire",
-      "path": "/Users/xeno_by/Projects/spire"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "scalatest",
-      "path": "/Users/xeno_by/Projects/scalatest"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "slick",
-      "path": "/Users/xeno_by/Projects/slick"
-    },
-    {
-      "folder_exclude_patterns":
-      [
-        "target"
-      ],
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "scalaz",
-      "path": "/Users/xeno_by/Projects/scalaz"
-    },
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"name": "ScalaIDE",
+			"path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "async",
+			"path": "/Users/xeno_by/Projects/async"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "SBT",
+			"path": "/Users/xeno_by/Projects/sbt"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "shapeless",
+			"path": "/Users/xeno_by/Projects/shapeless"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "specs2",
+			"path": "/Users/xeno_by/Projects/specs2"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "spire",
+			"path": "/Users/xeno_by/Projects/spire"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "scalatest",
+			"path": "/Users/xeno_by/Projects/scalatest"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "slick",
+			"path": "/Users/xeno_by/Projects/slick"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "scalaz",
+			"path": "/Users/xeno_by/Projects/scalaz"
+		},
 		{
 			"folder_exclude_patterns":
 			[

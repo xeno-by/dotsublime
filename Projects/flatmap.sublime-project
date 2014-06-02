@@ -1,0 +1,12 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/flatmap2014"
+		},
+    {
+      "path": "/Users/xeno_by/Projects/scalaz"
+    }
+	]
+}

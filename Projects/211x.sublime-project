@@ -3,25 +3,20 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Metadata/Scala2110"
+			"path": "/Users/xeno_by/Metadata/211x"
 		},
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/sandbox"
+			"path": "/Users/xeno_by/Projects/211x/sandbox"
 		},
 		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
 			"folder_exclude_patterns":
 			[
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "enum-paradise",
-			"path": "/Users/xeno_by/Projects/enum-paradise"
+			"name": "macrology201",
+			"path": "/Users/xeno_by/Projects/macrology201"
 		},
 		{
 			"file_exclude_patterns":
@@ -30,7 +25,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/src/library"
+			"path": "/Users/xeno_by/Projects/211x/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -39,7 +34,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/src/reflect"
+			"path": "/Users/xeno_by/Projects/211x/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -48,7 +43,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/src/compiler"
+			"path": "/Users/xeno_by/Projects/211x/src/compiler"
 		},
 		{
 			"file_exclude_patterns":
@@ -57,7 +52,25 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/src/continuations"
+			"path": "/Users/xeno_by/Projects/211x/src/repl"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/211x/src/interactive"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/xeno_by/Projects/211x/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -75,7 +88,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/test/files"
+			"path": "/Users/xeno_by/Projects/211x/test/files"
 		},
 		{
 			"file_exclude_patterns":
@@ -84,7 +97,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/Scala2110/test/pending"
+			"path": "/Users/xeno_by/Projects/211x/test/pending"
 		},
 		{
 			"file_exclude_patterns":
@@ -103,7 +116,7 @@
 			],
 			"follow_symlinks": true,
 			"name": "ScalaIDE",
-			"path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
+			"path": "/Users/xeno_by/Projects/scala-ide"
 		},
 		{
 			"file_exclude_patterns":

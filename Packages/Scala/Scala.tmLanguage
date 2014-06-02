@@ -232,7 +232,7 @@
 					</dict>
 					<key>match</key>
 					<string>(?x)
-						\b(def)\s+
+						\b(def|macro)\s+
 						(([a-zA-Z$_][a-zA-Z0-9$_]*(_[^a-zA-Z0-9\s]+)?)|`.*`|[^\w\[\(\:\_\s]+)</string>
 				</dict>
 				<dict>
