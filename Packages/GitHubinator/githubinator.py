@@ -48,10 +48,14 @@ class GithubinatorCommand(sublime_plugin.TextCommand):
                 continue
             matches = result.groups()
 
-            ref_path = open(os.path.join(git_path, '.git', 'HEAD'), "r").read().replace('ref: ', '')[:-1]
-            branch = ref_path.replace('refs/heads/','')
-            sha = open(os.path.join(git_path, '.git', ref_path), "r").read()[:-1]
-            target = sha if permalink else branch
+            ref_path = open(os.path.join(git_path, '.git', 'HEAD'), "r").read()[:-1]
+            if ref_path.startswith('ref:'):
+                ref_path = ref_path.replace('ref: ', '')[:-1]
+                branch = ref_path.replace('refs/heads/','')
+                sha = open(os.path.join(git_path, '.git', ref_path), "r").read()[:-1]
+                target = sha if permalink else branch
+            else:
+                target = ref_path
 
             full_link = 'https://github.com/%s/%s/blob/%s%s/%s#L%s' % \
                 (matches[0], matches[1], target, new_git_path, file_name, lines)

@@ -15,6 +15,7 @@ class GaikaCommand(sublime_plugin.WindowCommand):
     current_file = self.v.file_name() if self.v else None
     if current_file and current_file.endswith(".src"): self.args.append(current_file)
     if current_file and current_file.endswith(".tex"): self.args.append(current_file)
+    if current_file and current_file.endswith(".sty"): self.args.append(current_file)
     if current_file and current_file.endswith(".bib"): self.args.append(current_file)
     if current_file and current_file.endswith(".c"): self.args.append(current_file)
     return current_file
@@ -29,6 +30,8 @@ class GaikaCommand(sublime_plugin.WindowCommand):
         if os.path.exists(os.path.join(path, "project")):
           return path
         if os.path.exists(os.path.join(path, "Makefile")):
+          return path
+        if os.path.exists(os.path.join(path, "pom.xml")):
           return path
         parent = os.path.dirname(path)
         if parent != path:

@@ -3,11 +3,25 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Metadata/211x"
+			"path": "/Users/xeno_by/Metadata/Scala2112"
 		},
 		{
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/sandbox"
+			"path": "/Users/xeno_by/Projects/Scala2112/sandbox"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.orig"
+			],
+			"folder_exclude_patterns":
+			[
+				"target"
+			],
+			"follow_symlinks": true,
+			"name": "enum-paradise",
+			"path": "/Users/xeno_by/Projects/enum-paradise"
 		},
 		{
 			"file_exclude_patterns":
@@ -16,7 +30,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/library"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/library"
 		},
 		{
 			"file_exclude_patterns":
@@ -25,7 +39,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/reflect"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/reflect"
 		},
 		{
 			"file_exclude_patterns":
@@ -34,7 +48,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/compiler"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/compiler"
 		},
 		{
 			"file_exclude_patterns":
@@ -43,25 +57,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/repl"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/interactive"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/src/continuations"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/continuations"
 		},
 		{
 			"file_exclude_patterns":
@@ -79,7 +75,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/test/files"
+			"path": "/Users/xeno_by/Projects/Scala2112/test/files"
 		},
 		{
 			"file_exclude_patterns":
@@ -88,7 +84,7 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"path": "/Users/xeno_by/Projects/211x/test/pending"
+			"path": "/Users/xeno_by/Projects/Scala2112/test/pending"
 		},
 		{
 			"file_exclude_patterns":
@@ -106,38 +102,8 @@
 				"*.orig"
 			],
 			"follow_symlinks": true,
-			"name": "accord",
-			"path": "/Users/xeno_by/Projects/accord"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
-			"name": "resetallattrs",
-			"path": "/Users/xeno_by/Projects/resetallattrs"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
-			"name": "parboiled2",
-			"path": "/Users/xeno_by/Projects/parboiled2"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"*.js",
-				"*.orig"
-			],
-			"follow_symlinks": true,
 			"name": "ScalaIDE",
-			"path": "/Users/xeno_by/Projects/scala-ide"
+			"path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
 		},
 		{
 			"file_exclude_patterns":

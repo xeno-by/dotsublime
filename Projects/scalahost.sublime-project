@@ -1,6 +1,15 @@
 {
 	"folders":
 	[
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "core",
+      "path": "/Users/xeno_by/Projects/core"
+    },
 		{
 			"folder_exclude_patterns":
 			[
@@ -10,15 +19,33 @@
 			"name": "scalahost",
 			"path": "/Users/xeno_by/Projects/scalahost"
 		},
-		{
-			"folder_exclude_patterns":
-			[
-				"target"
-			],
-			"follow_symlinks": true,
-			"name": "core",
-			"path": "/Users/xeno_by/Projects/core"
-		},
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scala-ide",
+      "path": "/Users/xeno_by/Projects/palladium-scala-ide"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "intellij",
+      "path": "/Users/xeno_by/Projects/palladium-intellij"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scaladays",
+      "path": "/Users/xeno_by/Projects/scaladays2014"
+    },
 		{
 			"folder_exclude_patterns":
 			[
@@ -34,8 +61,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "persistence",
-			"path": "/Users/xeno_by/Projects/persistence"
+			"name": "old-persistence",
+			"path": "/Users/xeno_by/Projects/old-persistence"
 		},
 		{
 			"folder_exclude_patterns":
@@ -43,8 +70,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "mars",
-			"path": "/Users/xeno_by/Projects/mars"
+			"name": "old-mars",
+			"path": "/Users/xeno_by/Projects/old-mars"
 		},
 		{
 			"folder_exclude_patterns":
@@ -52,8 +79,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "runtimehost",
-			"path": "/Users/xeno_by/Projects/runtimehost"
+			"name": "old-runtimehost",
+			"path": "/Users/xeno_by/Projects/old-runtimehost"
 		},
     {
       "folder_exclude_patterns":
@@ -84,20 +111,21 @@
 			"name": "compiler",
 			"path": "/Users/xeno_by/Projects/Scala2110/src/compiler"
 		},
+    {
+      "follow_symlinks": true,
+      "name": "repl",
+      "path": "/Users/xeno_by/Projects/Scala2110/src/repl"
+    },
+    {
+      "follow_symlinks": true,
+      "name": "interactive",
+      "path": "/Users/xeno_by/Projects/Scala2110/src/interactive"
+    },
 		{
 			"follow_symlinks": true,
 			"name": "dotty",
 			"path": "/Users/xeno_by/Projects/Dotty/src/dotty/tools/dotc"
 		},
-    {
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "ScalaIDE",
-      "path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
-    },
     {
       "folder_exclude_patterns":
       [

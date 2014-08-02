@@ -10,6 +10,33 @@
 			"name": "core",
 			"path": "/Users/xeno_by/Projects/core"
 		},
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scalahost",
+      "path": "/Users/xeno_by/Projects/scalahost"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scala-ide",
+      "path": "/Users/xeno_by/Projects/palladium-scala-ide"
+    },
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "intellij",
+      "path": "/Users/xeno_by/Projects/palladium-intellij"
+    },
 		{
 			"folder_exclude_patterns":
 			[
@@ -25,8 +52,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "persistence",
-			"path": "/Users/xeno_by/Projects/persistence"
+			"name": "old-persistence",
+			"path": "/Users/xeno_by/Projects/old-persistence"
 		},
 		{
 			"folder_exclude_patterns":
@@ -34,8 +61,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "mars",
-			"path": "/Users/xeno_by/Projects/mars"
+			"name": "old-mars",
+			"path": "/Users/xeno_by/Projects/old-mars"
 		},
 		{
 			"folder_exclude_patterns":
@@ -43,17 +70,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "scalahost",
-			"path": "/Users/xeno_by/Projects/scalahost"
-		},
-		{
-			"folder_exclude_patterns":
-			[
-				"target"
-			],
-			"follow_symlinks": true,
-			"name": "runtimehost",
-			"path": "/Users/xeno_by/Projects/runtimehost"
+			"name": "old-runtimehost",
+			"path": "/Users/xeno_by/Projects/old-runtimehost"
 		},
     {
       "folder_exclude_patterns":
@@ -64,40 +82,26 @@
       "name": "macrotracker",
       "path": "/Users/xeno_by/Projects/macrotracker"
     },
-    {
-      "follow_symlinks": true,
-      "name": "paradise",
-      "path": "/Users/xeno_by/Projects/Paradise2110"
-    },
 		{
 			"follow_symlinks": true,
 			"name": "library",
-			"path": "/Users/xeno_by/Projects/Scala2110/src/library"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/library"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "reflect",
-			"path": "/Users/xeno_by/Projects/Scala2110/src/reflect"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/reflect"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "compiler",
-			"path": "/Users/xeno_by/Projects/Scala2110/src/compiler"
+			"path": "/Users/xeno_by/Projects/Scala2112/src/compiler"
 		},
 		{
 			"follow_symlinks": true,
 			"name": "dotty",
 			"path": "/Users/xeno_by/Projects/Dotty/src/dotty/tools/dotc"
 		},
-    {
-      "file_exclude_patterns":
-      [
-        "*.js",
-        "*.orig"
-      ],
-      "name": "ScalaIDE",
-      "path": "/Users/xeno_by/Projects/palladium0/src/scala-ide"
-    },
     {
       "folder_exclude_patterns":
       [
@@ -246,8 +250,8 @@
 				"_site"
 			],
 			"follow_symlinks": true,
-			"name": "scalareflect.org",
-			"path": "/Users/xeno_by/Projects/SiteScalareflectOrg"
+			"name": "scalameta.org",
+			"path": "/Users/xeno_by/Projects/SiteScalametaOrg"
 		},
 		{
 			"file_exclude_patterns":

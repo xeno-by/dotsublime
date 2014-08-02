@@ -18,7 +18,7 @@ class MyPartestCreateCommand(sublime_plugin.WindowCommand):
 
   def on_entered(self, name):
     name = "files/" + self.test_type + "/" + name
-    root = os.path.dirname(os.readlink(os.path.join(self.window.folders()[0], "build.xml")))
+    root = os.path.dirname(os.path.join(self.window.folders()[1], ".."))
     script = Popen(["partest-create", name] + (["--create-flags"] if self.flags else []), stdout=PIPE, cwd = root)
     output = script.communicate()[0].decode()[:-1]
     # call(["growlnotify", "-n", "Partest", "-m", output.replace("\n", " ").replace("/Users/xeno_by/Projects/", "")])

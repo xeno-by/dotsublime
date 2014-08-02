@@ -1,0 +1,13 @@
+{
+	"folders":
+	[
+    {
+      "follow_symlinks": true,
+      "path": "/Users/xeno_by/Projects/mars"
+    }
+		// {
+		// 	"follow_symlinks": true,
+		// 	"path": "/Users/xeno_by/Projects/mars-before-mirrors"
+		// }
+	]
+}

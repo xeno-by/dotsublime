@@ -1,6 +1,15 @@
 {
 	"folders":
 	[
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "core",
+      "path": "/Users/xeno_by/Projects/core"
+    },
 		{
 			"folder_exclude_patterns":
 			[
@@ -10,14 +19,23 @@
 			"name": "interpreter",
 			"path": "/Users/xeno_by/Projects/interpreter"
 		},
+    {
+      "folder_exclude_patterns":
+      [
+        "target"
+      ],
+      "follow_symlinks": true,
+      "name": "scalahost",
+      "path": "/Users/xeno_by/Projects/scalahost"
+    },
 		{
 			"folder_exclude_patterns":
 			[
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "core",
-			"path": "/Users/xeno_by/Projects/core"
+			"name": "old-persistence",
+			"path": "/Users/xeno_by/Projects/old-persistence"
 		},
 		{
 			"folder_exclude_patterns":
@@ -25,8 +43,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "persistence",
-			"path": "/Users/xeno_by/Projects/persistence"
+			"name": "old-mars",
+			"path": "/Users/xeno_by/Projects/old-mars"
 		},
 		{
 			"folder_exclude_patterns":
@@ -34,26 +52,8 @@
 				"target"
 			],
 			"follow_symlinks": true,
-			"name": "mars",
-			"path": "/Users/xeno_by/Projects/mars"
-		},
-		{
-			"folder_exclude_patterns":
-			[
-				"target"
-			],
-			"follow_symlinks": true,
-			"name": "scalahost",
-			"path": "/Users/xeno_by/Projects/scalahost"
-		},
-		{
-			"folder_exclude_patterns":
-			[
-				"target"
-			],
-			"follow_symlinks": true,
-			"name": "runtimehost",
-			"path": "/Users/xeno_by/Projects/runtimehost"
+			"name": "old-runtimehost",
+			"path": "/Users/xeno_by/Projects/old-runtimehost"
 		},
     {
       "folder_exclude_patterns":
